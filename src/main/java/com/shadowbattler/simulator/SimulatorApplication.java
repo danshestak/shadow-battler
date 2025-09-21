@@ -1,13 +1,13 @@
-package com.shadowbattlergroup.shadowbattler;
+package com.shadowbattler.simulator;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ShadowbattlerApplication {
+public class SimulatorApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ShadowbattlerApplication.class, args);
+		SpringApplication.run(SimulatorApplication.class, args);
 	}
 
 }

@@ -1,10 +1,10 @@
-package com.shadowbattlergroup.shadowbattler;
+package com.shadowbattler.simulator;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ShadowbattlerApplicationTests {
+class SimulatorApplicationTests {
 
 	@Test
 	void contextLoads() {
