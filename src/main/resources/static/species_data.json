@@ -1,0 +1,618 @@
+[
+    {
+        "dex": 1,
+        "speciesName": "Bulbasaur",
+        "speciesId": "bulbasaur",
+        "baseStats": {
+            "atk": 118,
+            "def": 111,
+            "hp": 128
+        },
+        "types": ["grass", "poison"],
+        "fastMoves": ["TACKLE", "VINE_WHIP"],
+        "chargedMoves": ["POWER_WHIP", "SEED_BOMB", "SLUDGE_BOMB"],
+        "tags": ["starter", "shadoweligible"],
+        "defaultIVs": {
+            "cp500": [17.5, 3, 14, 12],
+            "cp1500": [50, 15, 15, 15],
+            "cp2500": [50, 15, 15, 15]
+        },
+        "level25CP": 627,
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_BULBASAUR",
+            "evolutions": ["ivysaur"]
+        }
+    },
+    {
+        "dex": 1,
+        "speciesName": "Bulbasaur (Shadow)",
+        "speciesId": "bulbasaur_shadow",
+        "baseStats": {
+            "atk": 118,
+            "def": 111,
+            "hp": 128
+        },
+        "types": ["grass", "poison"],
+        "fastMoves": ["TACKLE", "VINE_WHIP"],
+        "chargedMoves": ["POWER_WHIP", "SEED_BOMB", "SLUDGE_BOMB"],
+        "tags": ["starter", "shadow"],
+        "defaultIVs": {
+            "cp500": [17, 5, 15, 14],
+            "cp1500": [50, 15, 15, 15],
+            "cp2500": [50, 15, 15, 15]
+        },
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_BULBASAUR",
+            "evolutions": ["ivysaur_shadow"]
+        }
+    },
+    {
+        "dex": 2,
+        "speciesName": "Ivysaur",
+        "speciesId": "ivysaur",
+        "baseStats": {
+            "atk": 151,
+            "def": 143,
+            "hp": 155
+        },
+        "types": ["grass", "poison"],
+        "fastMoves": ["RAZOR_LEAF", "VINE_WHIP"],
+        "chargedMoves": ["POWER_WHIP", "SLUDGE_BOMB", "SOLAR_BEAM"],
+        "tags": ["starter", "shadoweligible"],
+        "defaultIVs": {
+            "cp500": [11, 4, 15, 15],
+            "cp1500": [37.5, 2, 13, 15],
+            "cp2500": [50, 15, 15, 15]
+        },
+        "level25CP": 1002,
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_BULBASAUR",
+            "parent": "bulbasaur",
+            "evolutions": ["venusaur"]
+        }
+    },
+    {
+        "dex": 2,
+        "speciesName": "Ivysaur (Shadow)",
+        "speciesId": "ivysaur_shadow",
+        "baseStats": {
+            "atk": 151,
+            "def": 143,
+            "hp": 155
+        },
+        "types": ["grass", "poison"],
+        "fastMoves": ["RAZOR_LEAF", "VINE_WHIP"],
+        "chargedMoves": ["POWER_WHIP", "SLUDGE_BOMB", "SOLAR_BEAM"],
+        "tags": ["starter", "shadow"],
+        "defaultIVs": {
+            "cp500": [11, 4, 15, 15],
+            "cp1500": [37, 4, 14, 12],
+            "cp2500": [50, 15, 15, 15]
+        },
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_BULBASAUR",
+            "parent": "bulbasaur_shadow",
+            "evolutions": ["venusaur_shadow"]
+        }
+    },
+    {
+        "dex": 3,
+        "speciesName": "Venusaur",
+        "speciesId": "venusaur",
+        "baseStats": {
+            "atk": 198,
+            "def": 189,
+            "hp": 190
+        },
+        "types": ["grass", "poison"],
+        "fastMoves": ["RAZOR_LEAF", "VINE_WHIP"],
+        "chargedMoves": ["FRENZY_PLANT", "PETAL_BLIZZARD", "SLUDGE_BOMB", "SOLAR_BEAM", "SLUDGE"],
+        "tags": ["starter", "shadoweligible"],
+        "defaultIVs": {
+            "cp500": [7, 5, 14, 11],
+            "cp1500": [20.5, 4, 13, 14],
+            "cp2500": [38, 4, 14, 15]
+        },
+        "level25CP": 1673,
+        "eliteMoves": ["FRENZY_PLANT"],
+        "searchPriority": 13,
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_BULBASAUR",
+            "parent": "ivysaur"
+        }
+    },
+    {
+        "dex": 3,
+        "speciesName": "Venusaur (Mega)",
+        "speciesId": "venusaur_mega",
+        "baseStats": {
+            "atk": 241,
+            "def": 246,
+            "hp": 190
+        },
+        "types": ["grass", "poison"],
+        "fastMoves": ["RAZOR_LEAF", "VINE_WHIP"],
+        "chargedMoves": ["FRENZY_PLANT", "PETAL_BLIZZARD", "SLUDGE_BOMB", "SOLAR_BEAM", "SLUDGE"],
+        "tags": ["starter", "shadoweligible", "mega"],
+        "level25CP": 2324,
+        "defaultIVs": {
+            "cp500": [5, 15, 15, 14],
+            "cp1500": [15, 4, 9, 15],
+            "cp2500": [25, 4, 10, 14]
+        },
+        "eliteMoves": ["FRENZY_PLANT"],
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_BULBASAUR",
+            "parent": "ivysaur"
+        }
+    },
+    {
+        "dex": 3,
+        "speciesName": "Venusaur (Shadow)",
+        "speciesId": "venusaur_shadow",
+        "baseStats": {
+            "atk": 198,
+            "def": 189,
+            "hp": 190
+        },
+        "types": ["grass", "poison"],
+        "fastMoves": ["RAZOR_LEAF", "VINE_WHIP"],
+        "chargedMoves": ["FRENZY_PLANT", "PETAL_BLIZZARD", "SLUDGE_BOMB", "SOLAR_BEAM", "SLUDGE"],
+        "tags": ["starter", "shadow"],
+        "defaultIVs": {
+            "cp500": [7, 5, 14, 11],
+            "cp1500": [20.5, 4, 13, 14],
+            "cp2500": [38, 4, 14, 15]
+        },
+        "eliteMoves": ["FRENZY_PLANT"],
+        "searchPriority": 13,
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_BULBASAUR",
+            "parent": "ivysaur_shadow"
+        }
+    },
+    {
+        "dex": 4,
+        "speciesName": "Charmander",
+        "speciesId": "charmander",
+        "baseStats": {
+            "atk": 116,
+            "def": 93,
+            "hp": 118
+        },
+        "types": ["fire", "none"],
+        "fastMoves": ["EMBER", "SCRATCH"],
+        "chargedMoves": ["FLAME_BURST", "FLAME_CHARGE", "FLAMETHROWER"],
+        "tags": ["starter", "shadoweligible"],
+        "defaultIVs": {
+            "cp500": [19.5, 5, 15, 13],
+            "cp1500": [50, 15, 15, 15],
+            "cp2500": [50, 15, 15, 15]
+        },
+        "level25CP": 542,
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_CHARMANDER",
+            "evolutions": ["charmeleon"]
+        }
+    },
+    {
+        "dex": 4,
+        "speciesName": "Charmander (Shadow)",
+        "speciesId": "charmander_shadow",
+        "baseStats": {
+            "atk": 116,
+            "def": 93,
+            "hp": 118
+        },
+        "types": ["fire", "none"],
+        "fastMoves": ["EMBER", "SCRATCH"],
+        "chargedMoves": ["FLAME_BURST", "FLAME_CHARGE", "FLAMETHROWER"],
+        "tags": ["starter", "shadow"],
+        "defaultIVs": {
+            "cp500": [19.5, 5, 15, 13],
+            "cp1500": [50, 15, 15, 15],
+            "cp2500": [50, 15, 15, 15]
+        },
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_CHARMANDER",
+            "evolutions": ["charmeleon_shadow"]
+        }
+    },
+    {
+        "dex": 5,
+        "speciesName": "Charmeleon",
+        "speciesId": "charmeleon",
+        "baseStats": {
+            "atk": 158,
+            "def": 126,
+            "hp": 151
+        },
+        "types": ["fire", "none"],
+        "fastMoves": ["EMBER", "FIRE_FANG", "SCRATCH"],
+        "chargedMoves": ["FIRE_PUNCH", "FLAME_BURST", "FLAMETHROWER"],
+        "tags": ["starter", "shadoweligible"],
+        "defaultIVs": {
+            "cp500": [11.5, 5, 15, 8],
+            "cp1500": [38.5, 4, 14, 13],
+            "cp2500": [50, 15, 15, 15]
+        },
+        "level25CP": 972,
+        "eliteMoves": ["SCRATCH"],
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_CHARMANDER",
+            "parent": "charmander",
+            "evolutions": ["charizard"]
+        }
+    },
+    {
+        "dex": 5,
+        "speciesName": "Charmeleon (Shadow)",
+        "speciesId": "charmeleon_shadow",
+        "baseStats": {
+            "atk": 158,
+            "def": 126,
+            "hp": 151
+        },
+        "types": ["fire", "none"],
+        "fastMoves": ["EMBER", "FIRE_FANG", "SCRATCH"],
+        "chargedMoves": ["FIRE_PUNCH", "FLAME_BURST", "FLAMETHROWER"],
+        "tags": ["starter", "shadow"],
+        "defaultIVs": {
+            "cp500": [11.5, 5, 15, 8],
+            "cp1500": [38.5, 4, 14, 13],
+            "cp2500": [50, 15, 15, 15]
+        },
+        "eliteMoves": ["SCRATCH"],
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_CHARMANDER",
+            "parent": "charmander_shadow",
+            "evolutions": ["charizard_shadow"]
+        }
+    },
+    {
+        "dex": 6,
+        "speciesName": "Charizard",
+        "speciesId": "charizard",
+        "baseStats": {
+            "atk": 223,
+            "def": 173,
+            "hp": 186
+        },
+        "types": ["fire", "flying"],
+        "fastMoves": ["AIR_SLASH", "EMBER", "FIRE_SPIN", "WING_ATTACK", "DRAGON_BREATH"],
+        "chargedMoves": ["BLAST_BURN", "DRAGON_CLAW", "FIRE_BLAST", "FLAMETHROWER", "OVERHEAT", "AIR_CUTTER"],
+        "tags": ["starter", "shadoweligible"],
+        "defaultIVs": {
+            "cp500": [6.5, 6, 15, 14],
+            "cp1500": [19, 5, 14, 15],
+            "cp2500": [34, 4, 13, 14]
+        },
+        "level25CP": 1784,
+        "eliteMoves": ["EMBER", "WING_ATTACK", "BLAST_BURN", "FLAMETHROWER", "DRAGON_BREATH"],
+        "searchPriority": 5,
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_CHARMANDER",
+            "parent": "charmeleon"
+        },
+        "nicknames": ["zard"]
+    },
+    {
+        "dex": 6,
+        "speciesName": "Charizard (Mega X)",
+        "speciesId": "charizard_mega_x",
+        "baseStats": {
+            "atk": 273,
+            "def": 213,
+            "hp": 186
+        },
+        "types": ["fire", "dragon"],
+        "fastMoves": ["AIR_SLASH", "EMBER", "FIRE_SPIN", "WING_ATTACK", "DRAGON_BREATH"],
+        "chargedMoves": ["BLAST_BURN", "DRAGON_CLAW", "FIRE_BLAST", "FLAMETHROWER", "OVERHEAT", "AIR_CUTTER"],
+        "tags": ["starter", "shadoweligible", "mega"],
+        "level25CP": 2424,
+        "defaultIVs": {
+            "cp500": [5, 6, 14, 14],
+            "cp1500": [14.5, 4, 14, 7],
+            "cp2500": [23.5, 6, 14, 15]
+        },
+        "eliteMoves": ["EMBER", "WING_ATTACK", "BLAST_BURN", "FLAMETHROWER", "DRAGON_BREATH"],
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_CHARMANDER",
+            "parent": "charmeleon"
+        },
+        "nicknames": ["zardx"]
+    },
+    {
+        "dex": 6,
+        "speciesName": "Charizard (Mega Y)",
+        "speciesId": "charizard_mega_y",
+        "baseStats": {
+            "atk": 319,
+            "def": 212,
+            "hp": 186
+        },
+        "types": ["fire", "flying"],
+        "fastMoves": ["AIR_SLASH", "EMBER", "FIRE_SPIN", "WING_ATTACK", "DRAGON_BREATH"],
+        "chargedMoves": ["BLAST_BURN", "DRAGON_CLAW", "FIRE_BLAST", "FLAMETHROWER", "OVERHEAT", "AIR_CUTTER"],
+        "tags": ["starter", "shadoweligible", "mega"],
+        "level25CP": 2826,
+        "defaultIVs": {
+            "cp500": [4.5, 4, 9, 8],
+            "cp1500": [12, 8, 15, 15],
+            "cp2500": [20.5, 4, 13, 13]
+        },
+        "eliteMoves": ["EMBER", "WING_ATTACK", "BLAST_BURN", "FLAMETHROWER", "DRAGON_BREATH"],
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_CHARMANDER",
+            "parent": "charmeleon"
+        },
+        "nicknames": ["zardy"]
+    },
+    {
+        "dex": 6,
+        "speciesName": "Charizard (Shadow)",
+        "speciesId": "charizard_shadow",
+        "baseStats": {
+            "atk": 223,
+            "def": 173,
+            "hp": 186
+        },
+        "types": ["fire", "flying"],
+        "fastMoves": ["AIR_SLASH", "EMBER", "FIRE_SPIN", "WING_ATTACK", "DRAGON_BREATH"],
+        "chargedMoves": ["BLAST_BURN", "DRAGON_CLAW", "FIRE_BLAST", "FLAMETHROWER", "OVERHEAT", "AIR_CUTTER"],
+        "tags": ["starter", "shadow"],
+        "defaultIVs": {
+            "cp500": [6.5, 6, 15, 14],
+            "cp1500": [19, 5, 14, 15],
+            "cp2500": [34, 4, 13, 14]
+        },
+        "eliteMoves": ["EMBER", "WING_ATTACK", "BLAST_BURN", "FLAMETHROWER", "DRAGON_BREATH"],
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_CHARMANDER",
+            "parent": "charmeleon_shadow"
+        },
+        "nicknames": ["zard"],
+        "searchPriority": 6
+    },
+    {
+        "dex": 7,
+        "speciesName": "Squirtle",
+        "speciesId": "squirtle",
+        "baseStats": {
+            "atk": 94,
+            "def": 121,
+            "hp": 127
+        },
+        "types": ["water", "none"],
+        "fastMoves": ["BUBBLE", "TACKLE"],
+        "chargedMoves": ["AQUA_JET", "AQUA_TAIL", "WATER_PULSE"],
+        "tags": ["starter", "shadoweligible"],
+        "defaultIVs": {
+            "cp500": [21, 4, 12, 12],
+            "cp1500": [50, 15, 15, 15],
+            "cp2500": [50, 15, 15, 15]
+        },
+        "level25CP": 519,
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_SQUIRTLE",
+            "evolutions": ["wartortle"]
+        }
+    },
+    {
+        "dex": 7,
+        "speciesName": "Squirtle (Shadow)",
+        "speciesId": "squirtle_shadow",
+        "baseStats": {
+            "atk": 94,
+            "def": 121,
+            "hp": 127
+        },
+        "types": ["water", "none"],
+        "fastMoves": ["BUBBLE", "TACKLE"],
+        "chargedMoves": ["AQUA_JET", "AQUA_TAIL", "WATER_PULSE"],
+        "tags": ["starter", "shadow"],
+        "defaultIVs": {
+            "cp500": [21, 4, 12, 12],
+            "cp1500": [50, 15, 15, 15],
+            "cp2500": [50, 15, 15, 15]
+        },
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_SQUIRTLE",
+            "evolutions": ["wartortle_shadow"]
+        }
+    },
+    {
+        "dex": 8,
+        "speciesName": "Wartortle",
+        "speciesId": "wartortle",
+        "baseStats": {
+            "atk": 126,
+            "def": 155,
+            "hp": 153
+        },
+        "types": ["water", "none"],
+        "fastMoves": ["BITE", "WATER_GUN"],
+        "chargedMoves": ["AQUA_JET", "HYDRO_PUMP", "ICE_BEAM"],
+        "tags": ["starter", "shadoweligible"],
+        "defaultIVs": {
+            "cp500": [13, 4, 10, 14],
+            "cp1500": [47.5, 4, 13, 15],
+            "cp2500": [50, 15, 15, 15],
+            "cp1500l40": [40, 15, 15, 15]
+        },
+        "level25CP": 865,
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_SQUIRTLE",
+            "parent": "squirtle",
+            "evolutions": ["blastoise"]
+        }
+    },
+    {
+        "dex": 8,
+        "speciesName": "Wartortle (Shadow)",
+        "speciesId": "wartortle_shadow",
+        "baseStats": {
+            "atk": 126,
+            "def": 155,
+            "hp": 153
+        },
+        "types": ["water", "none"],
+        "fastMoves": ["BITE", "WATER_GUN"],
+        "chargedMoves": ["AQUA_JET", "HYDRO_PUMP", "ICE_BEAM"],
+        "tags": ["starter", "shadow"],
+        "defaultIVs": {
+            "cp500": [13, 4, 10, 14],
+            "cp1500": [47.5, 4, 13, 15],
+            "cp2500": [50, 15, 15, 15],
+            "cp1500l40": [40, 15, 15, 15]
+        },
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_SQUIRTLE",
+            "parent": "squirtle_shadow",
+            "evolutions": ["blastoise_shadow"]
+        }
+    },
+    {
+        "dex": 9,
+        "speciesName": "Blastoise",
+        "speciesId": "blastoise",
+        "baseStats": {
+            "atk": 171,
+            "def": 207,
+            "hp": 188
+        },
+        "types": ["water", "none"],
+        "fastMoves": ["BITE", "WATER_GUN", "ROLLOUT"],
+        "chargedMoves": ["FLASH_CANNON", "HYDRO_CANNON", "HYDRO_PUMP", "ICE_BEAM", "SKULL_BASH"],
+        "tags": ["starter", "shadoweligible"],
+        "defaultIVs": {
+            "cp500": [7.5, 9, 14, 15],
+            "cp1500": [23, 4, 8, 15],
+            "cp2500": [45.5, 5, 15, 15],
+            "cp2500l40": [40, 15, 15, 15]
+        },
+        "searchPriority": 4,
+        "level25CP": 1504,
+        "eliteMoves": ["HYDRO_CANNON"],
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_SQUIRTLE",
+            "parent": "wartortle"
+        }
+    },
+    {
+        "dex": 9,
+        "speciesName": "Blastoise (Mega)",
+        "speciesId": "blastoise_mega",
+        "baseStats": {
+            "atk": 264,
+            "def": 237,
+            "hp": 188
+        },
+        "types": ["water", "none"],
+        "fastMoves": ["BITE", "WATER_GUN", "ROLLOUT"],
+        "chargedMoves": ["FLASH_CANNON", "HYDRO_CANNON", "HYDRO_PUMP", "ICE_BEAM", "SKULL_BASH"],
+        "tags": ["starter", "shadoweligible", "mega"],
+        "level25CP": 1000,
+        "defaultIVs": {
+            "cp500": [5, 4, 8, 12],
+            "cp1500": [14, 4, 10, 15],
+            "cp2500": [23, 4, 15, 15]
+        },
+        "eliteMoves": ["HYDRO_CANNON"],
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_SQUIRTLE",
+            "parent": "wartortle"
+        }
+    },
+    {
+        "dex": 9,
+        "speciesName": "Blastoise (Shadow)",
+        "speciesId": "blastoise_shadow",
+        "baseStats": {
+            "atk": 171,
+            "def": 207,
+            "hp": 188
+        },
+        "types": ["water", "none"],
+        "fastMoves": ["BITE", "WATER_GUN", "ROLLOUT"],
+        "chargedMoves": ["FLASH_CANNON", "HYDRO_CANNON", "HYDRO_PUMP", "ICE_BEAM", "SKULL_BASH"],
+        "tags": ["starter", "shadow"],
+        "defaultIVs": {
+            "cp500": [7.5, 9, 14, 15],
+            "cp1500": [23, 4, 8, 15],
+            "cp2500": [45.5, 5, 15, 15],
+            "cp2500l40": [40, 15, 15, 15]
+        },
+        "eliteMoves": ["HYDRO_CANNON"],
+        "buddyDistance": 3,
+        "thirdMoveCost": 10000,
+        "released": true,
+        "family": {
+            "id": "FAMILY_SQUIRTLE",
+            "parent": "wartortle_shadow"
+        }
+    }
+]
