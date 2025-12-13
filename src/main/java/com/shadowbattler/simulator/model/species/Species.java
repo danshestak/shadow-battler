@@ -1,58 +1,30 @@
 package com.shadowbattler.simulator.model.species;
 
-import java.util.Arrays;
+import java.util.List;
 
-public class Species {
-    private final SpeciesIdentity speciesIdentity;
-    private final Stats3 baseStats;
-    private final String[] types;
-    private final Learnset learnset;
-    private final SpeciesFamily speciesFamily;
-    private final SpeciesCosts speciesCosts;
-    private final SpeciesMetadata speciesMetadata;
-    
-    public Species(
-        SpeciesIdentity speciesIdentity, 
-        Stats3 baseStats, 
-        String[] types, 
-        Learnset learnset, 
-        SpeciesFamily speciesFamily, 
-        SpeciesCosts speciesCosts,
-        SpeciesMetadata speciesMetadata) {
-        this.baseStats = baseStats;
-        this.learnset = learnset;
-        this.speciesFamily = speciesFamily;
-        this.speciesIdentity = speciesIdentity;
-        this.speciesMetadata = speciesMetadata;
-        this.speciesCosts = speciesCosts;
-        this.types = Arrays.copyOf(types, types.length);
-    }
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-    public SpeciesIdentity getSpeciesIdentity() {
-        return speciesIdentity;
-    }
-
-    public Stats3 getBaseStats() {
-        return baseStats;
-    }
-
-    public String[] getTypes() {
-        return Arrays.copyOf(types, types.length);
-    }
-
-    public Learnset getLearnset() {
-        return learnset;
-    }
-
-    public SpeciesFamily getSpeciesFamily() {
-        return speciesFamily;
-    }
-
-    public SpeciesCosts getSpeciesCosts() {
-        return speciesCosts;
-    }
-
-    public SpeciesMetadata getSpeciesMetadata() {
-        return speciesMetadata;
-    }
+@JsonIgnoreProperties(ignoreUnknown = true)
+public record Species(
+    int dex,
+    String speciesName,
+    String speciesId,
+    Stats3 baseStats,
+    List<String> types,
+    List<String> fastMoves,
+    List<String> chargedMoves,
+    List<String> tags,
+    // Map<String, List<Double>> defaultIVs, //not necessary
+    int level25CP,
+    int buddyDistance,
+    int thirdMoveCost,
+    boolean released,
+    Family family
+) {
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Family(
+        String id,
+        String parent,
+        List<String> evolutions
+    ) {}
 }

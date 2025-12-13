@@ -1,9 +1,9 @@
 package com.shadowbattler.simulator.model.species;
 
 public class Stats3 {
-    private int atk;
-    private int def;
-    private int hp;
+    private final int atk;
+    private final int def;
+    private final int hp;
 
     public Stats3(int atk, int def, int hp) {
         this.atk = atk;
@@ -22,6 +22,4 @@ public class Stats3 {
     public int getHp() {
         return hp;
     }
-
-
 }

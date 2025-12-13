@@ -1,15 +1,17 @@
 package com.shadowbattler.simulator.service;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shadowbattler.simulator.model.species.Species;
 
@@ -17,29 +19,40 @@ import jakarta.annotation.PostConstruct;
 
 @Service
 public class SpeciesDataService {
-    private final Map<String, Species> speciesMap = new HashMap<>();
+    private Map<String, Species> speciesMap = new HashMap<>();
 
     private final ObjectMapper objectMapper;
-    private final ResourceLoader resourceLoader;
 
-    public SpeciesDataService(ObjectMapper objectMapper, ResourceLoader resourceLoader) {
+    public SpeciesDataService(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.resourceLoader = resourceLoader;
     }
 
     @PostConstruct
-    public void LoadSpeciesData() {
+    public void loadSpeciesData() {
         try {
-            Resource resource = resourceLoader.getResource("classpath:static/species_data.json");
-            try (InputStream inputStream = resource.getInputStream()) {
-                List<Species> speciesList = Arrays.asList(
-                    objectMapper.readValue(inputStream, Species.class)
-                );
+            ClassPathResource resource = new ClassPathResource("static/species_data.json");
+            InputStream inputStream = resource.getInputStream();
 
-                speciesList.forEach(s -> speciesMap.put(s.getSpeciesIdentity().getSpeciesId(), s));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
+            List<Species> speciesList = objectMapper.readValue(
+                inputStream, 
+                new TypeReference<List<Species>>() {}
+            );
+
+            this.speciesMap = speciesList.stream()
+                .collect(Collectors.toMap(
+                    Species::speciesId, 
+                    Function.identity(), 
+                    (existing, replacement) -> existing // in case of duplicate IDs, keep existing
+                ));
+
+            System.out.println("loaded " + speciesMap.size() + " species into memory.");
+
+        } catch (IOException e) {
+            throw new RuntimeException("failed to load JSON data", e);
+        }
+    }
+
+    public Species getSpeciesById(String speciesId) {
+        return this.speciesMap.get(speciesId);
     }
 }
