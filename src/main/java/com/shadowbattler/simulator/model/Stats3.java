@@ -1,4 +1,4 @@
-package com.shadowbattler.simulator.model.species;
+package com.shadowbattler.simulator.model;
 
 public class Stats3 {
     private final int atk;

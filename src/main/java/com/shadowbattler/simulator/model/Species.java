@@ -1,4 +1,4 @@
-package com.shadowbattler.simulator.model.species;
+package com.shadowbattler.simulator.model;
 
 import java.util.List;
 
