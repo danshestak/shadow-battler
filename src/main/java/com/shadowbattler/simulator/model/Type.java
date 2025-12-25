@@ -18,7 +18,8 @@ public enum Type {
     DRAGON(14),
     DARK(15),
     STEEL(16),
-    FAIRY(17);
+    FAIRY(17),
+    NONE(-1);
 
     private static final int[][] MATCHUPS = {
         {  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1, -2,  0,  0, -1,  0  }, // Normal
@@ -47,15 +48,12 @@ public enum Type {
         this.id = id;
     }
 
-    public static Type fromName(String name) {
-        return Type.valueOf(name.toUpperCase().strip());
-    }
-
     public int getId() {
         return this.id;
     }
 
     public double effectivenessAgainst(Type defender) {
+        if (defender == Type.NONE) return 1;
         return Math.pow(1.6, Type.MATCHUPS[this.getId()][defender.getId()]);
     }
 

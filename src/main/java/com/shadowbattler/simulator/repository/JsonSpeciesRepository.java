@@ -15,7 +15,7 @@ public class JsonSpeciesRepository extends AbstractJsonRepository<Species> imple
             objectMapper, 
             "/static/species_data.json", 
             new TypeReference<List<Species>>() {}, 
-            Species::speciesId 
+            Species::getSpeciesId
         );
     }
 }

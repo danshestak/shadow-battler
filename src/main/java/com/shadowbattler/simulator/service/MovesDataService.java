@@ -8,7 +8,7 @@ import com.shadowbattler.simulator.repository.MovesRepository;
 
 @Service
 public class MovesDataService {
-    MovesRepository movesRepository;
+    private final MovesRepository movesRepository;
 
     public MovesDataService(MovesRepository movesRepository) {
         this.movesRepository = movesRepository;
