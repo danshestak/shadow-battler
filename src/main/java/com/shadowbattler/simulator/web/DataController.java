@@ -7,18 +7,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Species;
+import com.shadowbattler.simulator.model.Trainer;
 import com.shadowbattler.simulator.service.MovesDataService;
 import com.shadowbattler.simulator.service.SpeciesDataService;
+import com.shadowbattler.simulator.service.TrainerDataService;
 
 @RestController
 @RequestMapping("/api")
 public class DataController {
     private final SpeciesDataService speciesDataService;
     private final MovesDataService movesDataService;
+    private final TrainerDataService trainerDataService;
 
-    public DataController(SpeciesDataService speciesDataService, MovesDataService movesDataService) {
+    public DataController(
+        SpeciesDataService speciesDataService, 
+        MovesDataService movesDataService,
+        TrainerDataService trainerDataService
+    ) {
         this.speciesDataService = speciesDataService;
         this.movesDataService = movesDataService;
+        this.trainerDataService = trainerDataService;
     }
 
     @GetMapping("/species/{id}")
@@ -29,5 +37,10 @@ public class DataController {
     @GetMapping("/move/{id}")
     public Move getMove(@PathVariable String id) {
         return this.movesDataService.getMoveById(id);
+    }
+
+    @GetMapping("/trainer/{id}")
+    public Trainer getTrainer(@PathVariable String id) {
+        return this.trainerDataService.getTrainerById(id);
     }
 }

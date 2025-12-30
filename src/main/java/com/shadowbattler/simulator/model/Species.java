@@ -6,6 +6,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.shadowbattler.simulator.service.MovesDataService;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -13,19 +15,19 @@ public class Species {
     private int dex;
     private String speciesName;
     private String speciesId;
-    private Stats3 baseStats;
+    private Stats3<Integer> baseStats;
     private Type[] types;
-    @JsonProperty(value="fastMoves")
+    @JsonProperty(value = "fastMoves")
     private List<String> fastMoveIds;
     @JsonIgnore
     private List<Move> fastMoves = new ArrayList<>();
-    @JsonProperty(value="chargedMoves")
+    @JsonProperty(value = "chargedMoves")
     private List<String> chargedMoveIds;
     @JsonIgnore
     private List<Move> chargedMoves = new ArrayList<>();
-    @JsonProperty(value="eliteMoves")
+    @JsonProperty(value = "eliteMoves")
     private List<String> eliteMoveIds;
-    @JsonProperty(value="legacyMoves")
+    @JsonProperty(value = "legacyMoves")
     private List<String> legacyMoveIds;
     private List<Tag> tags;
     // private Map<String, List<Double>> defaultIVs;
@@ -36,27 +38,47 @@ public class Species {
     private Family family;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Family(
+    public static record Family(
         String id,
         String parent,
         List<String> evolutions
     ) {}
 
-    public enum Tag {
+    public static enum Tag {
         SHADOW,
         SHADOWELIGIBLE,
         MEGA,
         LEGENDARY,
         MYTHICAL,
         ULTRABEAST,
-        STARTER
+    } 
+
+    @JsonSetter("thirdMoveCost")
+    private void setThirdMoveCost(JsonNode node) {
+        this.thirdMoveCost = node.isInt() ? node.asInt() : 0;
     }
 
-    private List<Move> hydrateMovesList(MovesDataService movesDataService, List<String> movesList) {
-        if (movesList == null) return new ArrayList<>();
-        return movesList.stream()
-            .map(movesDataService::getMoveById)
+    @JsonSetter("tags")
+    private void setTags(List<String> stringTags) {
+        if (stringTags == null) {
+            this.tags = new ArrayList<>();
+            return;
+        }
+        this.tags = stringTags.stream()
+            .map((String str) -> {
+                try {
+                    return Tag.valueOf(str.strip().toUpperCase());
+                } catch (Exception e) {
+                    return null;
+                }
+            })
+            .filter((Tag tag) -> tag != null)
             .toList();
+    } 
+
+    private List<Move> hydrateMovesList(MovesDataService movesDataService, List<String> movesList) {
+        if (movesList == null || movesList.size() < 1) return new ArrayList<>();
+        return movesList.stream().map(movesDataService::getMoveById).toList();
     }
 
     public void hydrate(MovesDataService movesDataService) {
@@ -76,7 +98,7 @@ public class Species {
         return this.speciesId;
     }
 
-    public Stats3 getBaseStats() {
+    public Stats3<Integer> getBaseStats() {
         return this.baseStats;
     }
 

@@ -1,25 +1,25 @@
 package com.shadowbattler.simulator.model;
 
-public class Stats3 {
-    private final int atk;
-    private final int def;
-    private final int hp;
+public class Stats3<T> {
+    private final T atk;
+    private final T def;
+    private final T hp;
 
-    public Stats3(int atk, int def, int hp) {
+    public Stats3(T atk, T def, T hp) {
         this.atk = atk;
         this.def = def;
         this.hp = hp;
     }
 
-    public int getAtk() {
+    public T getAtk() {
         return atk;
     }
 
-    public int getDef() {
+    public T getDef() {
         return def;
     }
 
-    public int getHp() {
+    public T getHp() {
         return hp;
     }
 }

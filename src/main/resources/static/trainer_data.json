@@ -1,0 +1,123 @@
+[
+    {
+        "trainerId": "boss_giovanni",
+        "name": "Giovanni",
+        "title": "rocket_boss",
+        "limit": 100000,
+        "lineup": {
+            "first": ["persian"],
+            "second": ["kangaskhan", "rhyperior", "nidoking"],
+            "third": ["tornadus_incarnate"]
+        }
+    },
+    {
+        "trainerId": "leader_arlo",
+        "name": "Arlo",
+        "title": "rocket_leader",
+        "limit": 100000,
+        "lineup": {
+            "first": ["wobbuffet"],
+            "second": ["steelix", "slowbro", "crobat"],
+            "third": ["scizor", "alakazam", "muk_alolan"]
+        }
+    },
+    {
+        "trainerId": "leader_cliff",
+        "name": "Cliff",
+        "title": "rocket_leader",
+        "limit": 100000,
+        "lineup": {
+            "first": ["larvitar"],
+            "second": ["annihilape", "honchkrow", "skarmory"],
+            "third": ["tyranitar", "machamp", "luxray"]
+        }
+    },
+    {
+        "trainerId": "leader_sierra",
+        "name": "Sierra",
+        "title": "rocket_leader",
+        "limit": 100000,
+        "lineup": {
+            "first": ["feebas"],
+            "second": ["mismagius", "staraptor", "ferrothorn"],
+            "third": ["houndoom", "camerupt", "drapion"]
+        }
+    },
+    {
+        "trainerId": "grunt_m_normal",
+        "name": "Normal-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["slakoth", "slakoth", "bunnelby"],
+            "second": ["rattata", "vigoroth", "diggersby"],
+            "third": ["raticate", "ursaring", "slaking"]
+        }
+    },
+    {
+        "trainerId": "grunt_f_fire",
+        "name": "Fire-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["darumaka", "numel", "tepig"],
+            "second": ["houndoom", "ninetales", "pignite"],
+            "third": ["houndoom", "darmanitan_standard", "emboar"]
+        }
+    },
+    {
+        "trainerId": "grunt_f_water",
+        "name": "Female Water-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["oshawott", "spheal", "staryu"],
+            "second": ["cloyster", "dewott", "seadra"],
+            "third": ["carracosta", "samurott", "whiscash"]
+        }
+    },
+    {
+        "trainerId": "grunt_m_water",
+        "name": "Male Water-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["magikarp"],
+            "second": ["magikarp"],
+            "third": ["magikarp", "gyarados"]
+        }
+    },
+    {
+        "trainerId": "leader_candela_gl",
+        "name": "Candela (Great League)",
+        "title": "team_leader",
+        "limit": 1500,
+        "lineup": {
+            "first": ["combusken"],
+            "second": ["magcargo"],
+            "third": ["flareon"]
+        }
+    },
+    {
+        "trainerId": "leader_candela_ul",
+        "name": "Candela (Ultra League)",
+        "title": "team_leader",
+        "limit": 2500,
+        "lineup": {
+            "first": ["flareon"],
+            "second": ["typhlosion"],
+            "third": ["magmortar"]
+        }
+    },
+    {
+        "trainerId": "leader_candela_ml",
+        "name": "Candela (Master League)",
+        "title": "team_leader",
+        "limit": 100000,
+        "lineup": {
+            "first": ["entei"],
+            "second": ["salamence"],
+            "third": ["moltres"]
+        }
+    }
+]

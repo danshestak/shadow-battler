@@ -13,8 +13,8 @@ public record Move(
     int power,
     int energy,
     int energyGain,
-    Stats3 buffsSelf,
-    Stats3 buffsOpponent,
+    Stats3<Integer> buffsSelf,
+    Stats3<Integer> buffsOpponent,
     double buffApplyChance,
     String archetype,
     int turns
@@ -53,16 +53,16 @@ class MoveJsonConverter extends StdConverter<MoveJsonConverter.MoveJson, Move> {
             }
         }
 
-        final Stats3 buffsSelfStats3;
+        final Stats3<Integer> buffsSelfStats3;
         if (buffsSelfArr != null && buffsSelfArr.length >= 2) {
-            buffsSelfStats3 = new Stats3(buffsSelfArr[0], buffsSelfArr[1], 0);
+            buffsSelfStats3 = new Stats3<>(buffsSelfArr[0], buffsSelfArr[1], 0);
         } else {
             buffsSelfStats3 = null;
         }
 
-        final Stats3 buffsOpponentStats3;
+        final Stats3<Integer> buffsOpponentStats3;
         if (buffsOpponentArr != null && buffsOpponentArr.length >= 2) {
-            buffsOpponentStats3 = new Stats3(buffsOpponentArr[0], buffsOpponentArr[1], 0);
+            buffsOpponentStats3 = new Stats3<>(buffsOpponentArr[0], buffsOpponentArr[1], 0);
         } else {
             buffsOpponentStats3 = null;
         }
