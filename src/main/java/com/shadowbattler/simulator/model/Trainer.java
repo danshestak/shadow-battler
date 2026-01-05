@@ -45,8 +45,15 @@ public class Trainer {
     }
 
     private List<Species> hydrateLineupSlot(SpeciesDataService speciesDataService, List<String> idList) {
-        if (idList == null) return new ArrayList<>();
-        return idList.stream().map(speciesDataService::getSpeciesById).toList();
+        final List<Species> hydrated = new ArrayList<>();
+        if (idList == null) return hydrated;
+        for (String speciesId : idList) {
+            if (!speciesDataService.speciesExists(speciesId) && speciesId.endsWith("_shadow")) {
+                speciesDataService.createShadowFor(speciesId.substring(0, speciesId.length() - "_shadow".length()));
+            }
+            hydrated.add(speciesDataService.getSpeciesById(speciesId));
+        }
+        return hydrated;
     }
 
     public void hydrate(SpeciesDataService speciesDataService) {

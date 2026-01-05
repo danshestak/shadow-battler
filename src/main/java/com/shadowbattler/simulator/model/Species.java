@@ -18,7 +18,7 @@ public class Species {
     private Stats3<Integer> baseStats;
     private Type[] types;
     @JsonProperty(value = "fastMoves")
-    private List<String> fastMoveIds;
+    private List<String> fastMoveIds = new ArrayList<>();
     @JsonIgnore
     private List<Move> fastMoves = new ArrayList<>();
     @JsonProperty(value = "chargedMoves")
@@ -26,10 +26,10 @@ public class Species {
     @JsonIgnore
     private List<Move> chargedMoves = new ArrayList<>();
     @JsonProperty(value = "eliteMoves")
-    private List<String> eliteMoveIds;
+    private List<String> eliteMoveIds = new ArrayList<>();
     @JsonProperty(value = "legacyMoves")
-    private List<String> legacyMoveIds;
-    private List<Tag> tags;
+    private List<String> legacyMoveIds = new ArrayList<>();
+    private List<Tag> tags = new ArrayList<>();
     // private Map<String, List<Double>> defaultIVs;
     // private int level25CP;
     private int buddyDistance;
@@ -52,6 +52,42 @@ public class Species {
         MYTHICAL,
         ULTRABEAST,
     } 
+
+    //used by jackson for deserialization
+    private Species() {}
+
+    @JsonIgnore
+    public Species(
+        int dex, 
+        String speciesName, 
+        String speciesId, 
+        Stats3<Integer> baseStats,
+        Type[] types,
+        List<String> fastMoveIds,
+        List<String> chargedMoveIds,
+        List<String> eliteMoveIds,
+        List<String> legacyMoveIds,
+        List<Tag> tags,
+        int buddyDistance,
+        int thirdMoveCost,
+        boolean released,
+        Family family
+    ) {
+        this.dex = dex;
+        this.speciesName = speciesName;
+        this.speciesId = speciesId;
+        this.baseStats = baseStats;
+        this.types = types;
+        this.fastMoveIds = fastMoveIds;
+        this.chargedMoveIds = chargedMoveIds;
+        this.eliteMoveIds = eliteMoveIds;
+        this.legacyMoveIds = legacyMoveIds;
+        this.tags = tags;
+        this.buddyDistance = buddyDistance;
+        this.thirdMoveCost = thirdMoveCost;
+        this.released = released;
+        this.family = family;
+    }
 
     @JsonSetter("thirdMoveCost")
     private void setThirdMoveCost(JsonNode node) {
@@ -111,8 +147,7 @@ public class Species {
     }
 
     @JsonProperty("fastMoves")
-    @SuppressWarnings("unused")
-    private List<String> getFastMoveIds() {
+    public List<String> getFastMoveIds() {
         return this.fastMoveIds;
     }
 
@@ -121,8 +156,7 @@ public class Species {
     }
 
     @JsonProperty("chargedMoves")
-    @SuppressWarnings("unused")
-    private List<String> getChargedMoveIds() {
+    public List<String> getChargedMoveIds() {
         return this.chargedMoveIds;
     }
 

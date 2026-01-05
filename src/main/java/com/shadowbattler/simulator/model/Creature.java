@@ -7,7 +7,6 @@ public class Creature {
     private final Stats3<Integer> ivs;
     private final Stats3<Double> stats;
     private final int cp;
-    private final double level;
     private final Move fastMove;
     private final List<Move> chargedMoves;
 
@@ -123,6 +122,82 @@ public class Creature {
         0.8653 //55.0
     };
 
+    private static final double[] rocketCpMultipliers = {
+        0.299, //8
+        0.352, //9
+        0.4, //...
+        0.444,
+        0.487,
+        0.529,
+        0.569,
+        0.608,
+        0.646,
+        0.683,
+        0.72,
+        0.755,
+        0.796,
+        0.808,
+        0.82,
+        0.832,
+        0.844,
+        0.855,
+        0.867,
+        0.878,
+        0.89,
+        0.901,
+        0.912,
+        0.923,
+        0.934,
+        0.945,
+        0.955,
+        0.965,
+        0.976,
+        0.986,
+        0.997,
+        1.007,
+        1.016,
+        1.026,
+        1.036,
+        1.046,
+        1.056,
+        1.065,
+        1.075,
+        1.084,
+        1.093,
+        1.102,
+        1.111,
+        1.12,
+        1.128,
+        1.137,
+        1.145,
+        1.153,
+        1.161,
+        1.168,
+        1.176,
+        1.184,
+        1.191,
+        1.199,
+        1.206,
+        1.214,
+        1.221,
+        1.229,
+        1.236,
+        1.243,
+        1.251,
+        1.258,
+        1.265,
+        1.27,
+        1.275,
+        1.28,
+        1.285,
+        1.29,
+        1.295,
+        1.3,
+        1.305,
+        1.31,
+        1.315
+    };
+
     private static double getCpMultiplierAtLevel(double level) {
         if (level < 1.0 || level > 55.0) {
             throw new IllegalArgumentException(String.format(
@@ -132,10 +207,22 @@ public class Creature {
         return Creature.cpMultipliers[(int)Math.round((level-1.0)*2)];
     }
 
+    private static double getRocketCpMultiplierAtLevel(int level) {
+        if (level < 8 || level > 80) {
+            throw new IllegalArgumentException(String.format(
+                "expected level to be between 8 and 80, received %n", level
+            ));
+        }
+        return Creature.rocketCpMultipliers[level - 8];
+    }
+
+    private static int getCp(double atk, double def, double hp) {
+        return Math.max((int)Math.floor(0.1 * atk * Math.sqrt(def) * Math.sqrt(hp)), 10);
+    }
+
     public Creature(Species species, Stats3<Integer> ivs, double level, Move fastMove, List<Move> chargedMoves) {
         this.species = species;
         this.ivs = ivs;
-        this.level = level;
         this.fastMove = fastMove;
         this.chargedMoves = chargedMoves;
 
@@ -145,11 +232,34 @@ public class Creature {
         final double hp = (species.getBaseStats().getHp() + ivs.getHp())*cpMultiplier;
 
         this.stats = new Stats3<>(atk, def, Math.max(10.0, Math.floor(hp)));
+        this.cp = Creature.getCp(atk, def, hp);
+    }
 
-        this.cp = Math.max(
-            (int)Math.floor((atk * Math.sqrt(def) * Math.sqrt(hp))/10), 
-            10
-        );
+    public Creature(Species species, Trainer.Title rocketTitle, int trainerLevel, Move fastMove, Move chargedMove) {
+        this.species = species;
+        this.fastMove = fastMove;
+        this.chargedMoves = List.of(chargedMove);
+
+        double rank;
+        switch (rocketTitle) {
+            case Trainer.Title.ROCKET_GRUNT -> rank = 1.0;
+            case Trainer.Title.ROCKET_LEADER -> rank = 1.05;
+            case Trainer.Title.ROCKET_BOSS -> rank = 1.15;
+            default -> throw new IllegalArgumentException(
+                String.format("expected rocketTitle to be a team rocket member, instead received %s", rocketTitle.name())
+            );
+        }
+        
+        double rcpm = Creature.getRocketCpMultiplierAtLevel(trainerLevel);
+
+        this.ivs = new Stats3<>(15, 15, 15);
+
+        final double atk = (int)Math.floor((species.getBaseStats().getAtk() + this.ivs.getAtk()) * 5/3f) * rank * rcpm;
+        final double def = (species.getBaseStats().getDef() + this.ivs.getAtk()) * rank * rcpm;
+        final double hp = (int)Math.floor((species.getBaseStats().getHp() + this.ivs.getHp()) * 3/5f) * rank * rcpm;
+
+        this.stats = new Stats3<>(atk, def, Math.max(10.0, Math.floor(hp)));
+        this.cp = Creature.getCp(atk, def, hp);
     }
 
     public Species getSpecies() {
@@ -166,10 +276,6 @@ public class Creature {
 
     public int getCp() {
         return this.cp;
-    }
-
-    public double getLevel() {
-        return this.level;
     }
 
     public Move getFastMove() {

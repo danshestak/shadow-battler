@@ -18,4 +18,9 @@ public class JsonSpeciesRepository extends AbstractJsonRepository<Species> imple
             Species::getSpeciesId
         );
     }
+
+    @Override
+    public void save(Species species) {
+        this.cache.put(species.getSpeciesId(), species);
+    }
 }

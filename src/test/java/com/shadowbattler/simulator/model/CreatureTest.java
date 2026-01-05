@@ -19,6 +19,8 @@ public class CreatureTest {
     private MovesDataService movesDataService;
 
     private Creature kyogre151513;
+    private Creature gruntIvysaur;
+    private Creature leaderAlakazam;
 
     @BeforeEach
     public void setup() {
@@ -32,18 +34,44 @@ public class CreatureTest {
                 movesDataService.getMoveById("SURF")
             )
         );
+
+        gruntIvysaur = new Creature(
+            speciesDataService.getSpeciesById("ivysaur_shadow"), 
+            Trainer.Title.ROCKET_GRUNT, 
+            69, 
+            movesDataService.getMoveById("VINE_WHIP"), 
+            movesDataService.getMoveById("POWER_WHIP")
+        );
+
+        leaderAlakazam = new Creature(
+            speciesDataService.getSpeciesById("alakazam_shadow"), 
+            Trainer.Title.ROCKET_LEADER, 
+            70, 
+            movesDataService.getMoveById("CONFUSION"), 
+            movesDataService.getMoveById("PSYCHIC")
+        );
     }
 
     @Test
     public void testStats() {
         final Stats3<Double> stats = kyogre151513.getStats();
-        assertEquals(stats.getAtk(), 239.4, 0.1);
-        assertEquals(stats.getDef(), 204.1, 0.1);
-        assertEquals(stats.getHp(), 183.0, 0.001);
+        assertEquals(239.4, stats.getAtk(), 0.1);
+        assertEquals(204.1, stats.getDef(), 0.1);
+        assertEquals(183.0, stats.getHp(), 0.001);
     }
 
     @Test
     public void testCp() {
-        assertEquals(kyogre151513.getCp(), 4631);
+        assertEquals(4631, kyogre151513.getCp());
+    }
+
+    @Test
+    public void testGruntCp() {
+        assertEquals(5544, gruntIvysaur.getCp());
+    }
+
+    @Test
+    public void testLeaderCp() {
+        assertEquals(11100, leaderAlakazam.getCp());
     }
 }

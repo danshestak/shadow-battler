@@ -5,9 +5,9 @@
         "title": "rocket_boss",
         "limit": 100000,
         "lineup": {
-            "first": ["persian"],
-            "second": ["kangaskhan", "rhyperior", "nidoking"],
-            "third": ["tornadus_incarnate"]
+            "first": ["persian_shadow"],
+            "second": ["kangaskhan_shadow", "rhyperior_shadow", "nidoking_shadow"],
+            "third": ["tornadus_incarnate_shadow"]
         }
     },
     {
@@ -16,9 +16,9 @@
         "title": "rocket_leader",
         "limit": 100000,
         "lineup": {
-            "first": ["wobbuffet"],
-            "second": ["steelix", "slowbro", "crobat"],
-            "third": ["scizor", "alakazam", "muk_alolan"]
+            "first": ["wobbuffet_shadow"],
+            "second": ["steelix_shadow", "slowbro_shadow", "crobat_shadow"],
+            "third": ["scizor_shadow", "alakazam_shadow", "muk_alolan_shadow"]
         }
     },
     {
@@ -27,9 +27,9 @@
         "title": "rocket_leader",
         "limit": 100000,
         "lineup": {
-            "first": ["larvitar"],
-            "second": ["annihilape", "honchkrow", "skarmory"],
-            "third": ["tyranitar", "machamp", "luxray"]
+            "first": ["larvitar_shadow"],
+            "second": ["annihilape_shadow", "honchkrow_shadow", "skarmory_shadow"],
+            "third": ["tyranitar_shadow", "machamp_shadow", "luxray_shadow"]
         }
     },
     {
@@ -38,9 +38,9 @@
         "title": "rocket_leader",
         "limit": 100000,
         "lineup": {
-            "first": ["feebas"],
-            "second": ["mismagius", "staraptor", "ferrothorn"],
-            "third": ["houndoom", "camerupt", "drapion"]
+            "first": ["feebas_shadow"],
+            "second": ["mismagius_shadow", "staraptor_shadow", "ferrothorn_shadow"],
+            "third": ["houndoom_shadow", "camerupt_shadow", "drapion_shadow"]
         }
     },
     {
@@ -49,9 +49,9 @@
         "title": "rocket_grunt",
         "limit": 100000,
         "lineup": {
-            "first": ["slakoth", "slakoth", "bunnelby"],
-            "second": ["rattata", "vigoroth", "diggersby"],
-            "third": ["raticate", "ursaring", "slaking"]
+            "first": ["slakoth_shadow", "slakoth_shadow", "bunnelby_shadow"],
+            "second": ["rattata_shadow", "vigoroth_shadow", "diggersby_shadow"],
+            "third": ["raticate_shadow", "ursaring_shadow", "slaking_shadow"]
         }
     },
     {
@@ -60,9 +60,9 @@
         "title": "rocket_grunt",
         "limit": 100000,
         "lineup": {
-            "first": ["darumaka", "numel", "tepig"],
-            "second": ["houndoom", "ninetales", "pignite"],
-            "third": ["houndoom", "darmanitan_standard", "emboar"]
+            "first": ["darumaka_shadow", "numel_shadow", "tepig_shadow"],
+            "second": ["houndoom_shadow", "ninetales_shadow", "pignite_shadow"],
+            "third": ["houndoom_shadow", "darmanitan_standard_shadow", "emboar_shadow"]
         }
     },
     {
@@ -71,9 +71,9 @@
         "title": "rocket_grunt",
         "limit": 100000,
         "lineup": {
-            "first": ["oshawott", "spheal", "staryu"],
-            "second": ["cloyster", "dewott", "seadra"],
-            "third": ["carracosta", "samurott", "whiscash"]
+            "first": ["oshawott_shadow", "spheal_shadow", "staryu_shadow"],
+            "second": ["cloyster_shadow", "dewott_shadow", "seadra_shadow"],
+            "third": ["carracosta_shadow", "samurott_shadow", "whiscash_shadow"]
         }
     },
     {
@@ -82,9 +82,9 @@
         "title": "rocket_grunt",
         "limit": 100000,
         "lineup": {
-            "first": ["magikarp"],
-            "second": ["magikarp"],
-            "third": ["magikarp", "gyarados"]
+            "first": ["magikarp_shadow"],
+            "second": ["magikarp_shadow"],
+            "third": ["magikarp_shadow", "gyarados_shadow"]
         }
     },
     {
