@@ -9,8 +9,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shadowbattler.simulator.service.SpeciesDataService;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Trainer {
-    private String trainerId;
+public class Opponent {
+    private String opponentId;
     private String name;
     private Title title;
     private int limit;
@@ -64,8 +64,8 @@ public class Trainer {
         );
     }
 
-    public String getTrainerId() {
-        return this.trainerId;
+    public String getOpponentId() {
+        return this.opponentId;
     }
 
     public String getName() {

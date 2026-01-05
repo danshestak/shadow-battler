@@ -1,6 +1,6 @@
 [
     {
-        "trainerId": "boss_giovanni",
+        "opponentId": "boss_giovanni",
         "name": "Giovanni",
         "title": "rocket_boss",
         "limit": 100000,
@@ -11,7 +11,7 @@
         }
     },
     {
-        "trainerId": "leader_arlo",
+        "opponentId": "leader_arlo",
         "name": "Arlo",
         "title": "rocket_leader",
         "limit": 100000,
@@ -22,7 +22,7 @@
         }
     },
     {
-        "trainerId": "leader_cliff",
+        "opponentId": "leader_cliff",
         "name": "Cliff",
         "title": "rocket_leader",
         "limit": 100000,
@@ -33,7 +33,7 @@
         }
     },
     {
-        "trainerId": "leader_sierra",
+        "opponentId": "leader_sierra",
         "name": "Sierra",
         "title": "rocket_leader",
         "limit": 100000,
@@ -44,7 +44,7 @@
         }
     },
     {
-        "trainerId": "grunt_m_normal",
+        "opponentId": "grunt_m_normal",
         "name": "Normal-type Grunt",
         "title": "rocket_grunt",
         "limit": 100000,
@@ -55,7 +55,7 @@
         }
     },
     {
-        "trainerId": "grunt_f_fire",
+        "opponentId": "grunt_f_fire",
         "name": "Fire-type Grunt",
         "title": "rocket_grunt",
         "limit": 100000,
@@ -66,7 +66,7 @@
         }
     },
     {
-        "trainerId": "grunt_f_water",
+        "opponentId": "grunt_f_water",
         "name": "Female Water-type Grunt",
         "title": "rocket_grunt",
         "limit": 100000,
@@ -77,7 +77,7 @@
         }
     },
     {
-        "trainerId": "grunt_m_water",
+        "opponentId": "grunt_m_water",
         "name": "Male Water-type Grunt",
         "title": "rocket_grunt",
         "limit": 100000,
@@ -88,7 +88,7 @@
         }
     },
     {
-        "trainerId": "leader_candela_gl",
+        "opponentId": "leader_candela_gl",
         "name": "Candela (Great League)",
         "title": "team_leader",
         "limit": 1500,
@@ -99,7 +99,7 @@
         }
     },
     {
-        "trainerId": "leader_candela_ul",
+        "opponentId": "leader_candela_ul",
         "name": "Candela (Ultra League)",
         "title": "team_leader",
         "limit": 2500,
@@ -110,7 +110,7 @@
         }
     },
     {
-        "trainerId": "leader_candela_ml",
+        "opponentId": "leader_candela_ml",
         "name": "Candela (Master League)",
         "title": "team_leader",
         "limit": 100000,

@@ -235,16 +235,16 @@ public class Creature {
         this.cp = Creature.getCp(atk, def, hp);
     }
 
-    public Creature(Species species, Trainer.Title rocketTitle, int trainerLevel, Move fastMove, Move chargedMove) {
+    public Creature(Species species, Opponent.Title rocketTitle, int trainerLevel, Move fastMove, Move chargedMove) {
         this.species = species;
         this.fastMove = fastMove;
         this.chargedMoves = List.of(chargedMove);
 
         double rank;
         switch (rocketTitle) {
-            case Trainer.Title.ROCKET_GRUNT -> rank = 1.0;
-            case Trainer.Title.ROCKET_LEADER -> rank = 1.05;
-            case Trainer.Title.ROCKET_BOSS -> rank = 1.15;
+            case Opponent.Title.ROCKET_GRUNT -> rank = 1.0;
+            case Opponent.Title.ROCKET_LEADER -> rank = 1.05;
+            case Opponent.Title.ROCKET_BOSS -> rank = 1.15;
             default -> throw new IllegalArgumentException(
                 String.format("expected rocketTitle to be a team rocket member, instead received %s", rocketTitle.name())
             );
@@ -263,7 +263,7 @@ public class Creature {
     }
 
     public Species getSpecies() {
-        return species;
+        return this.species;
     }
 
     public Stats3<Integer> getIvs() {

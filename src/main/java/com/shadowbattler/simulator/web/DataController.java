@@ -6,27 +6,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shadowbattler.simulator.model.Move;
+import com.shadowbattler.simulator.model.Opponent;
 import com.shadowbattler.simulator.model.Species;
-import com.shadowbattler.simulator.model.Trainer;
 import com.shadowbattler.simulator.service.MovesDataService;
+import com.shadowbattler.simulator.service.OpponentDataService;
 import com.shadowbattler.simulator.service.SpeciesDataService;
-import com.shadowbattler.simulator.service.TrainerDataService;
 
 @RestController
 @RequestMapping("/api")
 public class DataController {
     private final SpeciesDataService speciesDataService;
     private final MovesDataService movesDataService;
-    private final TrainerDataService trainerDataService;
+    private final OpponentDataService opponentDataService;
 
     public DataController(
         SpeciesDataService speciesDataService, 
         MovesDataService movesDataService,
-        TrainerDataService trainerDataService
+        OpponentDataService opponentDataService
     ) {
         this.speciesDataService = speciesDataService;
         this.movesDataService = movesDataService;
-        this.trainerDataService = trainerDataService;
+        this.opponentDataService = opponentDataService;
     }
 
     @GetMapping("/species/{id}")
@@ -39,8 +39,8 @@ public class DataController {
         return this.movesDataService.getMoveById(id);
     }
 
-    @GetMapping("/trainer/{id}")
-    public Trainer getTrainer(@PathVariable String id) {
-        return this.trainerDataService.getTrainerById(id);
+    @GetMapping("/opponent/{id}")
+    public Opponent getOpponent(@PathVariable String id) {
+        return this.opponentDataService.getOpponentById(id);
     }
 }

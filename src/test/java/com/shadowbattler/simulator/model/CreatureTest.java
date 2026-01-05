@@ -37,7 +37,7 @@ public class CreatureTest {
 
         gruntIvysaur = new Creature(
             speciesDataService.getSpeciesById("ivysaur_shadow"), 
-            Trainer.Title.ROCKET_GRUNT, 
+            Opponent.Title.ROCKET_GRUNT, 
             69, 
             movesDataService.getMoveById("VINE_WHIP"), 
             movesDataService.getMoveById("POWER_WHIP")
@@ -45,7 +45,7 @@ public class CreatureTest {
 
         leaderAlakazam = new Creature(
             speciesDataService.getSpeciesById("alakazam_shadow"), 
-            Trainer.Title.ROCKET_LEADER, 
+            Opponent.Title.ROCKET_LEADER, 
             70, 
             movesDataService.getMoveById("CONFUSION"), 
             movesDataService.getMoveById("PSYCHIC")

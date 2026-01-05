@@ -54,6 +54,7 @@ public class Species {
     } 
 
     //used by jackson for deserialization
+    @SuppressWarnings("unused")
     private Species() {}
 
     @JsonIgnore
@@ -89,11 +90,13 @@ public class Species {
         this.family = family;
     }
 
+    @SuppressWarnings("unused")
     @JsonSetter("thirdMoveCost")
     private void setThirdMoveCost(JsonNode node) {
         this.thirdMoveCost = node.isInt() ? node.asInt() : 0;
     }
 
+    @SuppressWarnings("unused")
     @JsonSetter("tags")
     private void setTags(List<String> stringTags) {
         if (stringTags == null) {
