@@ -26,20 +26,20 @@ public class Opponent {
         TEAM_LEADER
     }
 
-    public static record Lineup<T> (
-        List<T> first,
-        List<T> second,
-        List<T> third
-    ) {
+    public static class Lineup<T> extends Team<List<T>> {
+        private Lineup(List<T> first, List<T> second, List<T> third) {
+            super(first, second, third);
+        }
+
         public int combinationQuantity() {
-            return this.first.size() * this.second.size() * this.third.size();
+            return this.getFirst().size() * this.getSecond().size() * this.getThird().size();
         }
 
         public Team<T> combinationFromId(int combinationId) {
             return new Team<>(
-                this.first.get(combinationId % first.size()),
-                this.second.get((combinationId / this.first.size()) % this.second.size()),
-                this.third.get((combinationId / (this.first.size()*this.second.size())) % this.third.size())
+                this.getFirst().get(combinationId % this.getFirst().size()),
+                this.getSecond().get((combinationId / this.getFirst().size()) % this.getSecond().size()),
+                this.getThird().get((combinationId / (this.getFirst().size()*this.getSecond().size())) % this.getThird().size())
             );
         }
     }
@@ -58,9 +58,9 @@ public class Opponent {
 
     public void hydrate(SpeciesDataService speciesDataService) {
         this.lineupSpecies = new Lineup<>(
-            hydrateLineupSlot(speciesDataService, this.lineupIds.first),
-            hydrateLineupSlot(speciesDataService, this.lineupIds.second),
-            hydrateLineupSlot(speciesDataService, this.lineupIds.third)
+            hydrateLineupSlot(speciesDataService, this.lineupIds.getFirst()),
+            hydrateLineupSlot(speciesDataService, this.lineupIds.getSecond()),
+            hydrateLineupSlot(speciesDataService, this.lineupIds.getThird())
         );
     }
 

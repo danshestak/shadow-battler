@@ -1,7 +1,54 @@
 package com.shadowbattler.simulator.model;
 
-public record Team<T>(
-    T first,
-    T second,
-    T third
-) {}
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+public class Team<T> {
+    private final T first;
+    private final T second;
+    private final T third;
+
+    private void validate() {
+        if (this.first == null && (this.second != null || this.third != null)) {
+            throw new IllegalArgumentException("teams cannot have a second or third member without a first");
+        }
+        if (this.second == null && this.third != null) {
+            throw new IllegalArgumentException("teams cannot have a third member without a second");
+        }
+    }
+
+    public Team(T first, T second, T third) {
+        this.first = first;
+        this.second = second;
+        this.third = third;
+        this.validate();
+    }
+
+    public Team(List<T> list) {
+        this.first = (list != null && !list.isEmpty()) ? list.get(0) : null;
+        this.second = (list != null && list.size() > 1) ? list.get(1) : null;
+        this.third = (list != null && list.size() > 2) ? list.get(2) : null;
+        this.validate();
+    } 
+
+    public List<T> toList() {
+        return Stream.of(this.first, this.second, this.third).filter(Objects::nonNull).toList();
+    }
+
+    public T getFirst() {
+        return this.first;
+    }
+
+    public T getSecond() {
+        return this.second;
+    }
+
+    public T getThird() {
+        return this.third;
+    }
+
+    public int size() {
+        return this.toList().size();
+    }
+}
