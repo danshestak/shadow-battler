@@ -49,17 +49,17 @@ public class Battle_BattlingCreatureTest {
     }
 
     @Test
-    void testProcessDamage_superEffectiveSTAB() {
-        assertEquals(161, (int)this.c.damageAgainst(this.v, this.bb));
+    void testCalculateDamageAgainst_superEffectiveSTAB() {
+        assertEquals(161, (int)this.c.calculateDamageAgainst(this.v, this.bb));
     }
 
     @Test
-    void testProcessDamage_fromShadowNotVeryEffective() {
-        assertEquals(46, (int)this.s.damageAgainst(this.c, this.sp));
+    void testCalculateDamageAgainst_fromShadowNotVeryEffective() {
+        assertEquals(46, (int)this.s.calculateDamageAgainst(this.c, this.sp));
     }
 
     @Test 
-    void testProcessDamage_neutralToShadow() {
-        assertEquals(56, (int)this.c.damageAgainst(this.s, this.bs));
+    void testCalculateDamageAgainst_neutralToShadow() {
+        assertEquals(56, (int)this.c.calculateDamageAgainst(this.s, this.bs));
     }
 }

@@ -91,7 +91,13 @@ public class Battle {
         public double calculateEffectiveAtk() { return this.calculateEffectiveStat(Stats3.Stat.ATK); }
         public double calculateEffectiveDef() { return this.calculateEffectiveStat(Stats3.Stat.DEF); }
 
-        public int damageAgainst(BattlingCreature target, Move move) {
+        /**
+         * calculates the damage this BattlingCreature does to the target Battling creature using the specified move
+         * @param target the BattlingCreature being attacked
+         * @param move the move being used on the target by the user
+         * @return the damage this BattlingCreature can inflict
+         */
+        public int calculateDamageAgainst(BattlingCreature target, Move move) {
             return 1 + (int)Math.floor(
                 move.power() *
                 this.calculateEffectiveAtk()/target.calculateEffectiveDef() *
@@ -135,14 +141,14 @@ public class Battle {
     }
 
     public static class State {
-        final private Battle battle;
+        final private Battle parent;
         final private Trainer player;
         final private Trainer enemy;
         private int turnsElapsed;
         private int timeElapsed;
 
-        public State(Battle battle, Creature playerCreature, Team<Creature> opponentTeam, int opponentStartingShields) {
-            this.battle = battle;
+        public State(Battle parent, Creature playerCreature, Team<Creature> opponentTeam, int opponentStartingShields) {
+            this.parent = parent;
             this.player = new Trainer(new Team<>(playerCreature, null, null), 2);
             this.enemy = new Trainer(opponentTeam, opponentStartingShields);
             this.turnsElapsed = 0;
@@ -150,7 +156,7 @@ public class Battle {
         }
 
         public State(State other) {
-            this.battle = other.battle;
+            this.parent = other.parent;
             this.player = new Trainer(other.player);
             this.enemy = new Trainer(other.enemy);
             this.turnsElapsed = other.turnsElapsed;
@@ -173,9 +179,13 @@ public class Battle {
             return this.timeElapsed;
         }
 
+        /**
+         * creates a clone of the current state and appends it to the parent Battle
+         * @return the new clone of the current state
+         */
         public State branch() {
             final State other = new State(this);
-            this.battle.states.add(other);
+            this.parent.states.add(other);
             return other;
         }
     }
