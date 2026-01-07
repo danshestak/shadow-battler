@@ -252,7 +252,7 @@ public class Creature {
         
         double rcpm = Creature.getRocketCpMultiplierAtLevel(trainerLevel);
 
-        this.ivs = new Stats3<>(15, 15, 15);
+        this.ivs = Stats3.getMaxIVs();
 
         final double atk = (int)Math.floor((species.getBaseStats().getAtk() + this.ivs.getAtk()) * 5/3f) * rank * rcpm;
         final double def = (species.getBaseStats().getDef() + this.ivs.getAtk()) * rank * rcpm;

@@ -57,7 +57,11 @@ public enum Type {
         return Math.pow(1.6, Type.MATCHUPS[this.getId()][defender.getId()]);
     }
 
-    public double effectivenessAgainst(Type defenderType1, Type defenderType2) {
-        return this.effectivenessAgainst(defenderType1) * this.effectivenessAgainst(defenderType2);
+    public double effectivenessAgainst(Type[] defendingTypes) {
+        double product = 1;
+        for (Type defendingType : defendingTypes) {
+            product *= this.effectivenessAgainst(defendingType);
+        }
+        return product;
     }
 }

@@ -2,6 +2,7 @@ package com.shadowbattler.simulator.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -36,6 +37,7 @@ public class Species {
     private int thirdMoveCost;
     private boolean released;
     private Family family;
+    private boolean shadow = false;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static record Family(
@@ -111,7 +113,7 @@ public class Species {
                     return null;
                 }
             })
-            .filter((Tag tag) -> tag != null)
+            .filter(Objects::nonNull)
             .toList();
     } 
 
@@ -121,6 +123,17 @@ public class Species {
     }
 
     public void hydrate(MovesDataService movesDataService) {
+        this.shadow = this.tags.contains(Species.Tag.SHADOW);
+        if (this.shadow) {
+            this.chargedMoveIds.add("FRUSTRATION");
+            this.legacyMoveIds.add("FRUSTRATION");
+        } else if (this.tags.contains(Species.Tag.SHADOWELIGIBLE)) {
+            this.chargedMoveIds.add("RETURN");
+            this.legacyMoveIds.add("RETURN");
+        } else if (this.chargedMoveIds.isEmpty()) {
+            this.chargedMoveIds.add("STRUGGLE");
+        }
+
         this.fastMoves = this.hydrateMovesList(movesDataService, this.fastMoveIds);
         this.chargedMoves = this.hydrateMovesList(movesDataService, this.chargedMoveIds);
     }
@@ -189,5 +202,17 @@ public class Species {
 
     public Family getFamily() {
         return this.family;
+    }
+
+    public boolean isShadow() {
+        return this.shadow;
+    }
+
+    public boolean givesStabTo(Move move) {
+        if (move == null) return false;
+        for (Type type : this.types) {
+            if (type == move.type()) return true;
+        }
+        return false;
     }
 }
