@@ -30,10 +30,14 @@ public class Team<T> {
         this.second = (list != null && list.size() > 1) ? list.get(1) : null;
         this.third = (list != null && list.size() > 2) ? list.get(2) : null;
         this.validate();
-    } 
+    }
+
+    public Stream<T> stream() {
+        return Stream.of(this.first, this.second, this.third);
+    }
 
     public List<T> toList() {
-        return Stream.of(this.first, this.second, this.third).filter(Objects::nonNull).toList();
+        return this.stream().filter(Objects::nonNull).toList();
     }
 
     public T getFirst() {
@@ -48,7 +52,21 @@ public class Team<T> {
         return this.third;
     }
 
+    public T getByInt(int i) {
+        return switch (i) {
+            case 1 -> this.first;
+            case 2 -> this.second;
+            case 3 -> this.third;
+            default -> throw new IllegalArgumentException(String.format("argument %n must be 1, 2, or 3", i));
+        };
+    }
+
     public int size() {
-        return this.toList().size();
+        return (this.first == null ? 0 : 1) + (this.second == null ? 0 : 1) + (this.third == null ? 0 : 1);
+    }
+
+    @Override
+    public String toString() {
+        return "Team"+this.toList().toString();
     }
 }

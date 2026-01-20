@@ -42,4 +42,17 @@ public class Stats3<T> {
             case Stats3.Stat.HP -> this.getHp();
         };
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+            .append("Stats3[")
+            .append(this.atk)
+            .append(", ")
+            .append(this.def)
+            .append(", ")
+            .append(this.hp)
+            .append("]")
+            .toString();
+    }
 }

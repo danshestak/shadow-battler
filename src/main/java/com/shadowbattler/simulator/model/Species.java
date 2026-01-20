@@ -215,4 +215,9 @@ public class Species {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return this.speciesId;
+    }
 }

@@ -18,7 +18,12 @@ public record Move(
     double buffApplyChance,
     String archetype,
     int turns
-) {}
+) {
+    @Override
+    public String toString() {
+        return this.moveId;
+    }
+}
 
 class MoveJsonConverter extends StdConverter<MoveJsonConverter.MoveJson, Move> {
     @JsonIgnoreProperties(ignoreUnknown=true)

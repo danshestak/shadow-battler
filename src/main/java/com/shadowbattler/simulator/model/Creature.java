@@ -2,6 +2,11 @@ package com.shadowbattler.simulator.model;
 
 import java.util.List;
 
+/**
+ * an immutable class for storing data about a member of a species. can be constructed using
+ * custom ivs and level, or a go rocket Opponent.Title and trainer level (necessary for go
+ * rocket creatures as they don't have standard levels)
+ */
 public class Creature {
     private final Species species;
     private final Stats3<Integer> ivs;
@@ -284,5 +289,19 @@ public class Creature {
 
     public List<Move> getChargedMoves() {
         return this.chargedMoves;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Creature{");
+        sb.append("species=").append(species);
+        // sb.append(", ivs=").append(ivs);
+        // sb.append(", stats=").append(stats);
+        sb.append(", cp=").append(cp);
+        sb.append(", fastMove=").append(fastMove);
+        sb.append(", chargedMoves=").append(chargedMoves);
+        sb.append('}');
+        return sb.toString();
     }
 }
