@@ -22,14 +22,19 @@ public class Species {
     private List<String> fastMoveIds = new ArrayList<>();
     @JsonIgnore
     private List<Move> fastMoves = new ArrayList<>();
+    @JsonIgnore
+    private List<Move> enemyFastMoves = new ArrayList<>();
     @JsonProperty(value = "chargedMoves")
     private List<String> chargedMoveIds;
     @JsonIgnore
     private List<Move> chargedMoves = new ArrayList<>();
+    @JsonIgnore
+    private List<Move> enemyChargedMoves = new ArrayList<>();
     @JsonProperty(value = "eliteMoves")
     private List<String> eliteMoveIds = new ArrayList<>();
     @JsonProperty(value = "legacyMoves")
     private List<String> legacyMoveIds = new ArrayList<>();
+    private Move requiredChargedMove = null;
     private List<Tag> tags = new ArrayList<>();
     // private Map<String, List<Double>> defaultIVs;
     // private int level25CP;
@@ -134,8 +139,27 @@ public class Species {
             this.chargedMoveIds.add("STRUGGLE");
         }
 
+        if (this.speciesId.equals("zacian_crowned_sword")) {
+            this.requiredChargedMove = movesDataService.getMoveById("BEHEMOTH_BLADE");
+        } else if (this.speciesId.equals("zamazenta_crowned_shield")) {
+            this.requiredChargedMove = movesDataService.getMoveById("BEHEMOTH_BASH");
+        }
+
         this.fastMoves = this.hydrateMovesList(movesDataService, this.fastMoveIds);
+        this.enemyFastMoves = this.hydrateMovesList(
+            movesDataService, 
+            this.fastMoveIds.stream().filter(
+                (id) -> !this.eliteMoveIds.contains(id) && !this.legacyMoveIds.contains(id)
+            ).toList()
+        );
         this.chargedMoves = this.hydrateMovesList(movesDataService, this.chargedMoveIds);
+        this.enemyChargedMoves = this.hydrateMovesList(
+            movesDataService, 
+            this.chargedMoveIds.stream().filter(
+                (id) -> (!this.eliteMoveIds.contains(id) && !this.legacyMoveIds.contains(id)) || 
+                        (this.requiredChargedMove != null && this.requiredChargedMove.moveId().equals(id))
+            ).toList()
+        );
     }
 
     public int getDex() {
@@ -214,6 +238,71 @@ public class Species {
             if (type == move.type()) return true;
         }
         return false;
+    }
+
+    /**
+     * @param enemyMoves true if elite and legacy moves should be excluded
+     * @return the number of possible move combinations
+     */
+    public int moveCombinationQuantity(boolean enemyMoves) {
+        final int chargedSize = (enemyMoves ? this.enemyChargedMoves : this.chargedMoves).size();
+        final int fastSize = (enemyMoves ? this.enemyFastMoves : this.fastMoves).size();
+
+        return fastSize * Math.max(
+            this.requiredChargedMove == null ? chargedSize*(chargedSize-1)/2 : (chargedSize-1),
+            1
+        );
+    }
+
+    /**
+     * returns the array of 3 Moves that corresponds to the combinationId, with the
+     * first move being the fast move, the second being the first charged move, and the
+     * third being the second charged move (if applicable, null otherwise)
+     * @param combinationId
+     * @param enemyMoves
+     * @return
+     */
+    public Move[] moveCombinationFromId(int combinationId, boolean enemyMoves) {
+        final List<Move> fast = enemyMoves ? this.enemyFastMoves : this.fastMoves;
+        final List<Move> charged = enemyMoves ? this.enemyChargedMoves : this.chargedMoves;
+        final int fastSize = fast.size();
+        final int chargedSize = charged.size();
+
+        Move fastMove = fast.get(combinationId % fastSize);
+        Move charged1 = null;
+        Move charged2 = null;
+
+        if (this.requiredChargedMove != null) {
+            charged1 = this.requiredChargedMove;
+            if (chargedSize > 1) {
+                List<Move> otherCharged = new ArrayList<>(charged);
+                otherCharged.remove(requiredChargedMove);
+                int charged2Id = (combinationId / fastSize) % otherCharged.size();
+                charged2 = otherCharged.get(charged2Id);
+            }
+        } else {
+            if (chargedSize == 1) {
+                charged1 = charged.get(0);
+            } else if (chargedSize >= 2) {
+                int chargedPairId = combinationId / fastSize;
+                
+                int i = 0;
+                while (chargedPairId >= (chargedSize - 1 - i)) {
+                    chargedPairId -= (chargedSize - 1 - i);
+                    i++;
+                }
+                int j = i + 1 + chargedPairId;
+
+                charged1 = charged.get(i);
+                charged2 = charged.get(j);
+            }
+        }
+
+        return new Move[]{
+            fastMove,
+            charged1,
+            charged2
+        };
     }
 
     @Override

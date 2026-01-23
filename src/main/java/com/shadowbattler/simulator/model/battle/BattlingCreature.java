@@ -95,7 +95,7 @@ public class BattlingCreature {
      */
     public int calculateDamageAgainst(BattlingCreature target, Move move, int atkBuff, int targetDefBuff) {
         /*
-        for charged moves there is also a charge double that goes from 0.25 - 1, however
+        for charged moves there is also a charge multiplier that goes from 0.25 - 1, however
         we will assume that the charged move is always fully charged
         */
         return 1 + (int)Math.floor(
