@@ -139,10 +139,15 @@ public class Species {
             this.chargedMoveIds.add("STRUGGLE");
         }
 
-        if (this.speciesId.equals("zacian_crowned_sword")) {
-            this.requiredChargedMove = movesDataService.getMoveById("BEHEMOTH_BLADE");
-        } else if (this.speciesId.equals("zamazenta_crowned_shield")) {
-            this.requiredChargedMove = movesDataService.getMoveById("BEHEMOTH_BASH");
+        final String requiredChargedMoveId = switch (this.speciesId) {
+            case "rayquaza_mega" -> "DRAGON_ASCENT";
+            case "zacian_crowned_sword" -> "BEHEMOTH_BLADE";
+            case "zamazenta_crowned_shield" -> "BEHEMOTH_BASH";
+            default -> null;
+        };
+
+        if (requiredChargedMoveId != null) {
+            this.requiredChargedMove = movesDataService.getMoveById(requiredChargedMoveId);
         }
 
         this.fastMoves = this.hydrateMovesList(movesDataService, this.fastMoveIds);
@@ -241,25 +246,32 @@ public class Species {
     }
 
     /**
-     * @param enemyMoves true if elite and legacy moves should be excluded
+     * @param enemyMoves true if this counts an enemy's possible movesets. enemies don't have
+     * access to elite moves, legacy moves, or a second charged move, greatly reducing their
+     * quantity of move combinations 
      * @return the number of possible move combinations
      */
     public int moveCombinationQuantity(boolean enemyMoves) {
         final int chargedSize = (enemyMoves ? this.enemyChargedMoves : this.chargedMoves).size();
         final int fastSize = (enemyMoves ? this.enemyFastMoves : this.fastMoves).size();
 
-        return fastSize * Math.max(
-            this.requiredChargedMove == null ? chargedSize*(chargedSize-1)/2 : (chargedSize-1),
-            1
-        );
+        if (!enemyMoves) {
+            return fastSize * Math.max(
+                this.requiredChargedMove == null ? chargedSize*(chargedSize-1)/2 : (chargedSize-1),
+                1
+            );
+        } else {
+            return fastSize * (this.requiredChargedMove == null ? chargedSize : 1);
+        }
     }
 
     /**
      * returns the array of 3 Moves that corresponds to the combinationId, with the
      * first move being the fast move, the second being the first charged move, and the
      * third being the second charged move (if applicable, null otherwise)
-     * @param combinationId
-     * @param enemyMoves
+     * @param combinationId the id of the move combination, on the interval [0, this.moveCombinationQuantity)
+     * @param enemyMoves true if this is for an enemy's possible moves. in that case,
+     * the second charged move is always null, and elite and legacy moves are not included
      * @return
      */
     public Move[] moveCombinationFromId(int combinationId, boolean enemyMoves) {
@@ -272,29 +284,37 @@ public class Species {
         Move charged1 = null;
         Move charged2 = null;
 
-        if (this.requiredChargedMove != null) {
-            charged1 = this.requiredChargedMove;
-            if (chargedSize > 1) {
-                List<Move> otherCharged = new ArrayList<>(charged);
-                otherCharged.remove(requiredChargedMove);
-                int charged2Id = (combinationId / fastSize) % otherCharged.size();
-                charged2 = otherCharged.get(charged2Id);
+        if (!enemyMoves) {
+            if (this.requiredChargedMove != null) {
+                charged1 = this.requiredChargedMove;
+                if (chargedSize > 1) {
+                    List<Move> otherCharged = new ArrayList<>(charged);
+                    otherCharged.remove(this.requiredChargedMove);
+                    int charged2Id = (combinationId / fastSize) % otherCharged.size();
+                    charged2 = otherCharged.get(charged2Id);
+                }
+            } else {
+                if (chargedSize == 1) {
+                    charged1 = charged.get(0);
+                } else if (chargedSize >= 2) {
+                    int chargedPairId = combinationId / fastSize;
+                    
+                    int i = 0;
+                    while (chargedPairId >= (chargedSize - 1 - i)) {
+                        chargedPairId -= (chargedSize - 1 - i);
+                        i++;
+                    }
+                    int j = i + 1 + chargedPairId;
+
+                    charged1 = charged.get(i);
+                    charged2 = charged.get(j);
+                }
             }
         } else {
-            if (chargedSize == 1) {
-                charged1 = charged.get(0);
-            } else if (chargedSize >= 2) {
-                int chargedPairId = combinationId / fastSize;
-                
-                int i = 0;
-                while (chargedPairId >= (chargedSize - 1 - i)) {
-                    chargedPairId -= (chargedSize - 1 - i);
-                    i++;
-                }
-                int j = i + 1 + chargedPairId;
-
-                charged1 = charged.get(i);
-                charged2 = charged.get(j);
+            if (this.requiredChargedMove != null) {
+                charged1 = this.requiredChargedMove;
+            } else {
+                charged1 = charged.get((combinationId/fastSize) % chargedSize);
             }
         }
 

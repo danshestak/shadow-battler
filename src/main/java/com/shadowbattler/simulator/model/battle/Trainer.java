@@ -160,22 +160,6 @@ public class Trainer {
         }
     }
 
-    public int sumDamageTaken() {
-        return this.team.stream().reduce(
-            0, 
-            (acc, bc) -> acc + bc.getRemainingHp() - (int)Math.round(bc.getCreature().getStats().getHp()), 
-            Integer::sum
-        );
-    }
-
-    public int sumEnergy() {
-        return this.team.stream().reduce(
-            0, 
-            (acc, bc) -> acc + bc.getEnergy(), 
-            Integer::sum
-        );
-    }
-
     public void switchTo(int slot) {
         if (this.getTeam().getByInt(slot).isFainted()) throw new IllegalArgumentException(
             String.format("attempted to switch to slot %n, which is fainted", slot)

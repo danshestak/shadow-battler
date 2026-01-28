@@ -260,7 +260,7 @@ public class Creature {
         this.ivs = Stats3.getMaxIVs();
 
         final double atk = (int)Math.floor((species.getBaseStats().getAtk() + this.ivs.getAtk()) * 5/3f) * rank * rcpm;
-        final double def = (species.getBaseStats().getDef() + this.ivs.getAtk()) * rank * rcpm;
+        final double def = (species.getBaseStats().getDef() + this.ivs.getDef()) * rank * rcpm;
         final double hp = (int)Math.floor((species.getBaseStats().getHp() + this.ivs.getHp()) * 3/5f) * rank * rcpm;
 
         this.stats = new Stats3<>(atk, def, Math.max(10.0, Math.floor(hp)));
@@ -289,6 +289,14 @@ public class Creature {
 
     public List<Move> getChargedMoves() {
         return this.chargedMoves;
+    }
+
+    public Move[] getMoveset() {
+        return new Move[]{
+            this.fastMove, 
+            !this.chargedMoves.isEmpty() ? this.chargedMoves.get(0) : null, 
+            this.chargedMoves.size() > 1 ? this.chargedMoves.get(1) : null
+        };
     }
 
     @Override

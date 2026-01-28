@@ -23,24 +23,14 @@ public class Opponent {
         ROCKET_BOSS,
         ROCKET_LEADER,
         ROCKET_GRUNT,
-        TEAM_LEADER
-    }
+        TEAM_LEADER;
 
-    public static class Lineup<T> extends Team<List<T>> {
-        private Lineup(List<T> first, List<T> second, List<T> third) {
-            super(first, second, third);
+        public boolean isRocket() {
+            return this == Title.ROCKET_GRUNT || this == Title.ROCKET_BOSS || this == Title.ROCKET_LEADER;
         }
 
-        public int combinationQuantity() {
-            return this.getFirst().size() * this.getSecond().size() * this.getThird().size();
-        }
-
-        public Team<T> combinationFromId(int combinationId) {
-            return new Team<>(
-                this.getFirst().get(combinationId % this.getFirst().size()),
-                this.getSecond().get((combinationId / this.getFirst().size()) % this.getSecond().size()),
-                this.getThird().get((combinationId / (this.getFirst().size()*this.getSecond().size())) % this.getThird().size())
-            );
+        public int getShields() {
+            return this == Title.ROCKET_GRUNT ? 0 : 2;
         }
     }
 

@@ -27,9 +27,9 @@
         "title": "rocket_leader",
         "limit": 100000,
         "lineup": {
-            "first": ["larvitar_shadow"],
-            "second": ["annihilape_shadow", "honchkrow_shadow", "skarmory_shadow"],
-            "third": ["tyranitar_shadow", "machamp_shadow", "luxray_shadow"]
+            "first": ["magikarp_shadow"],
+            "second": ["cradily_shadow", "annihilape_shadow", "skarmory_shadow"],
+            "third": ["camerupt_shadow", "tyranitar_shadow", "gallade_shadow"]
         }
     },
     {
