@@ -45,14 +45,24 @@ public class TeamBattleSolverTest {
         );
     }
 
+    private Creature shadowHelper(String species, String fast, String charged1) {
+        return new Creature(
+            this.speciesDataService.getSpeciesById(species), 
+            Opponent.Title.ROCKET_LEADER,
+            80,
+            this.movesDataService.getMoveById(fast),
+            this.movesDataService.getMoveById(charged1)
+        );
+    }
+
     @BeforeEach
     public void setup() {
-        this.pLead = helper("registeel", "LOCK_ON", "FLASH_CANNON", null);
+        this.pLead = helper("espeon", "CONFUSION", "PSYCHIC_FANGS", null);
         this.pSwitch = null; //helper("regice", "LOCK_ON", "BLIZZARD", null);
         this.pCloser = null; //helper("regirock", "LOCK_ON", "STONE_EDGE", null);
-        this.eLead = helper("moltres", "FIRE_SPIN", "SKY_ATTACK", "ANCIENT_POWER");
-        this.eSwitch = helper("zapdos", "THUNDER_SHOCK", "DRILL_PECK", "THUNDERBOLT");
-        this.eCloser = helper("articuno", "ICE_SHARD", "TRIPLE_AXEL", "ANCIENT_POWER");
+        this.eLead = shadowHelper("magikarp_shadow", "SPLASH", "STRUGGLE");
+        this.eSwitch = shadowHelper("cradily_shadow", "ACID", "GRASS_KNOT");
+        this.eCloser = shadowHelper("camerupt_shadow", "INCINERATE", "EARTH_POWER");
     }
 
     // @Test
@@ -107,5 +117,6 @@ public class TeamBattleSolverTest {
         battle.solve();
 
         System.out.printf("TeamBattleSolver test BattleResult: %s\n", battle.getBattleResult());
+        // System.out.printf("log: %s\n", battle.getBattleState().getLog());
     }
 }

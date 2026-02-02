@@ -8,7 +8,6 @@ public class BattleResult {
     private final double timeElapsedVariance;
     private final double winPercent;
     private final double hpPercent;
-    private final int score;
 
     private static final double SCORE_CALCULATION_CONSTANT = 100000000.0;
 
@@ -18,7 +17,6 @@ public class BattleResult {
         this.timeElapsed = timeElapsed;
         this.winPercent = winPercent;
         this.hpPercent = hpPercent;
-        this.score = this.calculateScore();
         this.timeElapsedVariance = 0.0;
     }
 
@@ -26,7 +24,6 @@ public class BattleResult {
         this.timeElapsed = timeElapsed;
         this.winPercent = winPercent;
         this.hpPercent = hpPercent;
-        this.score = this.calculateScore();
         this.timeElapsedVariance = timeElapsedVariance;
     }
 
@@ -64,12 +61,6 @@ public class BattleResult {
             Math.max(0, timeElapsedSquareAvg - Math.pow(timeElapsedAvg, 2.0))
         );
     }
-
-    private int calculateScore() {
-        if (this.timeElapsed == null || this.winPercent == 0.0) return 0;
-        
-        return (int)(BattleResult.SCORE_CALCULATION_CONSTANT/this.timeElapsed * this.winPercent);
-    }
     
     /**
      * @return integer if the result is a win, null otherwise
@@ -91,7 +82,8 @@ public class BattleResult {
     }
     
     public int getScore() {
-        return this.score;
+        if (this.timeElapsed == null || this.winPercent == 0.0) return 0;
+        return (int)(BattleResult.SCORE_CALCULATION_CONSTANT/this.timeElapsed * this.winPercent);
     }
 
     public boolean isLoss() {

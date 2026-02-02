@@ -69,6 +69,7 @@ public class BattleState {
         this.turnsElapsed = 0;
         this.timeElapsed = 0;
         this.finished = false;
+        // this.log = new ArrayList<>();
     }
     
     public BattleState(BattleState other) {
@@ -78,6 +79,7 @@ public class BattleState {
         this.turnsElapsed = other.turnsElapsed;
         this.timeElapsed = other.timeElapsed;
         this.finished = other.finished;
+        // this.log = new ArrayList<>(other.log);
     }
 
     public Trainer getPlayer() {
@@ -164,6 +166,7 @@ public class BattleState {
      */
     private void processQueuedAction(Trainer user) {
         if (user.getQueuedAction() == null) return;
+
         // final int beforeHp = this.getOpponentTo(user).getActive().getRemainingHp();
 
         if (user.getQueuedAction().isSwitch()) {
@@ -188,9 +191,7 @@ public class BattleState {
             final Move chargedMove = user.getActive().getCreature().getChargedMoves().get(user.getQueuedAction().get()-1);
             if (opp.getShields() > 0) {
                 opp.adjustShields(-1);
-                user.getActive().adjustEnergy(
-                    -chargedMove.energy()
-                );
+                user.getActive().adjustEnergy(-chargedMove.energy());
             } else {
                 user.getActive().attack(
                     opp.getActive(),
@@ -207,7 +208,6 @@ public class BattleState {
             }
             
             //account for charge time 
-            //assuming it takes 3 seconds for the player to decide to shield and animations
             this.timeElapsed += user == this.player ? BattleState.PLAYER_CHARGE_TIME : BattleState.ENEMY_CHARGE_TIME;
 
             this.enemy.setStunQueued(true);

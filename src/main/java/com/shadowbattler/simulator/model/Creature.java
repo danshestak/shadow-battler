@@ -215,7 +215,7 @@ public class Creature {
     private static double getRocketCpMultiplierAtLevel(int level) {
         if (level < 8 || level > 80) {
             throw new IllegalArgumentException(String.format(
-                "expected level to be between 8 and 80, received %n", level
+                "expected level to be between 8 and 80, received %d", level
             ));
         }
         return Creature.rocketCpMultipliers[level - 8];

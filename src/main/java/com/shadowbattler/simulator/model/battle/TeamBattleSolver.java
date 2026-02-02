@@ -11,6 +11,7 @@ import com.shadowbattler.simulator.model.Team;
 
 public class TeamBattleSolver implements BattleSolver {
     private BattleResult battleResult = null;
+    private BattleState battleState = null;
     private final Team<Creature> playerTeam;
     private final Team<Creature> opponentTeam;
     private final int opponentStartingShields;
@@ -92,6 +93,7 @@ public class TeamBattleSolver implements BattleSolver {
                 fastestWin = state;
             }
         }
+        this.battleState = fastestWin;
 
         if (fastestWin != null) {
             this.battleResult = new BattleResult(
@@ -111,5 +113,9 @@ public class TeamBattleSolver implements BattleSolver {
     @Override
     public BattleResult getBattleResult() {
         return this.battleResult;
+    }
+
+    public BattleState getBattleState() {
+        return this.battleState;
     }
 }

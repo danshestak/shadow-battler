@@ -1,5 +1,7 @@
 package com.shadowbattler.simulator.model;
 
+import java.util.Objects;
+
 public class Stats3<T> {
     private final T atk;
     private final T def;
@@ -54,5 +56,18 @@ public class Stats3<T> {
             .append(this.hp)
             .append("]")
             .toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Stats3<?> stats3 = (Stats3<?>) o;
+        return Objects.equals(atk, stats3.atk) && Objects.equals(def, stats3.def) && Objects.equals(hp, stats3.hp);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(atk, def, hp);
     }
 }

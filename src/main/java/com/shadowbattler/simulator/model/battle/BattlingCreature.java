@@ -20,7 +20,7 @@ public class BattlingCreature {
     final private static double SHADOW_ATK_MULTIPLIER = 1.2;
     final private static double SHADOW_DEF_MULTIPLIER = 0.83333331;
 
-    final private static int BUFF_DIVISOR = 4;
+    final private static double BUFF_DIVISOR = 4.0;
     final protected static int MAX_BUFF_STAGES = 4;
 
     public BattlingCreature(Creature creature) {

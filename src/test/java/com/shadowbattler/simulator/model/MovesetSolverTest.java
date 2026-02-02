@@ -19,7 +19,7 @@ public class MovesetSolverTest {
     @Test
     void testGetMovesetScores() {
         MovesetSolver movesetSolver = new MovesetSolver(
-            speciesDataService.getSpeciesById("latios_shadow"),
+            speciesDataService.getSpeciesById("togekiss"),
             (playerCreature) -> new LineupBattleSolver(
                 new Team<>(playerCreature, null, null), 
                 opponentDataService.getOpponentById("leader_cliff")
