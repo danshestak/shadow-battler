@@ -1,9 +1,5 @@
 package com.shadowbattler.simulator.persistence.entity;
 
-import java.util.List;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -26,9 +22,15 @@ public class BattleResultEntity {
     private double winPercent;
     private double hpPercent;
     private int score;
-    @Convert(converter = StringListConverter.class)
-    @Column(columnDefinition = "TEXT")
-    private List<String> playerMovesetIds;
+    @ManyToOne
+    @JoinColumn(name = "player_fast_move_id", referencedColumnName = "moveId")
+    private MoveEntity playerFastMove;
+    @ManyToOne
+    @JoinColumn(name = "player_charged_move_1_id", referencedColumnName = "moveId")
+    private MoveEntity playerChargedMove1;
+    @ManyToOne
+    @JoinColumn(name = "player_charged_move_2_id", referencedColumnName = "moveId")
+    private MoveEntity playerChargedMove2;
     @ManyToOne
     @JoinColumn(name = "speciesId", referencedColumnName = "speciesId")
     private SpeciesEntity playerSpecies;
@@ -80,20 +82,36 @@ public class BattleResultEntity {
         this.hpPercent = hpPercent;
     }
 
+    public MoveEntity getPlayerFastMove() {
+        return playerFastMove;
+    }
+
+    public void setPlayerFastMove(MoveEntity playerFastMove) {
+        this.playerFastMove = playerFastMove;
+    }
+
+    public MoveEntity getPlayerChargedMove1() {
+        return playerChargedMove1;
+    }
+
+    public void setPlayerChargedMove1(MoveEntity playerChargedMove1) {
+        this.playerChargedMove1 = playerChargedMove1;
+    }
+
+    public MoveEntity getPlayerChargedMove2() {
+        return playerChargedMove2;
+    }
+
+    public void setPlayerChargedMove2(MoveEntity playerChargedMove2) {
+        this.playerChargedMove2 = playerChargedMove2;
+    }
+
     public int getScore() {
         return this.score;
     }
 
     public void setScore(int score) {
         this.score = score;
-    }
-
-    public List<String> getPlayerMovesetIds() { 
-        return this.playerMovesetIds;
-    }
-
-    public void setPlayerMovesetIds(List<String> playerMovesetIds) {
-        this.playerMovesetIds = playerMovesetIds;
     }
 
     public SpeciesEntity getPlayerSpecies() {

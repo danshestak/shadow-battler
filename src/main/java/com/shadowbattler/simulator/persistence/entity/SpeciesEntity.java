@@ -2,31 +2,45 @@ package com.shadowbattler.simulator.persistence.entity;
 
 import java.util.List;
 
+import com.shadowbattler.simulator.model.Species;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+/*
+the only things that ever change about a species relevant to simulations are the movesets, so that is the only data stored. legacy
+and elite move data is also necessary to keep track of as it dictates what movesets opponents can have (since they can't have either
+elite or legacy moves)
+*/
 @Entity
 @Table(name = "species")
 public class SpeciesEntity {
     @Id
     private String speciesId;
-    @Convert(converter = StringListConverter.class)
-    @Column(columnDefinition = "TEXT")
+    @ElementCollection
+    @CollectionTable(name = "species_fast_moves", joinColumns = @JoinColumn(name = "species_id"))
+    @Column(name = "move_id")
     private List<String> fastMoveIds;
-    @Convert(converter = StringListConverter.class)
-    @Column(columnDefinition = "TEXT")
+    @ElementCollection
+    @CollectionTable(name = "species_charged_moves", joinColumns = @JoinColumn(name = "species_id"))
+    @Column(name = "move_id")
     private List<String> chargedMoveIds;
-    @Convert(converter = StringListConverter.class)
-    @Column(columnDefinition = "TEXT")
+    @ElementCollection
+    @CollectionTable(name = "species_elite_moves", joinColumns = @JoinColumn(name = "species_id"))
+    @Column(name = "move_id")
     private List<String> eliteMoveIds;
-    @Convert(converter = StringListConverter.class)
-    @Column(columnDefinition = "TEXT")
+    @ElementCollection
+    @CollectionTable(name = "species_legacy_moves", joinColumns = @JoinColumn(name = "species_id"))
+    @Column(name = "move_id")
     private List<String> legacyMoveIds;
-    @OneToMany(mappedBy = "playerSpecies")
+    @OneToMany(mappedBy = "playerSpecies", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BattleResultEntity> battleResults;
 
     public String getSpeciesId() {
@@ -75,5 +89,16 @@ public class SpeciesEntity {
 
     public void setBattleResults(List<BattleResultEntity> battleResults) {
         this.battleResults = battleResults;
+    }
+
+    /**
+     * @param species a species to compare to
+     * @return true iff all of this entity's move ids match the move ids of the species being compared to
+     */
+    public boolean representsSpecies(Species species) {
+        if (!this.fastMoveIds.equals(species.getFastMoveIds())) return false;
+        if (!this.chargedMoveIds.equals(species.getChargedMoveIds())) return false;
+        if (!this.eliteMoveIds.equals(species.getEliteMoveIds())) return false;
+        return (this.legacyMoveIds.equals(species.getLegacyMoveIds()));
     }
 }

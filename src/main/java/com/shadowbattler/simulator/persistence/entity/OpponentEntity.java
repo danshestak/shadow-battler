@@ -2,15 +2,18 @@ package com.shadowbattler.simulator.persistence.entity;
 
 import java.util.List;
 
-import com.shadowbattler.simulator.model.Lineup;
+import com.shadowbattler.simulator.model.Opponent;
 import com.shadowbattler.simulator.model.Opponent.Title;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -22,10 +25,11 @@ public class OpponentEntity {
     @Enumerated(EnumType.STRING)
     private Title title;
     private int limit;
-    @Convert(converter = LineupStringConverter.class)
-    @Column(columnDefinition = "TEXT")
-    private Lineup<String> lineupIds;
-    @OneToMany(mappedBy = "opponent")
+    @ElementCollection
+    @CollectionTable(name = "opponent_lineups", joinColumns = @JoinColumn(name = "opponent_id"))
+    @Column(name = "species_id")
+    private List<String> lineupSpeciesIds;
+    @OneToMany(mappedBy = "opponent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BattleResultEntity> battleResults;
 
     public String getOpponentId() {
@@ -52,12 +56,12 @@ public class OpponentEntity {
         this.limit = limit;
     }
 
-    public Lineup<String> getLineupIds() {
-        return this.lineupIds;
+    public List<String> getLineupSpeciesIds() {
+        return this.lineupSpeciesIds;
     }
 
-    public void setLineupIds(Lineup<String> lineupIds) {
-        this.lineupIds = lineupIds;
+    public void setLineupSpeciesIds(List<String> lineupSpeciesIds) {
+        this.lineupSpeciesIds = lineupSpeciesIds;
     }
 
     public List<BattleResultEntity> getBattleResults() {
@@ -66,5 +70,16 @@ public class OpponentEntity {
 
     public void setBattleResults(List<BattleResultEntity> battleResults) {
         this.battleResults = battleResults;
+    }
+    
+    /**
+     * @param opponent an opponent to compare to
+     * @return true iff the opponents have the same id, title, limit, and lineups
+     */
+    public boolean representsOpponent(Opponent opponent) {
+        if (!this.opponentId.equals(opponent.getOpponentId())) return false;
+        if (this.title != opponent.getTitle()) return false;
+        if (this.limit != opponent.getLimit()) return false;
+        return this.lineupSpeciesIds.equals(opponent.getLineupIds().flatten());
     }
 }

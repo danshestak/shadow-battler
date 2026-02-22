@@ -1,11 +1,15 @@
 package com.shadowbattler.simulator.persistence.entity;
 
+import java.util.List;
+
 import com.shadowbattler.simulator.model.Stats3;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,6 +28,12 @@ public class MoveEntity {
     @Column(columnDefinition = "TEXT")
     private Stats3<Integer> buffsOpponent;
     private double buffApplyChance;
+    @OneToMany(mappedBy = "playerFastMove", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BattleResultEntity> battleResultsAsFastMove;
+    @OneToMany(mappedBy = "playerChargedMove1", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BattleResultEntity> battleResultsAsChargedMove1;
+    @OneToMany(mappedBy = "playerChargedMove2", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BattleResultEntity> battleResultsAsChargedMove2;
 
     public String getMoveId() {
         return this.moveId;
@@ -87,5 +97,29 @@ public class MoveEntity {
 
     public void setBuffApplyChance(double buffApplyChance) {
         this.buffApplyChance = buffApplyChance;
+    }
+
+    public List<BattleResultEntity> getBattleResultsAsFastMove() {
+        return this.battleResultsAsFastMove;
+    }
+
+    public void setBattleResultsAsFastMove(List<BattleResultEntity> battleResultsAsFastMove) {
+        this.battleResultsAsFastMove = battleResultsAsFastMove;
+    }
+
+    public List<BattleResultEntity> getBattleResultsAsChargedMove1() {
+        return this.battleResultsAsChargedMove1;
+    }
+
+    public void setBattleResultsAsChargedMove1(List<BattleResultEntity> battleResultsAsChargedMove1) {
+        this.battleResultsAsChargedMove1 = battleResultsAsChargedMove1;
+    }
+
+    public List<BattleResultEntity> getBattleResultsAsChargedMove2() {
+        return this.battleResultsAsChargedMove2;
+    }
+
+    public void setBattleResultsAsChargedMove2(List<BattleResultEntity> battleResultsAsChargedMove2) {
+        this.battleResultsAsChargedMove2 = battleResultsAsChargedMove2;
     }
 }

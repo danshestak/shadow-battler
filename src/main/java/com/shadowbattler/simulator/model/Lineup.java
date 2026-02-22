@@ -30,4 +30,8 @@ public class Lineup<T> extends Team<List<T>> {
     public static <T> Lineup<T> empty() {
         return new Lineup<>(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
+
+    public List<T> flatten() {
+        return this.stream().flatMap((slot) -> slot.stream()).toList();
+    }
 }
