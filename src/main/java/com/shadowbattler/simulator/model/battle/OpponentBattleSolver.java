@@ -10,14 +10,22 @@ import com.shadowbattler.simulator.model.Species;
 import com.shadowbattler.simulator.model.Stats3;
 import com.shadowbattler.simulator.model.Team;
 
-public class LineupBattleSolver implements BattleSolver {
+public class OpponentBattleSolver implements BattleSolver {
     private BattleResult battleResult = null;
     private final Team<Creature> playerTeam;
     private final Opponent opponent;
-    
-    public LineupBattleSolver(Team<Creature> playerTeam, Opponent opponent) {
+    private final int trainerLevel;
+
+    /**
+     * constructor for OpponentBattleSolver when the opponent is a rocket member
+     * @param playerTeam team of creatures that the player uses
+     * @param opponent the opponent the player is battling. should be a rocket member
+     * @param trainerLevel the trainer level. affects the stats of rocket opponents' creatures
+     */
+    public OpponentBattleSolver(Team<Creature> playerTeam, Opponent opponent, int trainerLevel) {
         this.playerTeam = playerTeam;
         this.opponent = opponent;
+        this.trainerLevel = trainerLevel;
     }
     
     @Override
@@ -60,7 +68,7 @@ public class LineupBattleSolver implements BattleSolver {
             return new Creature(
                 species, 
                 opponent.getTitle(), 
-                80, 
+                this.trainerLevel, 
                 moveCombination[0], 
                 moveCombination[1]
             );

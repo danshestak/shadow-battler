@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.shadowbattler.simulator.model.battle.LineupBattleSolver;
 import com.shadowbattler.simulator.model.battle.MovesetSolver;
+import com.shadowbattler.simulator.model.battle.OpponentBattleSolver;
 import com.shadowbattler.simulator.service.OpponentDataService;
 import com.shadowbattler.simulator.service.SpeciesDataService;
 
@@ -20,9 +20,10 @@ public class MovesetSolverTest {
     void testGetMovesetScores() {
         MovesetSolver movesetSolver = new MovesetSolver(
             speciesDataService.getSpeciesById("togekiss"),
-            (playerCreature) -> new LineupBattleSolver(
+            (playerCreature) -> new OpponentBattleSolver(
                 new Team<>(playerCreature, null, null), 
-                opponentDataService.getOpponentById("leader_cliff")
+                opponentDataService.getOpponentById("leader_cliff"),
+                70
             )
         );
 

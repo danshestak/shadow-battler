@@ -6,13 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.shadowbattler.simulator.model.battle.LineupBattleSolver;
+import com.shadowbattler.simulator.model.battle.OpponentBattleSolver;
 import com.shadowbattler.simulator.service.MovesDataService;
 import com.shadowbattler.simulator.service.OpponentDataService;
 import com.shadowbattler.simulator.service.SpeciesDataService;
 
 @SpringBootTest
-public class LineupBattleSolverTest {
+public class OpponentBattleSolverTest {
     @Autowired
     MovesDataService movesDataService;
     @Autowired
@@ -20,7 +20,7 @@ public class LineupBattleSolverTest {
     @Autowired
     OpponentDataService opponentDataService;
 
-    private LineupBattleSolver helper(String playerSpeciesId, String playerFastId, String playerChargedId, String opponentId) {
+    private OpponentBattleSolver helper(String playerSpeciesId, String playerFastId, String playerChargedId, String opponentId) {
         final Species playerSpecies = this.speciesDataService.getSpeciesById(playerSpeciesId);
         final Move playerFast = this.movesDataService.getMoveById(playerFastId);
         final Move playerCharged = movesDataService.getMoveById(playerChargedId);
@@ -31,7 +31,7 @@ public class LineupBattleSolverTest {
         System.out.println(playerCharged);
         System.out.println(opponent);
 
-        return new LineupBattleSolver(
+        return new OpponentBattleSolver(
             new Team<>(
                 new Creature(
                     playerSpecies, 
@@ -43,13 +43,14 @@ public class LineupBattleSolverTest {
                 null,
                 null
             ),
-            opponent
+            opponent,
+            70
         );
     }
 
     @Test
     void testSolve() {
-        final LineupBattleSolver lineupBattleSolver1 = helper(
+        final OpponentBattleSolver lineupBattleSolver1 = helper(
             "magnezone_shadow", 
             "VOLT_SWITCH", 
             "WILD_CHARGE", 
@@ -58,7 +59,7 @@ public class LineupBattleSolverTest {
         System.out.println(lineupBattleSolver1);
         lineupBattleSolver1.solve();
 
-        final LineupBattleSolver lineupBattleSolver2 = helper(
+        final OpponentBattleSolver lineupBattleSolver2 = helper(
             "rampardos", 
             "SMACK_DOWN", 
             "ROCK_SLIDE", 
