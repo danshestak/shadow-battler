@@ -4,18 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.shadowbattler.simulator.model.Creature;
 import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Species;
-import com.shadowbattler.simulator.model.Stats3;
 
 public class MovesetSolver implements BattleSolver {
     private List<MovesetBattleResult> movesetBattleResults;
     private final Species species;
+    private final BiFunction<Move, List<Move>, Creature> creatureFactory;
     private final Function<Creature, BattleSolver> battleSolverFactory;
     
     public static class MovesetBattleResult implements Comparable<MovesetBattleResult> {
@@ -41,8 +41,9 @@ public class MovesetSolver implements BattleSolver {
         }
     }
 
-    public MovesetSolver(Species species, Function<Creature, BattleSolver> battleSolverFactory) {
-        this.species = species;
+    public MovesetSolver(BiFunction<Move, List<Move>, Creature> creatureFactory, Function<Creature, BattleSolver> battleSolverFactory) {
+        this.species = creatureFactory.apply(null, null).getSpecies();
+        this.creatureFactory = creatureFactory;
         this.battleSolverFactory = battleSolverFactory;
     }
 
@@ -59,13 +60,7 @@ public class MovesetSolver implements BattleSolver {
 
         this.movesetBattleResults = movesets.stream()
             .map((moveset) -> {
-                Creature playerCreature = new Creature(
-                    this.species,
-                    Stats3.getMaxIVs(),
-                    50, //using level 50 to find optimal movesets
-                    moveset[0],
-                    Arrays.stream(moveset).skip(1).filter(Objects::nonNull).toList()
-                );
+                Creature playerCreature = this.creatureFactory.apply(moveset[0], getChargedMoves(moveset));
                 BattleSolver battleSolver = battleSolverFactory.apply(playerCreature);
                 battleSolver.solve();
                 return new MovesetBattleResult(moveset, battleSolver.getBattleResult());
@@ -73,6 +68,21 @@ public class MovesetSolver implements BattleSolver {
             .collect(Collectors.toCollection(ArrayList::new));
         
         this.movesetBattleResults.sort(Comparator.reverseOrder());
+    }
+
+    private static List<Move> getChargedMoves(Move[] moveset) {
+        final Move charged1 = moveset[1];
+        final Move charged2 = moveset[2];
+
+        if (charged1 != null) {
+            if (charged2 != null) {
+                return List.of(charged1, charged2);
+            } else {
+                return List.of(charged1);
+            }
+        } else {
+            return List.of();
+        }
     }
 
     @Override

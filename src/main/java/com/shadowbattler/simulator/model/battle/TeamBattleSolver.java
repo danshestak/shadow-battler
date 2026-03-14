@@ -51,26 +51,24 @@ public class TeamBattleSolver implements BattleSolver {
         );
 
         while (!activeStates.isEmpty()) {
-            List<BattleState> potentialNextStates = new ArrayList<>();
+            //grouping states by how comparable they are to reduce the n in O(n^2) for pruning
+            Map<Long, List<BattleState>> groupedStates = new HashMap<>();
             for (BattleState state : activeStates) {
                 List<BattleState> newBranches = state.step();
-                potentialNextStates.addAll(newBranches);
 
                 if (state.isFinished()) {
                     finishedStates.add(state);
                 } else {
-                    potentialNextStates.add(state);
+                    groupedStates.computeIfAbsent(state.getComparisonKey(), k -> new ArrayList<>()).add(state);
                 }
-            }
 
-            //grouping states by how comparable they are to reduce the n in O(n^2) for pruning
-            Map<Long, List<BattleState>> groupedStates = new HashMap<>();
-            for (BattleState state : potentialNextStates) {
-                if (state.isFinished()) {
-                    finishedStates.add(state);
-                    continue;
+                for (BattleState branch : newBranches) {
+                    if (branch.isFinished()) {
+                        finishedStates.add(branch);
+                    } else {
+                        groupedStates.computeIfAbsent(branch.getComparisonKey(), k -> new ArrayList<>()).add(branch);
+                    }
                 }
-                groupedStates.computeIfAbsent(state.getComparisonKey(), k -> new ArrayList<>()).add(state);
             }
 
             List<BattleState> nextActiveStates = new ArrayList<>();
