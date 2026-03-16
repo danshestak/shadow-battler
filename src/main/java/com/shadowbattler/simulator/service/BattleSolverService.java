@@ -27,9 +27,9 @@ public class BattleSolverService {
         return opponentBattleSolver;
     }
 
-    public MovesetSolver solveOpponentMovesetSolver(Species species, Opponent opponent, int trainerLevel, int playerCreatureLevel) {
+    public MovesetSolver solveOpponentMovesetSolver(Species playerSpecies, Stats3<Integer> playerIVs, int playerCreatureLevel, Opponent opponent, int trainerLevel) {
         final MovesetSolver opponentMovesetSolver = new MovesetSolver(
-            (fast, charged) -> new Creature(species, Stats3.getMaxIVs(), playerCreatureLevel, fast, charged),
+            (fast, charged) -> new Creature(playerSpecies, playerIVs, playerCreatureLevel, fast, charged),
             (playerCreature) -> new OpponentBattleSolver(
                 new Team<>(playerCreature, null, null), 
                 opponent,
