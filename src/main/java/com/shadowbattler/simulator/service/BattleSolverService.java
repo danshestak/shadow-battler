@@ -17,6 +17,7 @@ public class BattleSolverService {
 
     public TeamBattleSolver solveTeamBattleSolver(Team<Creature> playerTeam, Team<Creature> opponentTeam, int opponentStartingShields) {
         final TeamBattleSolver teamBattleSolver = new TeamBattleSolver(playerTeam, opponentTeam, opponentStartingShields);
+        teamBattleSolver.enableLogging();
         teamBattleSolver.solve();
         return teamBattleSolver;
     }

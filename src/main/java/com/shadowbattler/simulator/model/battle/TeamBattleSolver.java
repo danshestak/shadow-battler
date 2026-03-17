@@ -15,6 +15,7 @@ public class TeamBattleSolver implements BattleSolver {
     private final Team<Creature> playerTeam;
     private final Team<Creature> opponentTeam;
     private final int opponentStartingShields;
+    private boolean shouldLog = false;
 
     public TeamBattleSolver(Team<Creature> playerTeam, Team<Creature> opponentTeam, int opponentStartingShields) {
         this.playerTeam = playerTeam;
@@ -26,6 +27,10 @@ public class TeamBattleSolver implements BattleSolver {
         this.playerTeam = new Team<>(playerCreature, null, null);
         this.opponentTeam = opponentTeam;
         this.opponentStartingShields = opponentStartingShields;
+    }
+
+    public void enableLogging() {
+        this.shouldLog = true;
     }
     
     private void addStateWithPruning(List<BattleState> states, BattleState newState) {
@@ -46,7 +51,8 @@ public class TeamBattleSolver implements BattleSolver {
             new BattleState(
                 this.playerTeam,
                 this.opponentTeam,
-                this.opponentStartingShields
+                this.opponentStartingShields,
+                this.shouldLog
             )
         );
 

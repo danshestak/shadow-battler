@@ -19,29 +19,7 @@ public class BattleState {
     private int turnsElapsed;
     private int timeElapsed;
     private boolean finished;
-    // final private List<LogEntry> log;
-
-    public static record LogEntry(
-        boolean isPlayer,
-        Action action,
-        int beforeHp,
-        int afterHp
-    ) {
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder()
-                .append(this.isPlayer ? "PLAYER" : "ENEMY")
-                .append("_")
-                .append(this.action);
-            if (this.action == Action.FAST_ATTACK || this.action.isChargedAttack()) {
-                sb.append(": ")
-                .append(this.beforeHp)
-                .append("->")
-                .append(this.afterHp);
-            }
-            return sb.toString();
-        }
-    }
+    final private BattleLog log;
 
     /** how long it takes for a turn/step to pass */
     final private static int TURN_TIME = 500;
@@ -62,14 +40,14 @@ public class BattleState {
     /** how many turns the enemy is stunned for after a trainer switches/uses a charged move */
     final private static int STUN_TURNS = 10;
 
-    public BattleState(Team<Creature> playerTeam, Team<Creature> opponentTeam, int opponentStartingShields) {
+    public BattleState(Team<Creature> playerTeam, Team<Creature> opponentTeam, int opponentStartingShields, boolean isLogged) {
         this.player = new Trainer(playerTeam, 2);
         this.enemy = new Trainer(opponentTeam, opponentStartingShields);
         this.trainers = new Trainer[]{this.player, this.enemy};
         this.turnsElapsed = 0;
         this.timeElapsed = 0;
         this.finished = false;
-        // this.log = new ArrayList<>();
+        this.log = isLogged ? new BattleLog() : null;
     }
     
     public BattleState(BattleState other) {
@@ -79,7 +57,7 @@ public class BattleState {
         this.turnsElapsed = other.turnsElapsed;
         this.timeElapsed = other.timeElapsed;
         this.finished = other.finished;
-        // this.log = new ArrayList<>(other.log);
+        this.log = other.log != null ? new BattleLog(other.log) : null;
     }
 
     public Trainer getPlayer() {
@@ -126,9 +104,9 @@ public class BattleState {
         return true;
     }
 
-    // public List<LogEntry> getLog() {
-    //     return this.log;
-    // }
+    public BattleLog getLog() {
+        return this.log;
+    }
 
     /**
      * queues an action for the specified user to use on the next step. should only be used if they don't already
@@ -167,7 +145,7 @@ public class BattleState {
     private void processQueuedAction(Trainer user) {
         if (user.getQueuedAction() == null) return;
 
-        // final int beforeHp = this.getOpponentTo(user).getActive().getRemainingHp();
+        final int beforeHp = this.getOpponentTo(user).getActive().getRemainingHp();
 
         if (user.getQueuedAction().isSwitch()) {
             //forced switch after fainting has no effect on cooldown
@@ -222,14 +200,15 @@ public class BattleState {
             user.setStunQueued(false);
         }
 
-        // if (user.getQueuedAction() != null) {
-        //     log.add(new LogEntry(
-        //         user == this.player, 
-        //         user.getQueuedAction(), 
-        //         beforeHp,
-        //         this.getOpponentTo(user).getActive().getRemainingHp()
-        //     ));
-        // }
+        if (this.log != null && user.getQueuedAction() != null) {
+            this.log.addEntry(
+                this, 
+                user, 
+                user.getQueuedAction(), 
+                beforeHp, 
+                this.getOpponentTo(user).getActive().getRemainingHp()
+            );
+        }
 
         user.setQueuedAction(null);
         user.setQueuedActionFulfills(0);
@@ -523,7 +502,7 @@ public class BattleState {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("BattleState{");
-        sb.append(", player=").append(player);
+        sb.append("player=").append(player);
         sb.append(", enemy=").append(enemy);
         // sb.append(", trainers=").append(trainers);
         sb.append(", turnsElapsed=").append(turnsElapsed);

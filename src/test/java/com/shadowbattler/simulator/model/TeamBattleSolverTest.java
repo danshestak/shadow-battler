@@ -113,10 +113,10 @@ public class TeamBattleSolverTest {
             new Team<>(this.eLead, this.eSwitch, this.eCloser), 
             0
         );
-
+        battle.enableLogging();
         battle.solve();
 
         System.out.printf("TeamBattleSolver test BattleResult: %s\n", battle.getBattleResult());
-        // System.out.printf("log: %s\n", battle.getBattleState().getLog());
+        System.out.printf("log: %s\n", battle.getBattleState().getLog());
     }
 }
