@@ -1,5 +1,7 @@
 package com.shadowbattler.simulator.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.shadowbattler.exception.ResourceNotFoundException;
@@ -21,6 +23,10 @@ public class OpponentDataService {
     public Opponent getOpponentById(String id) {
         return this.opponentRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException(String.format("opponent of id %s not found", id)));
+    }
+
+    public List<Opponent> getAllOpponents() {
+        return this.opponentRepository.findAll();
     }
     
     @PostConstruct

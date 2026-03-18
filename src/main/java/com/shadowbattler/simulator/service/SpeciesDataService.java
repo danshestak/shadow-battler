@@ -27,6 +27,10 @@ public class SpeciesDataService {
         .orElseThrow(() -> new ResourceNotFoundException(String.format("species of id %s not found", id)));
     }
 
+    public List<Species> getAllSpecies() {
+        return this.speciesRepository.findAll();
+    }
+
     public boolean speciesExists(String id) {
         try {
             this.getSpeciesById(id);

@@ -1,5 +1,7 @@
 package com.shadowbattler.simulator.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.shadowbattler.exception.ResourceNotFoundException;
@@ -17,5 +19,9 @@ public class MovesDataService {
     public Move getMoveById(String id) {
         return movesRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException(String.format("move of id %s not found", id)));
+    }
+
+    public List<Move> getAllMoves() {
+        return this.movesRepository.findAll();
     }
 }
