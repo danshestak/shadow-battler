@@ -1,13 +1,17 @@
 package com.shadowbattler.simulator.service;
 
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.shadowbattler.simulator.model.Move;
-import com.shadowbattler.simulator.persistence.entity.MoveEntity;
+import com.shadowbattler.simulator.model.Opponent;
+import com.shadowbattler.simulator.model.Species;
+import com.shadowbattler.simulator.persistence.entity.OpponentEntity;
+import com.shadowbattler.simulator.persistence.entity.SpeciesEntity;
 import com.shadowbattler.simulator.persistence.service.BattleResultEntityService;
 import com.shadowbattler.simulator.persistence.service.MoveEntityService;
 import com.shadowbattler.simulator.persistence.service.OpponentEntityService;
@@ -42,14 +46,30 @@ public class EntityReconciliationService {
     }
 
     public void reconcile() {
-        Set<Move> modifiedMoves = new HashSet<>();
-        for (Move move : movesDataService.getAllMoves()) {
-            final Optional<MoveEntity> moveEntity = this.moveEntityService.getMoveEntityById(move.moveId());
-            if (moveEntity.isEmpty() || !moveEntity.get().representsMove(move)) {
-                modifiedMoves.add(move);
-            }
-        }
+        Set<Move> modifiedMoves = movesDataService.getAllMoves().stream()
+            .filter(move -> {
+                return this.moveEntityService.getMoveEntityById(move.moveId()).map(e -> !e.representsMove(move)).orElse(true);
+            })
+            .collect(Collectors.toSet());
 
+        Set<Species> modifiedSpecies = speciesDataService.getAllSpecies().stream()
+            .filter(species -> {
+                final Optional<SpeciesEntity> speciesEntity = this.speciesEntityService.getSpeciesEntityById(species.getSpeciesId());
+
+                return speciesEntity.map(e -> !e.representsSpecies(species)).orElse(true)
+                    || species.getFastMoves().stream().anyMatch(modifiedMoves::contains)
+                    || species.getChargedMoves().stream().anyMatch(modifiedMoves::contains);
+            })
+            .collect(Collectors.toSet());
+        
+        Set<Opponent> modifiedOpponents = opponentDataService.getAllOpponents().stream()
+            .filter(opponent -> {
+                final Optional<OpponentEntity> opponentEntity = this.opponentEntityService.getOpponentEntityById(opponent.getOpponentId());
+
+                return opponentEntity.map(e -> !e.representsOpponent(opponent)).orElse(true)
+                    || opponent.getLineupSpecies().stream().flatMap(Collection::stream).anyMatch(modifiedSpecies::contains);
+            })
+            .collect(Collectors.toSet());
         /*
         create set of modified moves
             save changes to db entity, or create it if it doesn't exist
