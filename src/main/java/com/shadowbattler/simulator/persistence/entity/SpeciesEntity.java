@@ -1,6 +1,7 @@
 package com.shadowbattler.simulator.persistence.entity;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.shadowbattler.simulator.model.Species;
 
@@ -96,9 +97,9 @@ public class SpeciesEntity {
      * @return true iff all of this entity's move ids match the move ids of the species being compared to
      */
     public boolean representsSpecies(Species species) {
-        if (!this.fastMoveIds.equals(species.getFastMoveIds())) return false;
-        if (!this.chargedMoveIds.equals(species.getChargedMoveIds())) return false;
-        if (!this.eliteMoveIds.equals(species.getEliteMoveIds())) return false;
-        return (this.legacyMoveIds.equals(species.getLegacyMoveIds()));
+        if (!Objects.equals(this.fastMoveIds, species.getFastMoveIds())) return false;
+        if (!Objects.equals(this.chargedMoveIds, species.getChargedMoveIds())) return false;
+        if (!Objects.equals(this.eliteMoveIds, species.getEliteMoveIds())) return false;
+        return Objects.equals(this.legacyMoveIds, species.getLegacyMoveIds());
     }
 }
