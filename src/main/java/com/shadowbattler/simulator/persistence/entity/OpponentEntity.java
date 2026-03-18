@@ -82,4 +82,11 @@ public class OpponentEntity {
         if (this.limit != opponent.getLimit()) return false;
         return this.lineupSpeciesIds.equals(opponent.getLineupIds().flatten());
     }
+
+    public void updateFromOpponent(Opponent opponent) {
+        this.setOpponentId(opponent.getOpponentId());
+        this.setTitle(opponent.getTitle());
+        this.setLimit(opponent.getLimit());
+        this.setLineupSpeciesIds(opponent.getLineupIds().flatten());
+    }
 }

@@ -102,4 +102,12 @@ public class SpeciesEntity {
         if (!Objects.equals(this.eliteMoveIds, species.getEliteMoveIds())) return false;
         return Objects.equals(this.legacyMoveIds, species.getLegacyMoveIds());
     }
+    
+    public void updateFromSpecies(Species species) {
+        this.setSpeciesId(species.getSpeciesId());
+        this.setFastMoveIds(species.getFastMoveIds());
+        this.setChargedMoveIds(species.getChargedMoveIds());
+        this.setEliteMoveIds(species.getEliteMoveIds());
+        this.setLegacyMoveIds(species.getLegacyMoveIds());
+    }
 }

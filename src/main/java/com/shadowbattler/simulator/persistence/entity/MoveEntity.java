@@ -138,4 +138,15 @@ public class MoveEntity {
         if (!this.buffsOpponent.equals(move.buffsOpponent())) return false;
         return this.buffApplyChance == move.buffApplyChance();
     }
+
+    public void updateFromMove(Move move) {
+        this.setMoveId(move.moveId());
+        this.setPower(move.power());
+        this.setEnergy(move.energy());
+        this.setEnergyGain(move.energyGain());
+        this.setTurns(move.turns());
+        this.setBuffsSelf(move.buffsSelf());
+        this.setBuffsOpponent(move.buffsOpponent());
+        this.setBuffApplyChance(move.buffApplyChance());
+    }
 }
