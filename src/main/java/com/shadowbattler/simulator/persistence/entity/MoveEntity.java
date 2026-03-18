@@ -2,6 +2,7 @@ package com.shadowbattler.simulator.persistence.entity;
 
 import java.util.List;
 
+import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Stats3;
 
 import jakarta.persistence.CascadeType;
@@ -121,5 +122,20 @@ public class MoveEntity {
 
     public void setBattleResultsAsChargedMove2(List<BattleResultEntity> battleResultsAsChargedMove2) {
         this.battleResultsAsChargedMove2 = battleResultsAsChargedMove2;
+    }
+
+    /**
+     * @param move a move to compare to
+     * @return true iff all of this entity's attributes match those of the given move
+     */
+    public boolean representsMove(Move move) {
+        if (!this.moveId.equals(move.moveId())) return false;
+        if (this.power != move.power()) return false;
+        if (this.energy != move.energy()) return false;
+        if (this.energyGain != move.energyGain()) return false;
+        if (this.turns != move.turns()) return false;
+        if (!this.buffsSelf.equals(move.buffsSelf())) return false;
+        if (!this.buffsOpponent.equals(move.buffsOpponent())) return false;
+        return this.buffApplyChance == move.buffApplyChance();
     }
 }
