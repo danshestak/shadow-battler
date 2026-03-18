@@ -1,7 +1,13 @@
 package com.shadowbattler.simulator.service;
 
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
 import org.springframework.stereotype.Service;
 
+import com.shadowbattler.simulator.model.Move;
+import com.shadowbattler.simulator.persistence.entity.MoveEntity;
 import com.shadowbattler.simulator.persistence.service.BattleResultEntityService;
 import com.shadowbattler.simulator.persistence.service.MoveEntityService;
 import com.shadowbattler.simulator.persistence.service.OpponentEntityService;
@@ -36,6 +42,14 @@ public class EntityReconciliationService {
     }
 
     public void reconcile() {
+        Set<Move> modifiedMoves = new HashSet<>();
+        for (Move move : movesDataService.getAllMoves()) {
+            final Optional<MoveEntity> moveEntity = this.moveEntityService.getMoveEntityById(move.moveId());
+            if (moveEntity.isEmpty() || !moveEntity.get().representsMove(move)) {
+                modifiedMoves.add(move);
+            }
+        }
+
         /*
         create set of modified moves
             save changes to db entity, or create it if it doesn't exist
