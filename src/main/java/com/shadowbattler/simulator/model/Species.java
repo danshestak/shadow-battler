@@ -100,7 +100,7 @@ public class Species {
     @SuppressWarnings("unused")
     @JsonSetter("thirdMoveCost")
     private void setThirdMoveCost(JsonNode node) {
-        this.thirdMoveCost = node.isInt() ? node.asInt() : 0;
+        this.thirdMoveCost = node.isInt() ? node.asInt() : -1;
     }
 
     @SuppressWarnings("unused")
@@ -245,6 +245,10 @@ public class Species {
         return false;
     }
 
+    public boolean isThirdMoveEnabled() {
+        return this.thirdMoveCost != -1;
+    }
+
     /**
      * @param enemyMoves true if this counts an enemy's possible movesets. enemies don't have
      * access to elite moves, legacy moves, or a second charged move, greatly reducing their
@@ -255,13 +259,13 @@ public class Species {
         final int chargedSize = (enemyMoves ? this.enemyChargedMoves : this.chargedMoves).size();
         final int fastSize = (enemyMoves ? this.enemyFastMoves : this.fastMoves).size();
 
-        if (!enemyMoves) {
+        if (enemyMoves || !this.isThirdMoveEnabled()) {
+            return fastSize * (this.requiredChargedMove == null ? chargedSize : 1);
+        } else {
             return fastSize * Math.max(
                 this.requiredChargedMove == null ? chargedSize*(chargedSize-1)/2 : (chargedSize-1),
                 1
             );
-        } else {
-            return fastSize * (this.requiredChargedMove == null ? chargedSize : 1);
         }
     }
 
@@ -284,7 +288,13 @@ public class Species {
         Move charged1 = null;
         Move charged2 = null;
 
-        if (!enemyMoves) {
+        if (enemyMoves || !this.isThirdMoveEnabled()) {
+            if (this.requiredChargedMove != null) {
+                charged1 = this.requiredChargedMove;
+            } else {
+                charged1 = charged.get((combinationId/fastSize) % chargedSize);
+            }
+        } else if (!enemyMoves) {
             if (this.requiredChargedMove != null) {
                 charged1 = this.requiredChargedMove;
                 if (chargedSize > 1) {
@@ -309,12 +319,6 @@ public class Species {
                     charged1 = charged.get(i);
                     charged2 = charged.get(j);
                 }
-            }
-        } else {
-            if (this.requiredChargedMove != null) {
-                charged1 = this.requiredChargedMove;
-            } else {
-                charged1 = charged.get((combinationId/fastSize) % chargedSize);
             }
         }
 

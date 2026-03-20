@@ -36,4 +36,9 @@ public class SpeciesTest {
     public void testMoveCombinationFromIdWithRequiredMove() {
         printMoveCombinationsFor(speciesDataService.getSpeciesById("zacian_crowned_sword"));
     }
+
+    @Test
+    public void testMoveCombinationFromIdWithoutThirdMove() {
+        printMoveCombinationsFor(speciesDataService.getSpeciesById("smeargle"));
+    }
 }
