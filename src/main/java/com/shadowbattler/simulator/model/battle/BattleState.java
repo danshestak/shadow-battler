@@ -240,23 +240,28 @@ public class BattleState {
                 //treating equal atk as cmp tie loss for player to avoid randomness
                 playerPriority = playerActive.getCreature().getStats().getAtk() > enemyActive.getCreature().getStats().getAtk();
             } else if (playerFulfilledAction.isChargedAttack() && !enemyFulfilledAction.isChargedAttack()) {
-                //charged attack is ignored if the opponent has a lethal fast attack
-                //otherwise, the charged attack has priority
-                playerPriority = !(enemyFulfilledAction == Action.FAST_ATTACK && 
-                        enemyActive.calculateDamageAgainst(
-                            playerActive, 
-                            enemyActive.getCreature().getFastMove(),
-                            enemy.getAtkBuff(),
-                            player.getDefBuff()
-                        ) >= playerActive.getRemainingHp());
+                /*
+                with the segment(s) below, charged attack is ignored if the opponent has a lethal fast attack. 
+                otherwise, the charged attack has priority. pvpoke uses this logic, however this logic is not
+                used in game
+                 */
+                // playerPriority = !(enemyFulfilledAction == Action.FAST_ATTACK && 
+                //         enemyActive.calculateDamageAgainst(
+                //             playerActive, 
+                //             enemyActive.getCreature().getFastMove(),
+                //             enemy.getAtkBuff(),
+                //             player.getDefBuff()
+                //         ) >= playerActive.getRemainingHp());
+                playerPriority = true;
             } else if (!playerFulfilledAction.isChargedAttack() && enemyFulfilledAction.isChargedAttack()) {
-                playerPriority = playerFulfilledAction == Action.FAST_ATTACK && 
-                    playerActive.calculateDamageAgainst(
-                        enemyActive, 
-                        playerActive.getCreature().getFastMove(),
-                        player.getAtkBuff(),
-                        enemy.getDefBuff()
-                    ) >= enemyActive.getRemainingHp();
+                // playerPriority = playerFulfilledAction == Action.FAST_ATTACK && 
+                //     playerActive.calculateDamageAgainst(
+                //         enemyActive, 
+                //         playerActive.getCreature().getFastMove(),
+                //         player.getAtkBuff(),
+                //         enemy.getDefBuff()
+                //     ) >= enemyActive.getRemainingHp();
+                playerPriority = false;
             } else {
                 considerPriority = false;
             }
