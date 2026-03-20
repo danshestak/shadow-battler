@@ -21,6 +21,10 @@ public class SpeciesEntityService {
         return this.speciesEntityRepository.findById(id);
     }
 
+    public SpeciesEntity getReferenceById(String id) {
+        return this.speciesEntityRepository.getReferenceById(id);
+    }
+
     public SpeciesEntity saveSpecies(Species species) {
         SpeciesEntity entity = this.speciesEntityRepository.findById(species.getSpeciesId()).orElse(new SpeciesEntity());
         

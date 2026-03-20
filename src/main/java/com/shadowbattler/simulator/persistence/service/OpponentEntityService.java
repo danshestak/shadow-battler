@@ -20,6 +20,10 @@ public class OpponentEntityService {
         return this.opponentEntityRepository.findById(id);
     }
 
+    public OpponentEntity getReferenceById(String id) {
+        return this.opponentEntityRepository.getReferenceById(id);
+    }
+
     public OpponentEntity saveOpponent(Opponent opponent) {
         OpponentEntity entity = this.opponentEntityRepository.findById(opponent.getOpponentId()).orElse(new OpponentEntity());
 

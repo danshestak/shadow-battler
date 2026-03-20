@@ -1,5 +1,7 @@
 package com.shadowbattler.simulator.persistence.entity;
 
+import com.shadowbattler.simulator.model.battle.BattleResult;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -17,7 +19,7 @@ public class BattleResultEntity {
     @Id
     @GeneratedValue
     private int id;
-    private int timeElapsed;
+    private Integer timeElapsed;
     private double timeElapsedVariance;
     private double winPercent;
     private double hpPercent;
@@ -50,11 +52,11 @@ public class BattleResultEntity {
         this.id = id;
     }
 
-    public int getTimeElapsed() {
+    public Integer getTimeElapsed() {
         return this.timeElapsed;
     }
 
-    public void setTimeElapsed(int timeElapsed) {
+    public void setTimeElapsed(Integer timeElapsed) {
         this.timeElapsed = timeElapsed;
     }
 
@@ -144,5 +146,13 @@ public class BattleResultEntity {
 
     public void setTrainerLevel(Integer trainerLevel) {
         this.trainerLevel = trainerLevel;
+    }
+
+    public void updateFromBattleResult(BattleResult battleResult) {
+        this.setTimeElapsed(battleResult.getTimeElapsed().orElse(null));
+        this.setTimeElapsedVariance(battleResult.getTimeElapsedVariance());
+        this.setWinPercent(battleResult.getWinPercent());
+        this.setHpPercent(battleResult.getHpPercent());
+        this.setScore(battleResult.getScore());
     }
 }

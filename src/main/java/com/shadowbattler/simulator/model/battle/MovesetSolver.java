@@ -39,6 +39,20 @@ public class MovesetSolver implements BattleSolver {
         public String toString() {
             return "MovesetBattleResult [moveset=" + Arrays.toString(moveset) + ", battleResult=" + battleResult + "]";
         }
+
+        public Move[] getMoveset() {
+            return this.moveset;
+        }
+
+        public void setMoveset(Move[] moveset) {
+            this.moveset = moveset;
+        }
+
+        public BattleResult getBattleResult() {
+            return this.battleResult;
+        }
+
+        
     }
 
     public MovesetSolver(BiFunction<Move, List<Move>, Creature> creatureFactory, Function<Creature, BattleSolver> battleSolverFactory) {

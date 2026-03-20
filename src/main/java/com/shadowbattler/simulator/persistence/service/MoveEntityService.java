@@ -20,6 +20,10 @@ public class MoveEntityService {
         return this.moveEntityRepository.findById(id);
     }
 
+    public MoveEntity getReferenceById(String id) {
+        return this.moveEntityRepository.getReferenceById(id);
+    }
+
     public MoveEntity saveMove(Move move) {
         MoveEntity entity = this.moveEntityRepository.findById(move.moveId()).orElse(new MoveEntity());
         
