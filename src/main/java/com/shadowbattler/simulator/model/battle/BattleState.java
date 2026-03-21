@@ -293,7 +293,6 @@ public class BattleState {
                     this.finished = true;
                 }
 
-                //will switch on the next step due to fainted active and null queuedAction
                 trainer.setQueuedAction(null);
                 trainer.setQueuedActionFulfills(0);   
             }
@@ -321,35 +320,16 @@ public class BattleState {
         final BattlingCreature enemyActive = this.enemy.getActive();
         final Action enemyAction;
 
-        if (this.enemy.getQueuedAction() == null) {
+        if (enemyActive.isFainted() || playerActive.isFainted()) {
             if (enemyActive.isFainted()) {
                 //switch to next slot
                 enemyAction = Action.getSwitch(this.enemy.getActiveSlot() + 1);
                 //account for time for enemy to switch
                 this.timeElapsed += BattleState.ENEMY_FAINT_TIME;
-            } else if (enemyActive.getEnergy() >= enemyActive.getCreature().getChargedMoves().get(0).energy()) {
-                //always uses charged move when available
-                enemyAction = Action.CHARGED_ATTACK1;
-            } else if (this.enemy.hasStunQueued()) {
-                enemyAction = Action.STUN;
-                this.enemy.setStunQueued(false);
-            } else {
-                enemyAction = Action.FAST_ATTACK;
-            }
-        } else {
-            /*
-            if the enemy hasStunQueued set while they are already stunned, restart the stun duration
-            now instead of stunning them again after their current stun fulfills
-            */
-            if (this.enemy.hasStunQueued() && this.enemy.getQueuedAction() == Action.STUN) {
-                enemyAction = Action.STUN;
-                this.enemy.setStunQueued(false);
             } else {
                 enemyAction = null;
             }
-        }
-
-        if (this.player.getQueuedAction() == null) {
+            
             if (playerActive.isFainted()) {
                 //account for time for player to switch without double counting
                 if (enemyAction != null && !enemyAction.isSwitch()) {
@@ -372,6 +352,35 @@ public class BattleState {
                 //current State handles first possible switch, other is on another branch
                 this.queueActions(Action.getSwitch(firstSwitch), enemyAction);
             } else {
+                this.queueActions(null, enemyAction);
+            }
+
+            //turns are not elapsed when switching due to a creature fainting
+        } else {
+            if (this.enemy.getQueuedAction() == null) {
+                if (enemyActive.getEnergy() >= enemyActive.getCreature().getChargedMoves().get(0).energy()) {
+                    //always uses charged move when available
+                    enemyAction = Action.CHARGED_ATTACK1;
+                } else if (this.enemy.hasStunQueued()) {
+                    enemyAction = Action.STUN;
+                    this.enemy.setStunQueued(false);
+                } else {
+                    enemyAction = Action.FAST_ATTACK;
+                }
+            } else {
+                /*
+                if the enemy hasStunQueued set while they are already stunned, restart the stun duration
+                now instead of stunning them again after their current stun fulfills
+                */
+                if (this.enemy.hasStunQueued() && this.enemy.getQueuedAction() == Action.STUN) {
+                    enemyAction = Action.STUN;
+                    this.enemy.setStunQueued(false);
+                } else {
+                    enemyAction = null;
+                }
+            }
+
+            if (this.player.getQueuedAction() == null) {
                 for (int i = 1; i <= Math.min(playerActive.getCreature().getChargedMoves().size(), 2); i++) {
                     if (playerActive.getEnergy() >= playerActive.getCreature().getChargedMoves().get(i-1).energy()) {
                         final BattleState branch = new BattleState(this);
@@ -379,25 +388,17 @@ public class BattleState {
                         newBranches.add(branch);
                     } 
                 }
-
-                /*
-                for switching mid battle instead of only after fainting. would create too many branches
-                to handle, and is unlikely to improve times
-                */
-                // for (int i = 1; i <= 3; i++) {
-                //     if (this.player.getTeam().getByInt(i).isFainted()) continue;
-                //     this.branch().queueActions(Action.getSwitch(i), enemyAction);
-                // }
                 
                 //always processes fast attack on current State, other actions are processed on new branches
                 this.queueActions(Action.FAST_ATTACK, enemyAction);
+            } else {
+                this.queueActions(null, enemyAction);
             }
-        } else {
-            this.queueActions(null, enemyAction);
+            
+            this.timeElapsed += BattleState.TURN_TIME;
         }
 
         this.turnsElapsed++;
-        this.timeElapsed += BattleState.TURN_TIME;
 
         return newBranches;
     }
