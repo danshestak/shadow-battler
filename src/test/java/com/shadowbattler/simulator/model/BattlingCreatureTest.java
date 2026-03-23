@@ -1,5 +1,7 @@
 package com.shadowbattler.simulator.model;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,28 +28,28 @@ public class BattlingCreatureTest {
     Move fp;
     Move sp;
 
-    private BattlingCreature helper(String species) {
+    private BattlingCreature helper(String species, Move fast, List<Move> charged) {
         return new BattlingCreature(
             new Creature(
                 this.speciesDataService.getSpeciesById(species), 
                 Stats3.getMaxIVs(), 
                 50.0, 
-                null,
-                null
+                fast,
+                charged
             )
         );
     }
 
     @BeforeEach
     public void setup() {
-        this.v = helper("venusaur");
-        this.c = helper("charizard");
-        this.s = helper("snorlax_shadow");
-
         this.bs = this.movesDataService.getMoveById("BODY_SLAM");
         this.bb = this.movesDataService.getMoveById("BLAST_BURN");
         this.fp = this.movesDataService.getMoveById("FRENZY_PLANT");
         this.sp = this.movesDataService.getMoveById("SUPER_POWER");
+
+        this.v = helper("venusaur", null, List.of(this.fp));
+        this.c = helper("charizard", null, List.of(this.bb, this.bs));
+        this.s = helper("snorlax_shadow", null, List.of(this.sp));
     }
 
     @Test

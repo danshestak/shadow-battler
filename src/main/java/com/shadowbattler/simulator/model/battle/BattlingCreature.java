@@ -13,38 +13,43 @@ public class BattlingCreature {
     final private Creature creature;
     private int remainingHp;
     private int energy;
-    final private double baseAtk;
-    final private double baseDef;
-
-    final private static double BONUS_MULTIPLIER = 1.2999999523162841796875;
-    final private static double STAB_MULTIPLIER= 1.2000000476837158203125;
-    final private static double SHADOW_ATK_MULTIPLIER = 1.2;
-    final private static double SHADOW_DEF_MULTIPLIER = 0.83333331;
-
-    final private static double BUFF_DIVISOR = 4.0;
+    
     final protected static int MAX_BUFF_STAGES = 4;
+
+    final private static double[] BUFF_MULTIPLIERS = {
+        4.0 / 8.0, // -4
+        4.0 / 7.0, // -3
+        4.0 / 6.0, // -2
+        4.0 / 5.0, // -1
+        1.0, //  0
+        5.0 / 4.0, // +1
+        6.0 / 4.0, // +2
+        7.0 / 4.0, // +3
+        8.0 / 4.0  // +4
+    };
+
+    final private static double[] INVERSE_BUFF_MULTIPLIERS = {
+        8.0 / 4.0, // -4
+        7.0 / 4.0, // -3
+        6.0 / 4.0, // -2
+        5.0 / 4.0, // -1
+        1.0,       //  0
+        4.0 / 5.0, // +1
+        4.0 / 6.0, // +2
+        4.0 / 7.0, // +3
+        4.0 / 8.0  // +4
+    };
 
     public BattlingCreature(Creature creature) {
         this.creature = creature;
         this.remainingHp = (int)Math.round(creature.getStats().getHp());
         this.energy = 0;
-
-        double atk = creature.getStats().getAtk();
-        double def = creature.getStats().getDef();
-        if (creature.getSpecies().isShadow()) {
-            atk *= BattlingCreature.SHADOW_ATK_MULTIPLIER;
-            def *= BattlingCreature.SHADOW_DEF_MULTIPLIER;
-        }
-        this.baseAtk = atk;
-        this.baseDef = def;
     }
 
     public BattlingCreature(BattlingCreature other) {
         this.creature = other.creature;
         this.remainingHp = other.remainingHp;
         this.energy = other.energy;
-        this.baseAtk = other.baseAtk;
-        this.baseDef = other.baseDef;
     }
 
     public Creature getCreature() {
@@ -72,15 +77,15 @@ public class BattlingCreature {
     }
     
     public double calculateEffectiveAtk(int atkBuff) { 
-        if (atkBuff == 0) return this.baseAtk;
-        double multiplier = atkBuff > 0 ? (BattlingCreature.BUFF_DIVISOR + atkBuff) / BattlingCreature.BUFF_DIVISOR : BattlingCreature.BUFF_DIVISOR / (BattlingCreature.BUFF_DIVISOR - atkBuff);
-        return this.baseAtk * multiplier;
+        return this.creature.getBattleAtk() * BattlingCreature.BUFF_MULTIPLIERS[atkBuff + 4];
     }
 
     public double calculateEffectiveDef(int defBuff) {
-        if (defBuff == 0) return this.baseDef;
-        double multiplier = defBuff > 0 ? (BattlingCreature.BUFF_DIVISOR + defBuff) / BattlingCreature.BUFF_DIVISOR : BattlingCreature.BUFF_DIVISOR / (BattlingCreature.BUFF_DIVISOR - defBuff);
-        return this.baseDef * multiplier;
+        return this.creature.getBattleDef() * BattlingCreature.BUFF_MULTIPLIERS[defBuff + 4];
+    }
+
+    public double calculateInverseEffectiveDef(int defBuff) {
+        return this.creature.getInverseBattleDef() * BattlingCreature.INVERSE_BUFF_MULTIPLIERS[defBuff + 4];
     }
 
     /**
@@ -96,13 +101,19 @@ public class BattlingCreature {
         for charged moves there is also a charge multiplier that goes from 0.25 - 1, however
         we will assume that the charged move is always fully charged
         */
-        return 1 + (int)Math.floor(
-            move.power() *
-            this.calculateEffectiveAtk(atkBuff)/target.calculateEffectiveDef(targetDefBuff) *
-            move.type().effectivenessAgainst(target.creature.getSpecies().getTypes()) *
-            (this.creature.getSpecies().givesStabTo(move) ? BattlingCreature.STAB_MULTIPLIER : 1) *
-            0.5 *
-            BattlingCreature.BONUS_MULTIPLIER
+        final double powerWithStab;
+        if (move == this.creature.getFastMove()) {
+            powerWithStab = this.creature.getFastMovePowerWithStab();
+        } else if (move == this.creature.getChargedMoves().get(0)) {
+            powerWithStab = this.creature.getChargedMovePowersWithStab()[0];
+        } else {
+            powerWithStab = this.creature.getChargedMovePowersWithStab()[1];
+        }
+
+        return 1 + (int)(
+            powerWithStab *
+            this.calculateEffectiveAtk(atkBuff) * target.calculateInverseEffectiveDef(targetDefBuff) *
+            move.type().effectivenessAgainst(target.creature.getSpecies().getTypes())
         );
     }
 

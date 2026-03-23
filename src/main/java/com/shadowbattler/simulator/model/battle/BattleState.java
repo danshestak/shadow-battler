@@ -15,7 +15,6 @@ import com.shadowbattler.simulator.model.Team;
 public class BattleState {
     final private Trainer player;
     final private Trainer enemy;
-    final private Trainer[] trainers;
     private int turnsElapsed;
     private int timeElapsed;
     private boolean finished;
@@ -43,7 +42,6 @@ public class BattleState {
     public BattleState(Team<Creature> playerTeam, Team<Creature> opponentTeam, int opponentStartingShields, boolean isLogged) {
         this.player = new Trainer(playerTeam, 2);
         this.enemy = new Trainer(opponentTeam, opponentStartingShields);
-        this.trainers = new Trainer[]{this.player, this.enemy};
         this.turnsElapsed = 0;
         this.timeElapsed = 0;
         this.finished = false;
@@ -53,7 +51,6 @@ public class BattleState {
     public BattleState(BattleState other) {
         this.player = new Trainer(other.player);
         this.enemy = new Trainer(other.enemy);
-        this.trainers = new Trainer[]{this.player, this.enemy};
         this.turnsElapsed = other.turnsElapsed;
         this.timeElapsed = other.timeElapsed;
         this.finished = other.finished;
@@ -145,7 +142,8 @@ public class BattleState {
     private void processQueuedAction(Trainer user) {
         if (user.getQueuedAction() == null) return;
 
-        final int beforeHp = this.getOpponentTo(user).getActive().getRemainingHp();
+        final Trainer opp = this.getOpponentTo(user);
+        final int beforeHp = opp.getActive().getRemainingHp();
 
         if (user.getQueuedAction().isSwitch()) {
             //forced switch after fainting has no effect on cooldown
@@ -156,8 +154,6 @@ public class BattleState {
 
             this.enemy.setStunQueued(true);
         } else if (user.getQueuedAction().isChargedAttack()) {
-            final Trainer opp = this.getOpponentTo(user);
-
             //always uses shields if available
             /*
             the enemy ai always shields if they have them available, and for the player there
@@ -191,10 +187,10 @@ public class BattleState {
             this.enemy.setStunQueued(true);
         } else if (user.getQueuedAction() == Action.FAST_ATTACK) {
             user.getActive().attack(
-                this.getOpponentTo(user).getActive(),
+                opp.getActive(),
                 user.getActive().getCreature().getFastMove(),
                 user.getAtkBuff(),
-                this.getOpponentTo(user).getDefBuff()
+                opp.getDefBuff()
             );
         } else if (user.getQueuedAction() == Action.STUN) {
             user.setStunQueued(false);
@@ -206,7 +202,7 @@ public class BattleState {
                 user, 
                 user.getQueuedAction(), 
                 beforeHp, 
-                this.getOpponentTo(user).getActive().getRemainingHp()
+                opp.getActive().getRemainingHp()
             );
         }
 
@@ -285,23 +281,26 @@ public class BattleState {
         }
 
         if (playerFulfilledAction != null || enemyFulfilledAction != null) {
-            for (Trainer trainer : this.trainers) {
-                if (!trainer.getActive().isFainted()) continue;
-                trainer.adjustRemainingCreatures(-1);
-
-                if (trainer.getRemainingCreatures() <= 0) {
-                    this.finished = true;
-                }
-
-                trainer.setQueuedAction(null);
-                trainer.setQueuedActionFulfills(0);   
-            }
+            this.checkTrainerFaint(this.player);
+            this.checkTrainerFaint(this.enemy);
         }
 
         //end battle after 12 minutes
         if (this.timeElapsed > 720000) {
             this.finished = true;
         }
+    }
+
+    private void checkTrainerFaint(Trainer trainer) {
+        if (!trainer.getActive().isFainted()) return;
+        trainer.adjustRemainingCreatures(-1);
+
+        if (trainer.getRemainingCreatures() <= 0) {
+            this.finished = true;
+        }
+
+        trainer.setQueuedAction(null);
+        trainer.setQueuedActionFulfills(0);   
     }
 
     /**

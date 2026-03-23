@@ -46,6 +46,7 @@ public class TeamBattleSolver implements BattleSolver {
     public void solve() {
         List<BattleState> activeStates = new ArrayList<>();
         final List<BattleState> finishedStates = new ArrayList<>();
+        int fastestWinTime = Integer.MAX_VALUE;
 
         activeStates.add(
             new BattleState(
@@ -64,14 +65,20 @@ public class TeamBattleSolver implements BattleSolver {
 
                 if (state.isFinished()) {
                     finishedStates.add(state);
-                } else {
+                    if (state.playerWon()) {
+                        fastestWinTime = Math.min(fastestWinTime, state.getTimeElapsed());
+                    }
+                } else if (state.getTimeElapsed() < fastestWinTime) {
                     groupedStates.computeIfAbsent(state.getComparisonKey(), k -> new ArrayList<>()).add(state);
                 }
 
                 for (BattleState branch : newBranches) {
                     if (branch.isFinished()) {
                         finishedStates.add(branch);
-                    } else {
+                        if (branch.playerWon()) {
+                            fastestWinTime = Math.min(fastestWinTime, branch.getTimeElapsed());
+                        }
+                    } else if (branch.getTimeElapsed() < fastestWinTime) {
                         groupedStates.computeIfAbsent(branch.getComparisonKey(), k -> new ArrayList<>()).add(branch);
                     }
                 }

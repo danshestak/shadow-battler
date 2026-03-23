@@ -42,6 +42,16 @@ public enum Type {
         {  0, -1,  0,  0,  0,  0,  1, -1,  0,  0,  0,  0,  0,  0,  1,  1, -1,  0  }  // Fairy
     };
 
+    private static final double[][] EFFECTIVENESS = new double[18][18];
+
+    static {
+        for (int i = 0; i < 18; i++) {
+            for (int j = 0; j < 18; j++) {
+                EFFECTIVENESS[i][j] = Math.pow(1.6, Type.MATCHUPS[i][j]);
+            }
+        }
+    }
+
     private final int id;
 
     private Type(int id) {
@@ -54,7 +64,7 @@ public enum Type {
 
     public double effectivenessAgainst(Type defender) {
         if (defender == Type.NONE) return 1;
-        return Math.pow(1.6, Type.MATCHUPS[this.getId()][defender.getId()]);
+        return Type.EFFECTIVENESS[this.getId()][defender.getId()];
     }
 
     public double effectivenessAgainst(Type[] defendingTypes) {

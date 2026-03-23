@@ -44,6 +44,11 @@ public class Species {
     private Family family;
     private boolean shadow = false;
 
+    @JsonIgnore
+    private List<Move[]> cachedPlayerMoveCombinations;
+    @JsonIgnore
+    private List<Move[]> cachedEnemyMoveCombinations;
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static record Family(
         String id,
@@ -165,6 +170,18 @@ public class Species {
                         (this.requiredChargedMove != null && this.requiredChargedMove.moveId().equals(id))
             ).toList()
         );
+
+    this.cachedPlayerMoveCombinations = new ArrayList<>();
+    int playerQty = this.calculateMoveCombinationQuantity(false);
+    for (int i = 0; i < playerQty; i++) {
+        this.cachedPlayerMoveCombinations.add(this.calculateMoveCombinationFromId(i, false));
+    }
+
+    this.cachedEnemyMoveCombinations = new ArrayList<>();
+    int enemyQty = this.calculateMoveCombinationQuantity(true);
+    for (int i = 0; i < enemyQty; i++) {
+        this.cachedEnemyMoveCombinations.add(this.calculateMoveCombinationFromId(i, true));
+    }
     }
 
     public int getDex() {
@@ -256,6 +273,10 @@ public class Species {
      * @return the number of possible move combinations
      */
     public int moveCombinationQuantity(boolean enemyMoves) {
+        return enemyMoves ? this.cachedEnemyMoveCombinations.size() : this.cachedPlayerMoveCombinations.size();
+    }
+
+    private int calculateMoveCombinationQuantity(boolean enemyMoves) {
         final int chargedSize = (enemyMoves ? this.enemyChargedMoves : this.chargedMoves).size();
         final int fastSize = (enemyMoves ? this.enemyFastMoves : this.fastMoves).size();
 
@@ -279,6 +300,10 @@ public class Species {
      * @return
      */
     public Move[] moveCombinationFromId(int combinationId, boolean enemyMoves) {
+        return enemyMoves ? this.cachedEnemyMoveCombinations.get(combinationId) : this.cachedPlayerMoveCombinations.get(combinationId);
+    }
+
+    private Move[] calculateMoveCombinationFromId(int combinationId, boolean enemyMoves) {
         final List<Move> fast = enemyMoves ? this.enemyFastMoves : this.fastMoves;
         final List<Move> charged = enemyMoves ? this.enemyChargedMoves : this.chargedMoves;
         final int fastSize = fast.size();

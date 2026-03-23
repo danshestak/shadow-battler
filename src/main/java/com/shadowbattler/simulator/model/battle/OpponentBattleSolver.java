@@ -34,20 +34,31 @@ public class OpponentBattleSolver implements BattleSolver {
         for (int lineupId = 0; lineupId < opponent.getLineupSpecies().combinationQuantity(); lineupId++) {
             final Team<Species> lineup = opponent.getLineupSpecies().combinationFromId(lineupId);
             
+            final List<Creature> firstSlot = new ArrayList<>();
             for (int i = 0; i < lineup.getFirst().moveCombinationQuantity(true); i++) {
+                firstSlot.add(creatureFromMoveCombinationId(lineup.getFirst(), this.opponent, i));
+            }
+            
+            final List<Creature> secondSlot = new ArrayList<>();
             for (int j = 0; j < lineup.getSecond().moveCombinationQuantity(true); j++) {
+                secondSlot.add(creatureFromMoveCombinationId(lineup.getSecond(), this.opponent, j));
+            }
+            
+            final List<Creature> thirdSlot = new ArrayList<>();
             for (int k = 0; k < lineup.getThird().moveCombinationQuantity(true); k++) {
-                opponentTeamCombinations.add(
-                    new Team<>(
-                        creatureFromMoveCombinationId(lineup.getFirst(), this.opponent, i),
-                        creatureFromMoveCombinationId(lineup.getSecond(), this.opponent, j),
-                        creatureFromMoveCombinationId(lineup.getThird(), this.opponent, k)
-                    )
-                );
-            }}}
+                thirdSlot.add(creatureFromMoveCombinationId(lineup.getThird(), this.opponent, k));
+            }
+
+            for (Creature first : firstSlot) {
+                for (Creature second : secondSlot) {
+                    for (Creature third : thirdSlot) {
+                        opponentTeamCombinations.add(new Team<>(first, second, third));
+                    }
+                }
+            }
         }
         
-        final List<BattleResult> battleResults = opponentTeamCombinations.parallelStream()
+        final List<BattleResult> battleResults = opponentTeamCombinations.stream()
             .map((opponentTeam) -> {
                 final TeamBattleSolver teamBattleSolver = new TeamBattleSolver(
                     this.playerTeam,
