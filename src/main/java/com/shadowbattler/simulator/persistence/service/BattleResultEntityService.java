@@ -1,5 +1,7 @@
 package com.shadowbattler.simulator.persistence.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.shadowbattler.simulator.persistence.entity.BattleResultEntity;
@@ -15,5 +17,9 @@ public class BattleResultEntityService {
 
     public BattleResultEntity save(BattleResultEntity battleResultEntity) {
         return this.battleResultEntityRepository.save(battleResultEntity);
+    }
+
+    public List<BattleResultEntity> saveAll(List<BattleResultEntity> battleResultEntities) {
+        return this.battleResultEntityRepository.saveAll(battleResultEntities);
     }
 }

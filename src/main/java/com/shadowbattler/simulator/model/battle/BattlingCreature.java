@@ -2,7 +2,6 @@ package com.shadowbattler.simulator.model.battle;
 
 import com.shadowbattler.simulator.model.Creature;
 import com.shadowbattler.simulator.model.Move;
-import com.shadowbattler.simulator.model.Stats3;
 
 /**
  * a wrapper for a creature that adds battling functionality, such as dealing and receiving damage
@@ -14,6 +13,8 @@ public class BattlingCreature {
     final private Creature creature;
     private int remainingHp;
     private int energy;
+    final private double baseAtk;
+    final private double baseDef;
 
     final private static double BONUS_MULTIPLIER = 1.2999999523162841796875;
     final private static double STAB_MULTIPLIER= 1.2000000476837158203125;
@@ -27,12 +28,23 @@ public class BattlingCreature {
         this.creature = creature;
         this.remainingHp = (int)Math.round(creature.getStats().getHp());
         this.energy = 0;
+
+        double atk = creature.getStats().getAtk();
+        double def = creature.getStats().getDef();
+        if (creature.getSpecies().isShadow()) {
+            atk *= BattlingCreature.SHADOW_ATK_MULTIPLIER;
+            def *= BattlingCreature.SHADOW_DEF_MULTIPLIER;
+        }
+        this.baseAtk = atk;
+        this.baseDef = def;
     }
 
     public BattlingCreature(BattlingCreature other) {
         this.creature = other.creature;
         this.remainingHp = other.remainingHp;
         this.energy = other.energy;
+        this.baseAtk = other.baseAtk;
+        this.baseDef = other.baseDef;
     }
 
     public Creature getCreature() {
@@ -59,30 +71,16 @@ public class BattlingCreature {
         this.remainingHp = Math.max(this.remainingHp - damage, 0);
     }
     
-    private double calculateEffectiveStat(Stats3.Stat stat, int buff) {
-        double multiplier;
-
-        if (buff > 0) {
-            multiplier = (BattlingCreature.BUFF_DIVISOR + buff) / BattlingCreature.BUFF_DIVISOR;
-        } else if (buff < 0) {
-            multiplier = BattlingCreature.BUFF_DIVISOR / (BattlingCreature.BUFF_DIVISOR - buff);
-        } else {
-            multiplier = 1.0;
-        }
-
-        if (this.creature.getSpecies().isShadow()) {
-            multiplier *= stat == Stats3.Stat.ATK ? BattlingCreature.SHADOW_ATK_MULTIPLIER : BattlingCreature.SHADOW_DEF_MULTIPLIER;
-        }
-
-        return this.creature.getStats().getByEnum(stat) * multiplier;
-    }
-
     public double calculateEffectiveAtk(int atkBuff) { 
-        return this.calculateEffectiveStat(Stats3.Stat.ATK, atkBuff);
+        if (atkBuff == 0) return this.baseAtk;
+        double multiplier = atkBuff > 0 ? (BattlingCreature.BUFF_DIVISOR + atkBuff) / BattlingCreature.BUFF_DIVISOR : BattlingCreature.BUFF_DIVISOR / (BattlingCreature.BUFF_DIVISOR - atkBuff);
+        return this.baseAtk * multiplier;
     }
 
     public double calculateEffectiveDef(int defBuff) {
-        return this.calculateEffectiveStat(Stats3.Stat.DEF, defBuff); 
+        if (defBuff == 0) return this.baseDef;
+        double multiplier = defBuff > 0 ? (BattlingCreature.BUFF_DIVISOR + defBuff) / BattlingCreature.BUFF_DIVISOR : BattlingCreature.BUFF_DIVISOR / (BattlingCreature.BUFF_DIVISOR - defBuff);
+        return this.baseDef * multiplier;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.shadowbattler.simulator.persistence.service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +16,10 @@ public class SpeciesEntityService {
 
     public SpeciesEntityService(SpeciesEntityRepository speciesEntityRepository) {
         this.speciesEntityRepository = speciesEntityRepository;
+    }
+
+    public List<SpeciesEntity> getAllSpeciesEntities() {
+        return this.speciesEntityRepository.findAll();
     }
 
     public Optional<SpeciesEntity> getSpeciesEntityById(String id) {

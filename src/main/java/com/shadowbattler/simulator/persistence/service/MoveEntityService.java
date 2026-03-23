@@ -1,5 +1,7 @@
 package com.shadowbattler.simulator.persistence.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -16,6 +18,10 @@ public class MoveEntityService {
         this.moveEntityRepository = moveEntityRepository;
     }
 
+    public List<MoveEntity> getAllMoveEntities() {
+        return this.moveEntityRepository.findAll();
+    }
+
     public Optional<MoveEntity> getMoveEntityById(String id) {
         return this.moveEntityRepository.findById(id);
     }
@@ -28,6 +34,10 @@ public class MoveEntityService {
         MoveEntity entity = this.moveEntityRepository.findById(move.moveId()).orElse(new MoveEntity());
         
         entity.updateFromMove(move);
+        //by saving the entity with empty lists, orphanRemoval will delete the old results
+        entity.setBattleResultsAsFastMove(new ArrayList<>());
+        entity.setBattleResultsAsChargedMove1(new ArrayList<>());
+        entity.setBattleResultsAsChargedMove2(new ArrayList<>());
         return this.moveEntityRepository.save(entity);
     }
 }

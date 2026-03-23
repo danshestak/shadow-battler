@@ -1,9 +1,11 @@
 package com.shadowbattler.simulator.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -14,14 +16,13 @@ import com.shadowbattler.simulator.model.Species;
 import com.shadowbattler.simulator.model.Stats3;
 import com.shadowbattler.simulator.model.battle.MovesetSolver;
 import com.shadowbattler.simulator.persistence.entity.BattleResultEntity;
+import com.shadowbattler.simulator.persistence.entity.MoveEntity;
 import com.shadowbattler.simulator.persistence.entity.OpponentEntity;
 import com.shadowbattler.simulator.persistence.entity.SpeciesEntity;
 import com.shadowbattler.simulator.persistence.service.BattleResultEntityService;
 import com.shadowbattler.simulator.persistence.service.MoveEntityService;
 import com.shadowbattler.simulator.persistence.service.OpponentEntityService;
 import com.shadowbattler.simulator.persistence.service.SpeciesEntityService;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class EntityReconciliationService {
@@ -57,29 +58,49 @@ public class EntityReconciliationService {
         this.movesDataService = movesDataService;
     }
 
-    @Transactional
+    private static boolean speciesFilter(Species species) {
+        if (species.getFamily().evolutions() != null) return false;
+        return !species.getSpeciesId().equals("smeargle");
+    }
+
     public void reconcileModified() {
+        final List<Species> allSpecies = speciesDataService.getAllSpecies();
+        final List<Opponent> allOpponents = opponentDataService.getAllOpponents();
+
+        final List<Species> filteredSpecies = allSpecies.stream()
+            .filter(EntityReconciliationService::speciesFilter)
+            .toList();
+            
+        final Map<String, MoveEntity> existingMoves = this.moveEntityService.getAllMoveEntities().stream()
+            .collect(Collectors.toMap(MoveEntity::getMoveId, Function.identity()));
+
         Set<Move> modifiedMoves = movesDataService.getAllMoves().stream()
             .filter(move -> {
-                return this.moveEntityService.getMoveEntityById(move.moveId()).map(e -> !e.representsMove(move)).orElse(true);
+                MoveEntity e = existingMoves.get(move.moveId());
+                return e == null || !e.representsMove(move);
             })
             .collect(Collectors.toSet());
 
-        Set<Species> modifiedSpecies = speciesDataService.getAllSpecies().stream()
-            .filter(species -> {
-                final Optional<SpeciesEntity> speciesEntity = this.speciesEntityService.getSpeciesEntityById(species.getSpeciesId());
+        final Map<String, SpeciesEntity> existingSpecies = this.speciesEntityService.getAllSpeciesEntities().stream()
+            .collect(Collectors.toMap(SpeciesEntity::getSpeciesId, Function.identity()));
 
-                return speciesEntity.map(e -> !e.representsSpecies(species)).orElse(true)
+        Set<Species> modifiedSpecies = filteredSpecies.stream()
+            .filter(species -> {
+                SpeciesEntity e = existingSpecies.get(species.getSpeciesId());
+                return e == null || !e.representsSpecies(species)
                     || species.getFastMoves().stream().anyMatch(modifiedMoves::contains)
                     || species.getChargedMoves().stream().anyMatch(modifiedMoves::contains);
             })
             .collect(Collectors.toSet());
         
-        Set<Opponent> modifiedOpponents = opponentDataService.getAllOpponents().stream()
-            .filter(opponent -> {
-                final Optional<OpponentEntity> opponentEntity = this.opponentEntityService.getOpponentEntityById(opponent.getOpponentId());
+        final Map<String, OpponentEntity> existingOpponents = this.opponentEntityService.getAllOpponentEntities().stream()
+            .collect(Collectors.toMap(OpponentEntity::getOpponentId, Function.identity()));
 
-                return opponentEntity.map(e -> !e.representsOpponent(opponent)).orElse(true)
+        Set<Opponent> modifiedOpponents = allOpponents.stream()
+            .filter(opponent -> {
+                OpponentEntity e = existingOpponents.get(opponent.getOpponentId());
+                return e == null 
+                    || !e.representsOpponent(opponent)
                     || opponent.getLineupSpecies().stream().flatMap(Collection::stream).anyMatch(modifiedSpecies::contains);
             })
             .collect(Collectors.toSet());
@@ -89,42 +110,22 @@ public class EntityReconciliationService {
         modifiedOpponents.forEach(this.opponentEntityService::saveOpponent);
 
         for (Opponent opponent : modifiedOpponents) {
-            for (Species species : this.speciesDataService.getAllSpecies()) {
+            for (Species species : filteredSpecies) {
                 this.reconcileBattles(species, opponent);
             }
         }
 
-        for (Opponent opponent : this.opponentDataService.getAllOpponents()) {
+        for (Opponent opponent : allOpponents) {
             if (modifiedOpponents.contains(opponent)) continue; //avoid battles reconciled in previous loop
 
             for (Species species : modifiedSpecies) {
                 this.reconcileBattles(species, opponent);
             }
         }
-
-        /*
-        create set of modified moves
-            save changes to db entity, or create it if it doesn't exist
-            remove battle results using old move
-
-        create set of modified species (species with moveset changes, who know a modified move, or that don't exist)
-            save changes to db entity, or create it if it doesn't exist
-            remove battle results using old species
-
-        create set modified opponents (opponents who use a species that has been modified)
-            save changes to db entity, or create it if it doesn't exist
-            remove battle results against old opponent
-
-        rerun simulations for modified opponents
-            save simulation battle results
-
-        rerun simulations for modified species (excluding those against modified opponents as they've already happened)
-            save simulation battle results
-
-        */
     }
 
     public void reconcileBattles(Species species, Opponent opponent) {
+        List<BattleResultEntity> resultsToSave = new ArrayList<>();
         for (int trainerLevel : EntityReconciliationService.trainerLevels) {
             for (int playerCreatureLevel : EntityReconciliationService.playerCreatureLevels) {
                 final MovesetSolver solution = this.battleSolverService.solveOpponentMovesetSolver(
@@ -157,9 +158,10 @@ public class EntityReconciliationService {
                     entity.setPlayerLevel(playerCreatureLevel);
                     entity.setTrainerLevel(trainerLevel);
                 
-                    this.battleResultEntityService.save(entity);
+                    resultsToSave.add(entity);
                 });
             }
         }
+        this.battleResultEntityService.saveAll(resultsToSave);
     }
 }
