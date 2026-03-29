@@ -58,8 +58,8 @@ public class EntityReconciliationService {
         this.movesDataService = movesDataService;
     }
 
-    private static boolean speciesFilter(Species species) {
-        if (species.getFamily().evolutions() != null) return false;
+    public static boolean speciesFilter(Species species) {
+        if (species.getFamily() != null && species.getFamily().evolutions() != null) return false;
         return !species.getSpeciesId().equals("smeargle");
     }
 

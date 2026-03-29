@@ -254,12 +254,12 @@ public class Creature {
         this.battleDef = def * (species.isShadow() ? Creature.SHADOW_DEF_MULTIPLIER : 1.0);
         this.inverseBattleDef = 1.0 / this.battleDef;
 
-        this.fastMovePowerWithStab = fastMove != null ? fastMove.power() * (species.givesStabTo(fastMove) ? Creature.STAB_MULTIPLIER : 1.0) : 0;
+        this.fastMovePowerWithStab = fastMove != null ? calculateMovePowerWithStab(fastMove) : 0;
         
         this.chargedMovePowersWithStab = new double[chargedMoves != null ? chargedMoves.size() : 0];
         if (chargedMoves != null) {
             for (int i = 0; i < chargedMoves.size(); i++) {
-                this.chargedMovePowersWithStab[i] = chargedMoves.get(i).power() * (species.givesStabTo(chargedMoves.get(i)) ? Creature.STAB_MULTIPLIER : 1.0);
+                this.chargedMovePowersWithStab[i] = calculateMovePowerWithStab(chargedMoves.get(i));
             }
         }
     }
@@ -294,10 +294,14 @@ public class Creature {
         this.battleDef = def * (species.isShadow() ? Creature.SHADOW_DEF_MULTIPLIER : 1.0);
         this.inverseBattleDef = 1.0 / this.battleDef;
 
-        this.fastMovePowerWithStab = fastMove != null ? fastMove.power() * (species.givesStabTo(fastMove) ? Creature.STAB_MULTIPLIER : 1.0) : 0;
+        this.fastMovePowerWithStab = fastMove != null ? calculateMovePowerWithStab(fastMove) : 0;
         this.chargedMovePowersWithStab = new double[]{
-            chargedMove != null ? chargedMove.power() * (species.givesStabTo(chargedMove) ? Creature.STAB_MULTIPLIER : 1.0) : 0
+            chargedMove != null ? calculateMovePowerWithStab(chargedMove) : 0
         };
+    }
+
+    private double calculateMovePowerWithStab(Move move) {
+        return move.power() * (species.givesStabTo(move) ? Creature.STAB_MULTIPLIER : 1.0);
     }
 
     public Species getSpecies() {

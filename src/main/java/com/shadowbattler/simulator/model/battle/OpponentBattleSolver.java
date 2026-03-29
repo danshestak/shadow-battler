@@ -27,51 +27,51 @@ public class OpponentBattleSolver implements BattleSolver {
         this.opponent = opponent;
         this.trainerLevel = trainerLevel;
     }
-    
+
     @Override
     public void solve() {
-        final List<Team<Creature>> opponentTeamCombinations = new ArrayList<>();
-        for (int lineupId = 0; lineupId < opponent.getLineupSpecies().combinationQuantity(); lineupId++) {
-            final Team<Species> lineup = opponent.getLineupSpecies().combinationFromId(lineupId);
-            
-            final List<Creature> firstSlot = new ArrayList<>();
-            for (int i = 0; i < lineup.getFirst().moveCombinationQuantity(true); i++) {
-                firstSlot.add(creatureFromMoveCombinationId(lineup.getFirst(), this.opponent, i));
-            }
-            
-            final List<Creature> secondSlot = new ArrayList<>();
-            for (int j = 0; j < lineup.getSecond().moveCombinationQuantity(true); j++) {
-                secondSlot.add(creatureFromMoveCombinationId(lineup.getSecond(), this.opponent, j));
-            }
-            
-            final List<Creature> thirdSlot = new ArrayList<>();
-            for (int k = 0; k < lineup.getThird().moveCombinationQuantity(true); k++) {
-                thirdSlot.add(creatureFromMoveCombinationId(lineup.getThird(), this.opponent, k));
-            }
+        final List<BattleResult> battleResults = new ArrayList<>();
+        final int lineupCombinationQty = opponent.getLineupSpecies().combinationQuantity();
 
-            for (Creature first : firstSlot) {
-                for (Creature second : secondSlot) {
-                    for (Creature third : thirdSlot) {
-                        opponentTeamCombinations.add(new Team<>(first, second, third));
+        for (int lineupId = 0; lineupId < lineupCombinationQty; lineupId++) {
+            final Team<Species> lineup = opponent.getLineupSpecies().combinationFromId(lineupId);
+
+            final List<Creature> firstSlotCreatures = getCreaturesForSlot(lineup.getFirst());
+            final List<Creature> secondSlotCreatures = getCreaturesForSlot(lineup.getSecond());
+            final List<Creature> thirdSlotCreatures = getCreaturesForSlot(lineup.getThird());
+
+            for (Creature first : firstSlotCreatures) {
+                for (Creature second : secondSlotCreatures) {
+                    for (Creature third : thirdSlotCreatures) {
+                        final Team<Creature> opponentTeam = new Team<>(first, second, third);
+                        final TeamBattleSolver teamBattleSolver = new TeamBattleSolver(
+                            this.playerTeam,
+                            opponentTeam,
+                            opponent.getTitle().getShields()
+                        );
+                        teamBattleSolver.solve();
+                        battleResults.add(teamBattleSolver.getBattleResult());
                     }
                 }
             }
         }
-        
-        final List<BattleResult> battleResults = opponentTeamCombinations.stream()
-            .map((opponentTeam) -> {
-                final TeamBattleSolver teamBattleSolver = new TeamBattleSolver(
-                    this.playerTeam,
-                    opponentTeam,
-                    opponent.getTitle().getShields()
-                );
-                teamBattleSolver.solve();
-                return teamBattleSolver.getBattleResult();
-            })
-            .toList();
+
         this.battleResult = BattleResult.averageOf(battleResults);
     }
     
+    private List<Creature> getCreaturesForSlot(Species species) {
+        if (species == null) {
+            return List.of((Creature) null);
+        }
+
+        final int combinationsQuantity = species.moveCombinationQuantity(true);
+        final List<Creature> creatures = new ArrayList<>(combinationsQuantity);
+        for (int i = 0; i < combinationsQuantity; i++) {
+            creatures.add(creatureFromMoveCombinationId(species, this.opponent, i));
+        }
+        return creatures;
+    }
+
     private Creature creatureFromMoveCombinationId(Species species, Opponent opponent, int moveCombinationId) {
         final Move[] moveCombination = species.moveCombinationFromId(moveCombinationId, true);
 

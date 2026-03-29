@@ -162,14 +162,18 @@ public class Species {
                 (id) -> !this.eliteMoveIds.contains(id) && !this.legacyMoveIds.contains(id)
             ).toList()
         );
-        this.chargedMoves = this.hydrateMovesList(movesDataService, this.chargedMoveIds);
-        this.enemyChargedMoves = this.hydrateMovesList(
+
+        this.chargedMoves = new ArrayList<>(this.hydrateMovesList(movesDataService, this.chargedMoveIds));
+        this.chargedMoves.sort(java.util.Comparator.comparingInt(Move::energy));
+
+        this.enemyChargedMoves = new ArrayList<>(this.hydrateMovesList(
             movesDataService, 
             this.chargedMoveIds.stream().filter(
                 (id) -> (!this.eliteMoveIds.contains(id) && !this.legacyMoveIds.contains(id)) || 
                         (this.requiredChargedMove != null && this.requiredChargedMove.moveId().equals(id))
             ).toList()
-        );
+        ));
+        this.enemyChargedMoves.sort(java.util.Comparator.comparingInt(Move::energy));
 
     this.cachedPlayerMoveCombinations = new ArrayList<>();
     int playerQty = this.calculateMoveCombinationQuantity(false);
