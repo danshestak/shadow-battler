@@ -24,6 +24,7 @@ public class OpponentEntity {
     private String opponentId;
     @Enumerated(EnumType.STRING)
     private Title title;
+    @Column(name = "cp_limit")
     private int limit;
     @ElementCollection
     @CollectionTable(name = "opponent_lineups", joinColumns = @JoinColumn(name = "opponent_id"))

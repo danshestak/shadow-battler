@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.shadowbattler.simulator.model.Move;
@@ -63,6 +64,8 @@ public class EntityReconciliationService {
         return !species.getSpeciesId().equals("smeargle");
     }
 
+    @Async
+    // @EventListener(ApplicationReadyEvent.class)
     public void reconcileModified() {
         final List<Species> allSpecies = speciesDataService.getAllSpecies();
         final List<Opponent> allOpponents = opponentDataService.getAllOpponents();

@@ -5,20 +5,9 @@
         "title": "rocket_boss",
         "limit": 100000,
         "lineup": {
-            "first": ["persian_shadow"],
-            "second": ["kangaskhan_shadow", "rhyperior_shadow", "nidoking_shadow"],
-            "third": ["tornadus_incarnate_shadow"]
-        }
-    },
-    {
-        "opponentId": "leader_arlo",
-        "name": "Arlo",
-        "title": "rocket_leader",
-        "limit": 100000,
-        "lineup": {
-            "first": ["wobbuffet_shadow"],
-            "second": ["steelix_shadow", "slowbro_shadow", "crobat_shadow"],
-            "third": ["scizor_shadow", "alakazam_shadow", "muk_alolan_shadow"]
+            "first": ["raticate_shadow"],
+            "second": ["pidgeot_shadow", "rhydon_shadow", "raticate_shadow"],
+            "third": ["charizard_shadow"]
         }
     },
     {
@@ -27,20 +16,9 @@
         "title": "rocket_leader",
         "limit": 100000,
         "lineup": {
-            "first": ["magikarp_shadow"],
-            "second": ["cradily_shadow", "annihilape_shadow", "skarmory_shadow"],
-            "third": ["camerupt_shadow", "tyranitar_shadow", "gallade_shadow"]
-        }
-    },
-    {
-        "opponentId": "leader_sierra",
-        "name": "Sierra",
-        "title": "rocket_leader",
-        "limit": 100000,
-        "lineup": {
-            "first": ["feebas_shadow"],
-            "second": ["mismagius_shadow", "staraptor_shadow", "ferrothorn_shadow"],
-            "third": ["houndoom_shadow", "camerupt_shadow", "drapion_shadow"]
+            "first": ["pidgey_shadow"],
+            "second": ["wartortle_shadow", "ivysaur_shadow", "pidgeotto_shadow"],
+            "third": ["blastoise_shadow", "venusaur_shadow", "pidgeot_shadow"]
         }
     },
     {
@@ -49,9 +27,9 @@
         "title": "rocket_grunt",
         "limit": 100000,
         "lineup": {
-            "first": ["slakoth_shadow", "slakoth_shadow", "bunnelby_shadow"],
-            "second": ["rattata_shadow", "vigoroth_shadow", "diggersby_shadow"],
-            "third": ["raticate_shadow", "ursaring_shadow", "slaking_shadow"]
+            "first": ["rattata_shadow"],
+            "second": ["rattata_shadow", "raticate_shadow"],
+            "third": ["rattata_shadow", "raticate_shadow"]
         }
     },
     {
@@ -60,9 +38,9 @@
         "title": "rocket_grunt",
         "limit": 100000,
         "lineup": {
-            "first": ["darumaka_shadow", "numel_shadow", "tepig_shadow"],
-            "second": ["houndoom_shadow", "ninetales_shadow", "pignite_shadow"],
-            "third": ["houndoom_shadow", "darmanitan_standard_shadow", "emboar_shadow"]
+            "first": ["charmander_shadow", "charmeleon_shadow", "charizard_shadow"],
+            "second": ["charmander_shadow", "charmeleon_shadow", "charizard_shadow"],
+            "third": ["charmander_shadow", "charmeleon_shadow", "charizard_shadow"]
         }
     },
     {
@@ -71,53 +49,9 @@
         "title": "rocket_grunt",
         "limit": 100000,
         "lineup": {
-            "first": ["oshawott_shadow", "spheal_shadow", "staryu_shadow"],
-            "second": ["cloyster_shadow", "dewott_shadow", "seadra_shadow"],
-            "third": ["carracosta_shadow", "samurott_shadow", "whiscash_shadow"]
-        }
-    },
-    {
-        "opponentId": "grunt_m_water",
-        "name": "Male Water-type Grunt",
-        "title": "rocket_grunt",
-        "limit": 100000,
-        "lineup": {
-            "first": ["magikarp_shadow"],
-            "second": ["magikarp_shadow"],
-            "third": ["magikarp_shadow", "gyarados_shadow"]
-        }
-    },
-    {
-        "opponentId": "leader_candela_gl",
-        "name": "Candela (Great League)",
-        "title": "team_leader",
-        "limit": 1500,
-        "lineup": {
-            "first": ["combusken"],
-            "second": ["magcargo"],
-            "third": ["flareon"]
-        }
-    },
-    {
-        "opponentId": "leader_candela_ul",
-        "name": "Candela (Ultra League)",
-        "title": "team_leader",
-        "limit": 2500,
-        "lineup": {
-            "first": ["flareon"],
-            "second": ["typhlosion"],
-            "third": ["magmortar"]
-        }
-    },
-    {
-        "opponentId": "leader_candela_ml",
-        "name": "Candela (Master League)",
-        "title": "team_leader",
-        "limit": 100000,
-        "lineup": {
-            "first": ["entei"],
-            "second": ["salamence"],
-            "third": ["moltres"]
+            "first": ["squirtle_shadow", "wartortle_shadow", "blastoise_shadow"],
+            "second": ["squirtle_shadow", "wartortle_shadow", "blastoise_shadow"],
+            "third": ["squirtle_shadow", "wartortle_shadow", "blastoise_shadow"]
         }
     }
 ]

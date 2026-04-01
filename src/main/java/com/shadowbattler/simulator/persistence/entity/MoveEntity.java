@@ -1,6 +1,7 @@
 package com.shadowbattler.simulator.persistence.entity;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Stats3;
@@ -23,10 +24,10 @@ public class MoveEntity {
     private int energyGain;
     private int turns;
     @Convert(converter = Stats3IntegerConverter.class)
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = true)
     private Stats3<Integer> buffsSelf;
     @Convert(converter = Stats3IntegerConverter.class)
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = true)
     private Stats3<Integer> buffsOpponent;
     private double buffApplyChance;
     @OneToMany(mappedBy = "playerFastMove", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -134,8 +135,8 @@ public class MoveEntity {
         if (this.energy != move.energy()) return false;
         if (this.energyGain != move.energyGain()) return false;
         if (this.turns != move.turns()) return false;
-        if (!this.buffsSelf.equals(move.buffsSelf())) return false;
-        if (!this.buffsOpponent.equals(move.buffsOpponent())) return false;
+        if (!Objects.equals(this.buffsSelf, move.buffsSelf())) return false;
+        if (!Objects.equals(this.buffsOpponent, move.buffsOpponent())) return false;
         return this.buffApplyChance == move.buffApplyChance();
     }
 

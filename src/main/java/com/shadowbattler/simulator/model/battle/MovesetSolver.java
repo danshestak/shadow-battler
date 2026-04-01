@@ -72,7 +72,13 @@ public class MovesetSolver implements BattleSolver {
             movesets.add(this.species.moveCombinationFromId(i, false));
         }
 
-        this.movesetBattleResults = movesets.parallelStream()
+        // for (Move charged : this.species.getChargedMoves()) {
+        //     for (Move fast : this.species.getFastMoves()) {
+        //         movesets.add(new Move[]{fast, charged, null});
+        //     }
+        // }
+
+        this.movesetBattleResults = movesets.stream()
             .map((moveset) -> {
                 Creature playerCreature = this.creatureFactory.apply(moveset[0], getChargedMoves(moveset));
                 BattleSolver battleSolver = battleSolverFactory.apply(playerCreature);

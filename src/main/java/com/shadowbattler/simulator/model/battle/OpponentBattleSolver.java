@@ -30,8 +30,8 @@ public class OpponentBattleSolver implements BattleSolver {
 
     @Override
     public void solve() {
-        final List<BattleResult> battleResults = new ArrayList<>();
         final int lineupCombinationQty = opponent.getLineupSpecies().combinationQuantity();
+        final List<Team<Creature>> teams = new ArrayList<>();
 
         for (int lineupId = 0; lineupId < lineupCombinationQty; lineupId++) {
             final Team<Species> lineup = opponent.getLineupSpecies().combinationFromId(lineupId);
@@ -43,18 +43,23 @@ public class OpponentBattleSolver implements BattleSolver {
             for (Creature first : firstSlotCreatures) {
                 for (Creature second : secondSlotCreatures) {
                     for (Creature third : thirdSlotCreatures) {
-                        final Team<Creature> opponentTeam = new Team<>(first, second, third);
-                        final TeamBattleSolver teamBattleSolver = new TeamBattleSolver(
-                            this.playerTeam,
-                            opponentTeam,
-                            opponent.getTitle().getShields()
-                        );
-                        teamBattleSolver.solve();
-                        battleResults.add(teamBattleSolver.getBattleResult());
+                        teams.add(new Team<>(first, second, third));
                     }
                 }
             }
         }
+
+        final List<BattleResult> battleResults = teams.parallelStream()
+            .map(t -> {
+                final TeamBattleSolver teamBattleSolver = new TeamBattleSolver(
+                    this.playerTeam,
+                    t,
+                    opponent.getTitle().getShields()
+                );
+                teamBattleSolver.solve();
+                return teamBattleSolver.getBattleResult();
+            })
+            .toList();
 
         this.battleResult = BattleResult.averageOf(battleResults);
     }
