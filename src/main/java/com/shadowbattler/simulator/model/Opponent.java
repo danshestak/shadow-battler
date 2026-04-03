@@ -19,6 +19,7 @@ public class Opponent {
     @JsonIgnore
     private Lineup<Species> lineupSpecies;
 
+    
     public static enum Title {
         ROCKET_BOSS,
         ROCKET_LEADER,
@@ -76,5 +77,10 @@ public class Opponent {
 
     public Lineup<Species> getLineupSpecies() {
         return this.lineupSpecies;
+    }
+
+    @Override
+    public String toString() {
+        return this.opponentId;
     }
 }

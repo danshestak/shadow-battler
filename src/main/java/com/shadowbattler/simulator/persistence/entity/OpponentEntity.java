@@ -1,6 +1,9 @@
 package com.shadowbattler.simulator.persistence.entity;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import com.shadowbattler.simulator.model.Opponent;
 import com.shadowbattler.simulator.model.Opponent.Title;
@@ -12,6 +15,7 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -26,7 +30,7 @@ public class OpponentEntity {
     private Title title;
     @Column(name = "cp_limit")
     private int limit;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "opponent_lineups", joinColumns = @JoinColumn(name = "opponent_id"))
     @Column(name = "species_id")
     private List<String> lineupSpeciesIds;
@@ -78,10 +82,12 @@ public class OpponentEntity {
      * @return true iff the opponents have the same id, title, limit, and lineups
      */
     public boolean representsOpponent(Opponent opponent) {
-        if (!this.opponentId.equals(opponent.getOpponentId())) return false;
+        if (!Objects.equals(this.opponentId, opponent.getOpponentId())) return false;
         if (this.title != opponent.getTitle()) return false;
         if (this.limit != opponent.getLimit()) return false;
-        return this.lineupSpeciesIds.equals(opponent.getLineupIds().flatten());
+        final Set<String> thisIds = this.lineupSpeciesIds == null ? Set.of() : new HashSet<>(this.lineupSpeciesIds);
+        final Set<String> otherIds = new HashSet<>(opponent.getLineupIds().flatten());
+        return thisIds.equals(otherIds);
     }
 
     public void updateFromOpponent(Opponent opponent) {

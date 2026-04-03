@@ -1,7 +1,8 @@
 package com.shadowbattler.simulator.persistence.entity;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
 import com.shadowbattler.simulator.model.Species;
 
@@ -10,6 +11,7 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -25,22 +27,22 @@ elite or legacy moves)
 public class SpeciesEntity {
     @Id
     private String speciesId;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "species_fast_moves", joinColumns = @JoinColumn(name = "species_id"))
     @Column(name = "move_id")
-    private List<String> fastMoveIds;
-    @ElementCollection
+    private Set<String> fastMoveIds;
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "species_charged_moves", joinColumns = @JoinColumn(name = "species_id"))
     @Column(name = "move_id")
-    private List<String> chargedMoveIds;
-    @ElementCollection
+    private Set<String> chargedMoveIds;
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "species_elite_moves", joinColumns = @JoinColumn(name = "species_id"))
     @Column(name = "move_id")
-    private List<String> eliteMoveIds;
-    @ElementCollection
+    private Set<String> eliteMoveIds;
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "species_legacy_moves", joinColumns = @JoinColumn(name = "species_id"))
     @Column(name = "move_id")
-    private List<String> legacyMoveIds;
+    private Set<String> legacyMoveIds;
     @OneToMany(mappedBy = "playerSpecies", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BattleResultEntity> battleResults;
 
@@ -52,35 +54,35 @@ public class SpeciesEntity {
         this.speciesId = speciesId;
     }
 
-    public List<String> getFastMoveIds() {
+    public Set<String> getFastMoveIds() {
         return this.fastMoveIds;
     }
 
-    public void setFastMoveIds(List<String> fastMoveIds) {
+    public void setFastMoveIds(Set<String> fastMoveIds) {
         this.fastMoveIds = fastMoveIds;
     }
 
-    public List<String> getChargedMoveIds() {
+    public Set<String> getChargedMoveIds() {
         return this.chargedMoveIds;
     }
 
-    public void setChargedMoveIds(List<String> chargedMoveIds) {
+    public void setChargedMoveIds(Set<String> chargedMoveIds) {
         this.chargedMoveIds = chargedMoveIds;
     }
 
-    public List<String> getEliteMoveIds() {
+    public Set<String> getEliteMoveIds() {
         return this.eliteMoveIds;
     }
 
-    public void setEliteMoveIds(List<String> eliteMoveIds) {
+    public void setEliteMoveIds(Set<String> eliteMoveIds) {
         this.eliteMoveIds = eliteMoveIds;
     }
 
-    public List<String> getLegacyMoveIds() {
+    public Set<String> getLegacyMoveIds() {
         return this.legacyMoveIds;
     }
 
-    public void setLegacyMoveIds(List<String> legacyMoveIds) {
+    public void setLegacyMoveIds(Set<String> legacyMoveIds) {
         this.legacyMoveIds = legacyMoveIds;
     }
 
@@ -92,22 +94,30 @@ public class SpeciesEntity {
         this.battleResults = battleResults;
     }
 
+    private static Set<String> listAsSet(List<String> list) {
+        return list == null ? Set.of() : new HashSet<>(list);
+    }
+
+    private static boolean setEqualsList(Set<String> set, List<String> list) {
+        return (set == null ? Set.of() : set).equals(SpeciesEntity.listAsSet(list));
+    }
+
     /**
      * @param species a species to compare to
      * @return true iff all of this entity's move ids match the move ids of the species being compared to
      */
     public boolean representsSpecies(Species species) {
-        if (!Objects.equals(this.fastMoveIds, species.getFastMoveIds())) return false;
-        if (!Objects.equals(this.chargedMoveIds, species.getChargedMoveIds())) return false;
-        if (!Objects.equals(this.eliteMoveIds, species.getEliteMoveIds())) return false;
-        return Objects.equals(this.legacyMoveIds, species.getLegacyMoveIds());
+        if (!SpeciesEntity.setEqualsList(this.fastMoveIds, species.getFastMoveIds())) return false;
+        if (!SpeciesEntity.setEqualsList(this.chargedMoveIds, species.getChargedMoveIds())) return false;
+        if (!SpeciesEntity.setEqualsList(this.eliteMoveIds, species.getEliteMoveIds())) return false;
+        return SpeciesEntity.setEqualsList(this.legacyMoveIds, species.getLegacyMoveIds());
     }
     
     public void updateFromSpecies(Species species) {
         this.setSpeciesId(species.getSpeciesId());
-        this.setFastMoveIds(species.getFastMoveIds());
-        this.setChargedMoveIds(species.getChargedMoveIds());
-        this.setEliteMoveIds(species.getEliteMoveIds());
-        this.setLegacyMoveIds(species.getLegacyMoveIds());
+        this.setFastMoveIds(SpeciesEntity.listAsSet(species.getFastMoveIds()));
+        this.setChargedMoveIds(SpeciesEntity.listAsSet(species.getChargedMoveIds()));
+        this.setEliteMoveIds(SpeciesEntity.listAsSet(species.getEliteMoveIds()));
+        this.setLegacyMoveIds(SpeciesEntity.listAsSet(species.getLegacyMoveIds()));
     }
 }

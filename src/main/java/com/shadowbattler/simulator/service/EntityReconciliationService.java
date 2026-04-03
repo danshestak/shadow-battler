@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -65,7 +67,7 @@ public class EntityReconciliationService {
     }
 
     @Async
-    // @EventListener(ApplicationReadyEvent.class)
+    @EventListener(ApplicationReadyEvent.class)
     public void reconcileModified() {
         final List<Species> allSpecies = speciesDataService.getAllSpecies();
         final List<Opponent> allOpponents = opponentDataService.getAllOpponents();
@@ -84,6 +86,8 @@ public class EntityReconciliationService {
             })
             .collect(Collectors.toSet());
 
+        System.out.println("Modified moves: " + modifiedMoves.toString());
+
         final Map<String, SpeciesEntity> existingSpecies = this.speciesEntityService.getAllSpeciesEntities().stream()
             .collect(Collectors.toMap(SpeciesEntity::getSpeciesId, Function.identity()));
 
@@ -96,6 +100,8 @@ public class EntityReconciliationService {
             })
             .collect(Collectors.toSet());
         
+        System.out.println("Modified species: " + modifiedSpecies.toString());
+        
         final Map<String, OpponentEntity> existingOpponents = this.opponentEntityService.getAllOpponentEntities().stream()
             .collect(Collectors.toMap(OpponentEntity::getOpponentId, Function.identity()));
 
@@ -107,6 +113,8 @@ public class EntityReconciliationService {
                     || opponent.getLineupSpecies().stream().flatMap(Collection::stream).anyMatch(modifiedSpecies::contains);
             })
             .collect(Collectors.toSet());
+        
+        System.out.println("Modified opponents: " + modifiedOpponents.toString());
 
         modifiedMoves.forEach(this.moveEntityService::saveMove);
         modifiedSpecies.forEach(this.speciesEntityService::saveSpecies);
@@ -125,9 +133,13 @@ public class EntityReconciliationService {
                 this.reconcileBattles(species, opponent);
             }
         }
+
+        System.out.println("Reconciliation complete!");
     }
 
     public void reconcileBattles(Species species, Opponent opponent) {
+        System.out.println("Reconciling battles between " + species.getSpeciesName() + " and " + opponent.getName());
+
         List<BattleResultEntity> resultsToSave = new ArrayList<>();
         for (int trainerLevel : EntityReconciliationService.trainerLevels) {
             for (int playerCreatureLevel : EntityReconciliationService.playerCreatureLevels) {
