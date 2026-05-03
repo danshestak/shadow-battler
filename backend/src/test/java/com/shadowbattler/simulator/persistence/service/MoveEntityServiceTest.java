@@ -20,8 +20,11 @@ import com.shadowbattler.simulator.persistence.entity.MoveEntity;
 import com.shadowbattler.simulator.service.MovesDataService;
 
 @SpringBootTest
-@AutoConfigureTestDatabase
-@TestPropertySource(properties = "spring.jpa.hibernate.ddl-auto=create-drop")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // Do not replace the datasource
+@TestPropertySource(properties = {
+    "spring.datasource.url=jdbc:h2:file:./build/h2-db/testdb;DB_CLOSE_DELAY=-1", // Use a file-based H2 database for tests
+    "spring.jpa.hibernate.ddl-auto=create-drop"
+})
 @Transactional // Ensures each test runs in an isolated transaction and rolls back changes
 public class MoveEntityServiceTest {
 
