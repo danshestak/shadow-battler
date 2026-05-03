@@ -1,5 +1,6 @@
 package com.shadowbattler.simulator.persistence.entity;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +16,6 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -30,12 +30,12 @@ public class OpponentEntity {
     private Title title;
     @Column(name = "cp_limit")
     private int limit;
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     @CollectionTable(name = "opponent_lineups", joinColumns = @JoinColumn(name = "opponent_id"))
     @Column(name = "species_id")
     private List<String> lineupSpeciesIds;
     @OneToMany(mappedBy = "opponent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BattleResultEntity> battleResults;
+    private List<BattleResultEntity> battleResults = new ArrayList<>();
 
     public String getOpponentId() {
         return this.opponentId;

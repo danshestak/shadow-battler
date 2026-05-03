@@ -1,5 +1,6 @@
 package com.shadowbattler.simulator.persistence.entity;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,7 +12,6 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
@@ -27,24 +27,24 @@ elite or legacy moves)
 public class SpeciesEntity {
     @Id
     private String speciesId;
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     @CollectionTable(name = "species_fast_moves", joinColumns = @JoinColumn(name = "species_id"))
     @Column(name = "move_id")
     private Set<String> fastMoveIds;
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     @CollectionTable(name = "species_charged_moves", joinColumns = @JoinColumn(name = "species_id"))
     @Column(name = "move_id")
     private Set<String> chargedMoveIds;
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     @CollectionTable(name = "species_elite_moves", joinColumns = @JoinColumn(name = "species_id"))
     @Column(name = "move_id")
     private Set<String> eliteMoveIds;
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection
     @CollectionTable(name = "species_legacy_moves", joinColumns = @JoinColumn(name = "species_id"))
     @Column(name = "move_id")
     private Set<String> legacyMoveIds;
     @OneToMany(mappedBy = "playerSpecies", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BattleResultEntity> battleResults;
+    private List<BattleResultEntity> battleResults = new ArrayList<>();
 
     public String getSpeciesId() {
         return this.speciesId;

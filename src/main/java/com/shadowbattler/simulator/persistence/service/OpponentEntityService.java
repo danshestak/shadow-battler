@@ -1,6 +1,5 @@
 package com.shadowbattler.simulator.persistence.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +21,10 @@ public class OpponentEntityService {
         return this.opponentEntityRepository.findAll();
     }
 
+    public List<OpponentEntity> getAllOpponentEntitiesWithLineups() {
+        return this.opponentEntityRepository.findAllWithLineups();
+    }
+
     public Optional<OpponentEntity> getOpponentEntityById(String id) {
         return this.opponentEntityRepository.findById(id);
     }
@@ -34,8 +37,7 @@ public class OpponentEntityService {
         OpponentEntity entity = this.opponentEntityRepository.findById(opponent.getOpponentId()).orElse(new OpponentEntity());
 
         entity.updateFromOpponent(opponent);
-        //by saving the entity with an empty list, orphanRemoval will delete the old results
-        entity.setBattleResults(new ArrayList<>());
+        entity.getBattleResults().clear(); //triggers orphan removal
         return this.opponentEntityRepository.save(entity);
     }
 }

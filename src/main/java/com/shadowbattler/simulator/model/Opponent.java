@@ -18,7 +18,6 @@ public class Opponent {
     private Lineup<String> lineupIds;
     @JsonIgnore
     private Lineup<Species> lineupSpecies;
-
     
     public static enum Title {
         ROCKET_BOSS,

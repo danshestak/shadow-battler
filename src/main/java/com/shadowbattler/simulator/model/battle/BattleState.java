@@ -33,11 +33,11 @@ public class BattleState {
      */
     final private static int ENEMY_CHARGE_TIME = 7000;
     /** how long it takes for the player to switch to their next creature after their active faints */
-    final private static int PLAYER_FAINT_TIME = 1500;
+    final private static int PLAYER_FAINT_TIME = 1000;
     /** how long it takes for the enemy to switch to their next creature after their active faints */
-    final private static int ENEMY_FAINT_TIME = 3500;
+    final private static int ENEMY_FAINT_TIME = 2000;
     /** how many turns the enemy is stunned for after a trainer switches/uses a charged move */
-    final private static int STUN_TURNS = 10;
+    final private static int STUN_TURNS = 8;
 
     public BattleState(Team<Creature> playerTeam, Team<Creature> opponentTeam, int opponentStartingShields, boolean isLogged) {
         this.player = new Trainer(playerTeam, 2);

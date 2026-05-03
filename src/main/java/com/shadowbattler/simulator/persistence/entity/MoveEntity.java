@@ -1,5 +1,6 @@
 package com.shadowbattler.simulator.persistence.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,11 +32,11 @@ public class MoveEntity {
     private Stats3<Integer> buffsOpponent;
     private double buffApplyChance;
     @OneToMany(mappedBy = "playerFastMove", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BattleResultEntity> battleResultsAsFastMove;
+    private List<BattleResultEntity> battleResultsAsFastMove = new ArrayList<>();
     @OneToMany(mappedBy = "playerChargedMove1", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BattleResultEntity> battleResultsAsChargedMove1;
+    private List<BattleResultEntity> battleResultsAsChargedMove1 = new ArrayList<>();
     @OneToMany(mappedBy = "playerChargedMove2", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BattleResultEntity> battleResultsAsChargedMove2;
+    private List<BattleResultEntity> battleResultsAsChargedMove2 = new ArrayList<>();
 
     public String getMoveId() {
         return this.moveId;
