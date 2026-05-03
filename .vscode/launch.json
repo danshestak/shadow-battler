@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch SimulatorApplication",
+            "request": "launch",
+            "mainClass": "com.shadowbattler.simulator.SimulatorApplication",
+            "projectName": "simulator",
+            "cwd": "${workspaceFolder}/backend"
+        }
+    ]
+}
