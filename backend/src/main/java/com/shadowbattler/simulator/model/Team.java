@@ -1,5 +1,6 @@
 package com.shadowbattler.simulator.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -37,7 +38,7 @@ public class Team<T> {
     }
 
     public List<T> toList() {
-        return this.stream().filter(Objects::nonNull).toList();
+        return this.stream().filter(Objects::nonNull).collect(java.util.stream.Collectors.toCollection(ArrayList::new));
     }
 
     public T getFirst() {

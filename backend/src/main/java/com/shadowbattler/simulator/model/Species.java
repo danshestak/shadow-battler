@@ -124,12 +124,12 @@ public class Species {
                 }
             })
             .filter(Objects::nonNull)
-            .toList();
+            .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
     } 
 
     private List<Move> hydrateMovesList(MovesDataService movesDataService, List<String> movesList) {
         if (movesList == null || movesList.size() < 1) return new ArrayList<>();
-        return movesList.stream().map(movesDataService::getMoveById).toList();
+        return movesList.stream().map(movesDataService::getMoveById).collect(java.util.stream.Collectors.toCollection(ArrayList::new));
     }
 
     public void hydrate(MovesDataService movesDataService) {
@@ -160,7 +160,7 @@ public class Species {
             movesDataService, 
             this.fastMoveIds.stream().filter(
                 (id) -> !this.eliteMoveIds.contains(id) && !this.legacyMoveIds.contains(id)
-            ).toList()
+            ).collect(java.util.stream.Collectors.toCollection(ArrayList::new))
         );
 
         this.chargedMoves = new ArrayList<>(this.hydrateMovesList(movesDataService, this.chargedMoveIds));
@@ -171,7 +171,7 @@ public class Species {
             this.chargedMoveIds.stream().filter(
                 (id) -> (!this.eliteMoveIds.contains(id) && !this.legacyMoveIds.contains(id)) || 
                         (this.requiredChargedMove != null && this.requiredChargedMove.moveId().equals(id))
-            ).toList()
+            ).collect(java.util.stream.Collectors.toCollection(ArrayList::new))
         ));
         this.enemyChargedMoves.sort(java.util.Comparator.comparingInt(Move::energy));
 

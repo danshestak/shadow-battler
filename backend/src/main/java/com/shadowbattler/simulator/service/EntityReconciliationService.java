@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Opponent;
 import com.shadowbattler.simulator.model.Species;
-import com.shadowbattler.simulator.persistence.entity.BattleResultEntity;
 import com.shadowbattler.simulator.persistence.entity.MoveEntity;
 import com.shadowbattler.simulator.persistence.entity.OpponentEntity;
 import com.shadowbattler.simulator.persistence.entity.SpeciesEntity;
@@ -126,7 +125,7 @@ public class EntityReconciliationService {
         for (Opponent opponent : modifiedOpponents) {
             for (Species species : filteredSpecies) {
                 System.out.println("Reconciling battles between " + species.getSpeciesName() + " and " + opponent.getName());
-                List<BattleResultEntity> results = battleReconciliationService.createBattleResultEntities(species, opponent);
+                List<BattlePersistenceService.BattleResultDTO> results = battleReconciliationService.createBattleResultEntities(species, opponent);
                 battleReconciliationService.persistBattles(results);
             }
         }
@@ -136,7 +135,7 @@ public class EntityReconciliationService {
 
             for (Species species : modifiedSpecies) {
                 System.out.println("Reconciling battles between " + species.getSpeciesName() + " and " + opponent.getName());
-                List<BattleResultEntity> results = battleReconciliationService.createBattleResultEntities(species, opponent);
+                List<BattlePersistenceService.BattleResultDTO> results = battleReconciliationService.createBattleResultEntities(species, opponent);
                 battleReconciliationService.persistBattles(results);
             }
         }

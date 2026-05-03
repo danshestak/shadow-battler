@@ -240,7 +240,7 @@ public class Creature {
         this.species = species;
         this.ivs = ivs;
         this.fastMove = fastMove;
-        this.chargedMoves = chargedMoves;
+        this.chargedMoves = chargedMoves == null ? List.of() : List.copyOf(chargedMoves);
 
         final double cpMultiplier = Creature.getCpMultiplierAtLevel(level);
         final double atk = (species.getBaseStats().getAtk() + ivs.getAtk())*cpMultiplier;
@@ -267,8 +267,7 @@ public class Creature {
     public Creature(Species species, Opponent.Title rocketTitle, int trainerLevel, Move fastMove, Move chargedMove) {
         this.species = species;
         this.fastMove = fastMove;
-        this.chargedMoves = List.of(chargedMove);
-
+        this.chargedMoves = chargedMove == null ? List.of() : List.of(chargedMove);
         double rank;
         switch (rocketTitle) {
             case Opponent.Title.ROCKET_GRUNT -> rank = 1.0;

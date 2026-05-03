@@ -32,6 +32,6 @@ public class Lineup<T> extends Team<List<T>> {
     }
 
     public List<T> flatten() {
-        return this.stream().flatMap((slot) -> slot.stream()).toList();
+        return this.stream().flatMap((slot) -> slot.stream()).collect(java.util.stream.Collectors.toCollection(ArrayList::new));
     }
 }
