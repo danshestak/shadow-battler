@@ -37,14 +37,7 @@ const Sidebar = (p: SidebarProps) => {
                     <span className="sr-only">Close menu</span>
                 </button>
             </div>
-            {p.buttons.map(s =>
-                <HeaderButton
-                key={s}
-                content={s}
-                link={`/${s.toLowerCase()}`}
-                onClick={p.onClose}
-                />
-            )}
+            {p.buttons.map(s => <HeaderButton key={s} content={s} onClick={p.onClose}/>)}
         </div>
       </div>
     </>

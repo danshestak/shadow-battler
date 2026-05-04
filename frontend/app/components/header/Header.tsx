@@ -26,7 +26,7 @@ const Header = () => {
         <div className='flex'>
           <HamburgerButton onOpen={() => setIsSidebarOpen(true)} isOpen={isSidebarOpen} />
           <div className='hidden md:flex items-center gap-2'>
-            {buttons.map(s => <HeaderButton key={s} content={s} link={`/${s.toLowerCase()}`} />)}
+            {buttons.map(s => <HeaderButton key={s} content={s}/>)}
           </div>
         </div>
       </header>
