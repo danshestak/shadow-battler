@@ -45,7 +45,7 @@ const CountersTableRow = ({ description }: CountersTableRowProps) => {
                     </h3> 
 
                     <div className='text-xs mb-2'>
-                        The stats this Pokémon has with the given Pokémon level and IVs. The Pokémon level can be changed through the Counters list settings.
+                        The stats this species has with the given Pokémon level and IVs. The Pokémon level can be changed through the Counters list settings.
                     </div>
 
                     <div className='text-xs grid grid-cols-[max-content_max-content_1fr] items-center gap-2 mb-2'>
@@ -72,9 +72,9 @@ const CountersTableRow = ({ description }: CountersTableRowProps) => {
                         <span>Moves</span>
                     </h3> 
 
-                    <div className='text-xs mb-2'>The moves this Pokémon can learn. Damage, DPT, and DPE factor Same Type Attack Bonus (STAB).</div>
+                    <div className='text-xs mb-2'>The moves this species can learn. Damage, DPT, and DPE factor Same Type Attack Bonus (STAB).</div>
 
-                    <div className='text-xs grid grid-cols-[1fr_max-content_max-content_max-content] gap-2 mb-4'>
+                    <div className='text-xs grid grid-cols-[4fr_1fr_1fr_1fr] gap-2 mb-4'>
                         <div className='text-sm'>Fast Move</div>
                         <div className='text-sm text-center'>DPT</div>
                         <div className='text-sm text-center'>EPT</div>
@@ -145,10 +145,10 @@ const CountersTableRow = ({ description }: CountersTableRowProps) => {
                     <h3 className='text-lg mb-2'>Performance</h3>
 
                     <div className='text-xs mb-2'>
-                        How this Pokémon performs against the selected opponent with the given Pokémon level, trainer level, and preferred moveset.
+                        How a Pokémon of this species performs against the selected opponent with the given Pokémon level, trainer level, and preferred moveset.
                     </div>
 
-                    <div className='text-xs grid grid-cols-[2.5fr_1fr] items-center gap-2 mb-2'>
+                    <div className='text-xs grid grid-cols-[2fr_1fr] items-center gap-2 mb-2'>
                         <div className='text-sm'>Time:</div> 
                         <div>107s</div>
 
@@ -165,58 +165,58 @@ const CountersTableRow = ({ description }: CountersTableRowProps) => {
                         Shows how performance changes against each Pokémon in the opponent&apos;s lineup.
                     </div>
 
-                    <div className='text-xs grid grid-cols-[max-content_4fr_max-content_1fr] gap-2 items-center'>
+                    <div className='text-xs grid grid-cols-[max-content_3fr_max-content_1fr] gap-2 items-center'>
                         <div className='text-sm'>Slot</div>
                         <div className='text-sm'>Species</div>
                         <div className='text-sm col-span-2'>&Delta;Score</div>
 
-                        <div className='h-px col-span-full bg-theme4'/>
+                        {/* <div className='h-px col-span-full bg-theme4'/> */}
 
                         <div>1.</div>
                         <div>Ratata (Alolan) (Shadow)</div>
                         <div>+44.5%</div>
                         <Meter value={144.5} max={200} colorSensitivity={2} className='h-2.5'/>
 
-                        <div>1.</div>
+                        <div></div>
                         <div>Raticate (Alolan) (Shadow)</div>
                         <div>+7.3%</div>
                         <Meter value={107.3} max={200} colorSensitivity={2} className='h-2.5'/>
 
-                        <div>1.</div>
+                        <div></div>
                         <div>Kangaskhan (Shadow)</div>
                         <div>-65.2%</div>
                         <Meter value={34.8} max={200} colorSensitivity={2} className='h-2.5'/>
 
-                        <div className='h-px col-span-full bg-theme4'/>
+                        {/* <div className='h-px col-span-full bg-theme4'/> */}
 
                         <div>2.</div>
                         <div>Ratata (Alolan) (Shadow)</div>
                         <div>+44.5%</div>
                         <Meter value={144.5} max={200} colorSensitivity={2} className='h-2.5'/>
 
-                        <div>2.</div>
+                        <div></div>
                         <div>Raticate (Alolan) (Shadow)</div>
                         <div>+7.3%</div>
                         <Meter value={107.3} max={200} colorSensitivity={2} className='h-2.5'/>
 
-                        <div>2.</div>
+                        <div></div>
                         <div>Kangaskhan (Shadow)</div>
                         <div>-65.2%</div>
                         <Meter value={34.8} max={200} colorSensitivity={2} className='h-2.5'/>
 
-                        <div className='h-px col-span-full bg-theme4'/>
+                        {/* <div className='h-px col-span-full bg-theme4'/> */}
 
                         <div>3.</div>
                         <div>Ratata (Alolan) (Shadow)</div>
                         <div>+44.5%</div>
                         <Meter value={144.5} max={200} colorSensitivity={2} className='h-2.5'/>
 
-                        <div>3.</div>
+                        <div></div>
                         <div>Raticate (Alolan) (Shadow)</div>
                         <div>+7.3%</div>
                         <Meter value={107.3} max={200} colorSensitivity={2} className='h-2.5'/>
 
-                        <div>3.</div>
+                        <div></div>
                         <div>Kangaskhan (Shadow)</div>
                         <div>-65.2%</div>
                         <Meter value={34.8} max={200} colorSensitivity={2} className='h-2.5'/>
