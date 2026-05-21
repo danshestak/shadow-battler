@@ -8,14 +8,14 @@ interface SidebarProps {
     onClose: () => void;
 }
 
+//            backdrop-filter backdrop-blur-xl 
 const Sidebar = (p: SidebarProps) => {
   return (
     <>
       {/* overlay */}
       <div
         className={`fixed inset-0 z-20 md:hidden
-            bg-theme1/60 
-            backdrop-filter backdrop-blur-xl 
+            bg-theme1/80
             transition-opacity duration-300 ease-in-out ${p.isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={p.onClose}
         aria-hidden="true"
