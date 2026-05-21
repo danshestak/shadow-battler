@@ -7,7 +7,7 @@ const OpponentsPage = () => {
       <h1 className='text-2xl mb-4'>Opponents</h1>
 
       <p className='mb-4'>
-        This is a list of every opponent in the game and the lineup of Pokémon they are currently using.
+        This is a list of every opponent in the game and the lineup of Pokémon they are currently using. Opponent's teams consist of one random Pokémon from each lineup slot.
       </p>
 
       <p className='mb-4'>

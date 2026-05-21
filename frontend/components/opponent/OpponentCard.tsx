@@ -20,7 +20,7 @@ const OpponentCard = () => {
                 [{ id: "snorlax_shadow", dex: 143}],
                 [{ id: "gardevoir_shadow", dex: 282}, { id: "golurk_shadow", dex: 623}, { id: "weezing_galarian_shadow", dex: 0}],
                 [{ id: "tyranitar_shadow", dex: 248}, { id: "camerupt_shadow", dex: 323}, { id: "gallade_shadow", dex: 475}]
-            ].map((arr, i) => <OpponentCardRow key={i} speciesArr={arr} asteriskCount={((i===0) ? 1 : undefined)}/>)}
+            ].map((arr, i) => <OpponentCardRow key={i} speciesArr={arr} slotNumber={i+1} asteriskCount={((i===0) ? 1 : undefined)}/>)}
         </div>
 
         <div className='pt-2 flex justify-end'>
