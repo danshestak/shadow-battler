@@ -132,10 +132,8 @@ const CountersTableRow = ({ description }: CountersTableRowProps) => {
                         <div className='text-center'>75</div>
                         <div className='text-center'>2.24</div>
                     </div>
-
-                    <h4 className='mb-2 mt-4'>Legend</h4>
                     
-                    <ul className='text-xs ml-3 list-disc'>
+                    <ul className='text-xs text-right mt-6'>
                         <li className='font-semibold'>Preferred move</li>
                         <li>Unobtainable by non-Elite TM*</li>
                         <li>Unobtainable by any TM<sup>&dagger;</sup></li>
