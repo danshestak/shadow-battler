@@ -16,7 +16,7 @@ const CountersTableRow = ({ description }: CountersTableRowProps) => {
   const cellStyle = "pt-2 pb-2";
 
   return (
-    <div className={cn('bg-theme3 rounded border border-transparent transition-colors duration-150', isOpen && 'bg-theme2 border-theme4')}>
+    <div className={cn('bg-theme3 rounded border border-transparent transition-colors duration-150', isOpen && 'bg-theme2 border-theme4 shadow-lg')}>
         <button onClick={() => setIsOpen(!isOpen)} className={cn('w-full text-left cursor-pointer grid items-center px-2')} style={{ gridTemplateColumns: gridCols, gap: '0.5rem' }}>
             {description.dropdownIndicator && <div className={cn("transition-transform text-xs text-right", isOpen && "rotate-90")}>&#128898;</div>}
             {description.species && <div className={cellStyle}>

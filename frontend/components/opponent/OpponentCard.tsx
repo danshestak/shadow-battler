@@ -5,7 +5,7 @@ import TypeLabel from '../TypeLabel'
 
 const OpponentCard = () => {
   return (
-    <div className='p-2 bg-theme3 border border-theme4 rounded shadow'>
+    <div className='p-2 bg-theme3 border border-theme4 rounded shadow-lg'>
         <div className='flex justify-between items-center border-b border-theme4 pb-2'>
             <div>
                 <div className='text-xl'>Leader Cliff</div>

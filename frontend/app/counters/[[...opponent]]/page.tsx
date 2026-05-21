@@ -81,8 +81,8 @@ const CountersPage = () => {
         value={selectedOpponent?.name}
         onValueChange={handleValueChange}
       >
-        <ComboboxInput placeholder="Search opponents..." className={'text-base shadow mb-4'}/>
-        <ComboboxContent>
+        <ComboboxInput placeholder="Search opponents..." className={'text-base shadow-lg mb-4'}/>
+        <ComboboxContent className={"shadow-lg"}>
           <ComboboxEmpty>No opponent found.</ComboboxEmpty>
           <ComboboxList>
             {(item) => (
@@ -99,7 +99,7 @@ const CountersPage = () => {
         their lineup <Link href={"/opponents"}><span className='text-highlight hover:underline'>here</span></Link>.
       </p>}
 
-      <div className="rounded bg-theme3 border border-theme4 p-2 shadow overflow-x-auto">
+      <div className="rounded bg-theme3 border border-theme4 p-2 shadow overflow-x-auto shadow-lg">
         {!selectedOpponent && <div className='text-center italic'>No opponent selected</div>}
 
         {selectedOpponent &&

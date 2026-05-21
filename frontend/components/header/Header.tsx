@@ -16,7 +16,7 @@ const Header = () => {
       <header className='
       sticky top-0 z-10 h-16 p-2
       flex justify-between 
-      bg-theme1 border-b border-theme4 shadow'>
+      bg-theme1 border-b border-theme4 shadow-lg'>
         {/* left */}
         <Link className='flex items-center h-full text-3xl font-light tracking-tighter' href="/">
           shadow<span className='text-highlight font-semibold tracking-tight'>KO!</span>
