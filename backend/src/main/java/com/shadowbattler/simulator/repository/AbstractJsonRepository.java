@@ -60,4 +60,9 @@ public abstract class AbstractJsonRepository<T> implements Repository<T, String>
     public List<T> findAll() {
         return new ArrayList<>(this.cache.values());
     }
+
+    @Override
+    public Map<String, T> findAllAsMap() {
+        return this.cache;
+    }
 }

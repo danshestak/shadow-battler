@@ -15,7 +15,7 @@ const spritesheetWidth = 480;
 const spritesheetHeight = 4110;
 
 const Sprite = ({ species, className, scale = 1 }: SpriteProps) => {
-  let id = species.id.toLowerCase();
+  let id = species.speciesId.toLowerCase();
   let shadow = false;
   
   const shadowSubstring = "_shadow";
@@ -65,7 +65,7 @@ const Sprite = ({ species, className, scale = 1 }: SpriteProps) => {
   return (
     <div
       role="img"
-      aria-label={species.id}
+      aria-label={`${species.speciesId}_sprite`}
       className={cn(className, "flex-none")}
       style={style}
     />

@@ -1,7 +1,10 @@
 import React from 'react'
 import OpponentCard from '@/components/opponent/OpponentCard'
+import { getOpponents } from '@/lib/data'
 
-const OpponentsPage = () => {
+const OpponentsPage = async () => {
+  const opponents = await getOpponents();
+  
   return (
     <div className='max-w-3xl m-auto'>
       <h1 className='text-2xl mb-4'>Opponents</h1>
@@ -16,7 +19,7 @@ const OpponentsPage = () => {
       </p>
 
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-        {[1, 2, 3, 4, 5].map((v, i) => <OpponentCard key={i}/>)}
+        {Object.values(opponents).map((opponent) => <OpponentCard key={opponent.opponentId} opponent={opponent}/>)}
       </div>
     </div>
   )

@@ -17,7 +17,7 @@ const OpponentCardRow = ({ speciesArr, asteriskCount, slotNumber }: OpponentCard
         speciesArr.map((s, i) => (
           <div key={i} className="relative flex justify-center items-center p-1">
             <span className="absolute bottom-1 z-2 w-full text-center text-xs tracking-tight leading-none drop-shadow-theme2 drop-shadow">
-              {s.id.replaceAll("_", " ")}
+              {s.speciesName}
               {((asteriskCount !== undefined) && (asteriskCount > 0)) && <span className='text-highlight'>{"*".repeat(asteriskCount)}</span>}
             </span>
             <Sprite species={s} scale={2} />

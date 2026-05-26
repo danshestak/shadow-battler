@@ -1,5 +1,7 @@
 package com.shadowbattler.simulator.web;
 
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,13 +36,28 @@ public class DataController {
         return this.speciesDataService.getSpeciesById(id);
     }
 
+    @GetMapping("/species")
+    public Map<String, Species> getAllSpecies() {
+        return this.speciesDataService.getAllSpeciesMap();
+    }
+
     @GetMapping("/move/{id}")
     public Move getMove(@PathVariable String id) {
         return this.movesDataService.getMoveById(id);
     }
 
+    @GetMapping("/moves")
+    public Map<String, Move> getAllMoves() {
+        return this.movesDataService.getAllMovesMap();
+    }
+
     @GetMapping("/opponent/{id}")
     public Opponent getOpponent(@PathVariable String id) {
         return this.opponentDataService.getOpponentById(id);
+    }
+
+    @GetMapping("/opponents")
+    public Map<String, Opponent> getAllOpponents() {
+        return this.opponentDataService.getAllOpponentsMap();
     }
 }

@@ -3,6 +3,7 @@ package com.shadowbattler.simulator.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,10 @@ public class SpeciesDataService {
 
     public List<Species> getAllSpecies() {
         return this.speciesRepository.findAll();
+    }
+
+    public Map<String, Species> getAllSpeciesMap() {
+        return this.speciesRepository.findAllAsMap();
     }
 
     public boolean speciesExists(String id) {

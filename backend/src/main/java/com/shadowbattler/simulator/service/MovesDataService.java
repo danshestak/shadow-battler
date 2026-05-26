@@ -1,6 +1,7 @@
 package com.shadowbattler.simulator.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -23,5 +24,9 @@ public class MovesDataService {
 
     public List<Move> getAllMoves() {
         return this.movesRepository.findAll();
+    }
+
+    public Map<String, Move> getAllMovesMap() {
+        return movesRepository.findAllAsMap();
     }
 }

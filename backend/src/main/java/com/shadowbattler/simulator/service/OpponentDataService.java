@@ -1,6 +1,7 @@
 package com.shadowbattler.simulator.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,10 @@ public class OpponentDataService {
 
     public List<Opponent> getAllOpponents() {
         return this.opponentRepository.findAll();
+    }
+
+    public Map<String, Opponent> getAllOpponentsMap() {
+        return this.opponentRepository.findAllAsMap();
     }
     
     @PostConstruct
