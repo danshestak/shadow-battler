@@ -4,6 +4,8 @@ import { getOpponents } from '@/lib/data'
 
 const OpponentsPage = async () => {
   const opponents = await getOpponents();
+
+  console.log(opponents);
   
   return (
     <div className='max-w-3xl m-auto'>

@@ -23,7 +23,7 @@ const OpponentCard = async ({ opponent }: OpponentCardProps) => {
                 <div className='text-sm italic'>{OpponentTitle.toFull(opponent.title)}</div>
             </div>
 
-            <TypeLabel type={'normal'}/>
+            <TypeLabel type={opponent.specialtyType ?? "NONE"}/>
         </div>
 
         <div className='grid grid-rows-3 pt-2 gap-2 border-b border-theme4 pb-2'>

@@ -1,11 +1,12 @@
 import { Stats3 } from "./Stats3"
+import { Type } from "./Type"
 
 export type Species = {
     dex: number,
     speciesName: string,
     speciesId: string,
     baseStats: Stats3<number>,
-    types: string[],
+    types: Type[],
     buddyDistance: number,
     released: boolean,
     family: {

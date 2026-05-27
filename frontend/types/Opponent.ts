@@ -1,3 +1,4 @@
+import { Type } from "./Type"
 import { Lineup } from "./Lineup"
 
 export type Opponent = {
@@ -6,7 +7,8 @@ export type Opponent = {
     title: OpponentTitle,
     limit: number,
     lineup: Lineup<string>,
-    encounterSlots: number[]
+    encounterSlots: number[],
+    specialtyType: Type | null
 }
 
 export type OpponentTitle = "ROCKET_GRUNT" | "ROCKET_LEADER" | "ROCKET_BOSS"

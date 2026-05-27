@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils'
-import { CreatureType } from '@/types/CreatureType';
+import { CreatureType } from '@/types/Type';
 import { creatureTypeToColor } from '@/util/creatureTypeToColor';
 import React from 'react'
 

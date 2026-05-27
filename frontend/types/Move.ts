@@ -1,6 +1,6 @@
-import { CreatureType } from "./CreatureType"
+import { Type } from "./Type"
 
 export type Move = {
-    type: CreatureType,
+    type: Type,
     name: string
 }
