@@ -11,6 +11,20 @@ export type Opponent = {
     specialtyType: Type | null
 }
 
+export const Opponent = {
+    compare(a: Opponent, b: Opponent): number {
+        const titleDiff = OpponentTitle.toOrder(a.title) - OpponentTitle.toOrder(b.title);
+        if (titleDiff !== 0) return titleDiff;
+
+        const typeDiff = Type.toOrder(a.specialtyType ?? "NONE") - Type.toOrder(b.specialtyType ?? "NONE");
+        if (typeDiff !== 0) return typeDiff;
+
+        return a.name.localeCompare(b.name);
+    }
+}
+
+/*--------------------------------------------------------------------------------*/
+
 export type OpponentTitle = "ROCKET_GRUNT" | "ROCKET_LEADER" | "ROCKET_BOSS"
 
 const full: Record<OpponentTitle, string> = {
@@ -30,5 +44,5 @@ export const OpponentTitle = {
     
     toOrder(title: OpponentTitle): number {
         return order[title];
-    }
+    },
 }

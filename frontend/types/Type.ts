@@ -6,7 +6,7 @@ export const typesArr = [
 export type Type = "NORMAL" | "FIRE" | "WATER" | "GRASS" | "ELECTRIC" | "ICE" | "FIGHTING" | "POISON" | "GROUND" | 
     "FLYING" | "PSYCHIC" | "BUG" | "ROCK" | "GHOST" | "DRAGON" | "DARK" | "STEEL" | "FAIRY" | "NONE";
 
-const colors: Record<Type, string> = {
+const hex: Record<Type, string> = {
     NORMAL: "#9FA19F",
     FIRE: "#E62829",
     WATER: "#2980EF",
@@ -27,8 +27,33 @@ const colors: Record<Type, string> = {
     FAIRY: "#EF70EF",
     NONE: "#68A090"
 }
+const order: Record<Type, number> = {
+    NORMAL: 0,
+    FIRE: 1,
+    WATER: 2,
+    GRASS: 3,
+    ELECTRIC: 4,
+    ICE: 5,
+    FIGHTING: 6,
+    POISON: 7,
+    GROUND: 8,
+    FLYING: 9,
+    PSYCHIC: 10,
+    BUG: 11,
+    ROCK: 12,
+    GHOST: 13,
+    DRAGON: 14,
+    DARK: 15,
+    STEEL: 16,
+    FAIRY: 17,
+    NONE: 18
+}
 export const Type = {
     toHex(type: Type) {
-        return colors[type];
+        return hex[type];
+    },
+
+    toOrder(type: Type) {
+        return order[type];
     }
 }
