@@ -8,7 +8,8 @@
             "first": ["raticate_shadow"],
             "second": ["pidgeot_shadow", "rhydon_shadow", "raticate_shadow"],
             "third": ["charizard_shadow"]
-        }
+        },
+        "encounterSlots": [3]
     },
     {
         "opponentId": "leader_cliff",
@@ -19,7 +20,8 @@
             "first": ["pidgey_shadow"],
             "second": ["wartortle_shadow", "ivysaur_shadow", "pidgeotto_shadow"],
             "third": ["blastoise_shadow", "venusaur_shadow", "pidgeot_shadow"]
-        }
+        },
+        "encounterSlots": [1]
     },
     {
         "opponentId": "grunt_m_normal",
@@ -30,7 +32,8 @@
             "first": ["rattata_shadow"],
             "second": ["rattata_shadow", "raticate_shadow"],
             "third": ["rattata_shadow", "raticate_shadow"]
-        }
+        },
+        "encounterSlots": [1, 2]
     },
     {
         "opponentId": "grunt_f_fire",
@@ -41,7 +44,8 @@
             "first": ["charmander_shadow", "charmeleon_shadow", "charizard_shadow"],
             "second": ["charmander_shadow", "charmeleon_shadow", "charizard_shadow"],
             "third": ["charmander_shadow", "charmeleon_shadow", "charizard_shadow"]
-        }
+        },
+        "encounterSlots": [1]
     },
     {
         "opponentId": "grunt_f_water",
@@ -52,6 +56,7 @@
             "first": ["squirtle_shadow", "wartortle_shadow", "blastoise_shadow"],
             "second": ["squirtle_shadow", "wartortle_shadow", "blastoise_shadow"],
             "third": ["squirtle_shadow", "wartortle_shadow", "blastoise_shadow"]
-        }
+        },
+        "encounterSlots": [1]
     }
 ]

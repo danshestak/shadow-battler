@@ -12,6 +12,8 @@ interface OpponentCardProps {
 
 const OpponentCard = async ({ opponent }: OpponentCardProps) => {
   const species = await getSpecies();
+
+  console.log(opponent);
   
   return (
     <div className='p-2 bg-theme3 border border-theme4 rounded shadow-lg'>
@@ -30,7 +32,7 @@ const OpponentCard = async ({ opponent }: OpponentCardProps) => {
                 key={i} 
                 speciesArr={speciesIds.map(id => species[id])} 
                 slotNumber={i+1} 
-                asteriskCount={((i===0) ? 1 : undefined)}
+                asteriskCount={opponent.encounterSlots.includes(i+1) ? (i+1 === 2 ? 2 : 1) : undefined}
                 />
             )}
         </div>

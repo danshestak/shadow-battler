@@ -5,7 +5,8 @@ export type Opponent = {
     name: string,
     title: OpponentTitle,
     limit: number,
-    lineup: Lineup<string>
+    lineup: Lineup<string>,
+    encounterSlots: number[]
 }
 
 export type OpponentTitle = "ROCKET_GRUNT" | "ROCKET_LEADER" | "ROCKET_BOSS"
