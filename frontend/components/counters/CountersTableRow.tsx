@@ -4,6 +4,7 @@ import MoveLabel from '../MoveLabel'
 import { cn } from '@/lib/utils';
 import Meter from '../Meter';
 import { CountersTableDescription, getGridColsByDesc } from './CountersTableDescription';
+import { Species } from '@/types/Species';
 
 interface CountersTableRowProps {
     description: CountersTableDescription
@@ -21,15 +22,15 @@ const CountersTableRow = ({ description }: CountersTableRowProps) => {
             {description.dropdownIndicator && <div className={cn("transition-transform text-xs text-right", isOpen && "rotate-90")}>&#128898;</div>}
             {description.species && <div className={cellStyle}>
                 <div className='text-sm flex items-center gap-1'>
-                    <Sprite species={{ id: "kyurem_white_shadow", dex: 0}}/>
+                    <Sprite species={{ speciesId: "kyurem_white_shadow", dex: 0} as Species}/>
                     <span className='tracking-tight'>Kyurem (White) (Shadow)</span>
                 </div>
             </div>}
             {description.moves && <div className={cellStyle}>
                 <div className='flex flex-wrap gap-0.5 items-start text-xs'>
-                    <MoveLabel move={{ name: "Dragon Breath", type: "dragon" }}/>
-                    <MoveLabel move={{ name: "Ice Burn", type: "ice" }} isLegacy={true}/>
-                    <MoveLabel move={{ name: "Fusion Flare", type: "fire" }} isElite={true}/>
+                    <MoveLabel move={{ name: "Dragon Breath", type: "DRAGON" }}/>
+                    <MoveLabel move={{ name: "Ice Burn", type: "ICE" }} isLegacy={true}/>
+                    <MoveLabel move={{ name: "Fusion Flare", type: "FIRE" }} isElite={true}/>
                 </div>
             </div>}
             {description.time && <div className={cn(cellStyle, "text-sm tracking-tight")}>107s</div> }
@@ -80,17 +81,17 @@ const CountersTableRow = ({ description }: CountersTableRowProps) => {
                         <div className='text-sm text-center'>EPT</div>
                         <div className='text-sm text-center'>Turns</div>
 
-                        <div><MoveLabel className='flex-none font-semibold' move={{ name: "Dragon Breath", type: "dragon" }}/></div>
+                        <div><MoveLabel className='flex-none font-semibold' move={{ name: "Dragon Breath", type: "DRAGON" }}/></div>
                         <div className='text-center'>3.6</div>
                         <div className='text-center'>4</div>
                         <div className='text-center'>1</div>
 
-                        <div><MoveLabel className='flex-none' move={{ name: "Ice Fang", type: "ice" }}/></div>
+                        <div><MoveLabel className='flex-none' move={{ name: "Ice Fang", type: "ICE" }}/></div>
                         <div className='text-center'>4.8</div>
                         <div className='text-center'>3</div>
                         <div className='text-center'>2</div>
 
-                        <div><MoveLabel className='flex-none' move={{ name: "Steel Wing", type: "steel" }}/></div>
+                        <div><MoveLabel className='flex-none' move={{ name: "Steel Wing", type: "STEEL" }}/></div>
                         <div className='text-center'>3.5</div>
                         <div className='text-center'>2.5</div>
                         <div className='text-center'>2</div>
@@ -100,34 +101,34 @@ const CountersTableRow = ({ description }: CountersTableRowProps) => {
                         <div className='text-sm mt-4 text-center'>Enrg.</div>
                         <div className='text-sm mt-4 text-center'>DPE</div>
 
-                        <div><MoveLabel className='flex-none font-semibold' move={{ name: "Ice Burn", type: "ice" }} isLegacy={true}/></div>
+                        <div><MoveLabel className='flex-none font-semibold' move={{ name: "Ice Burn", type: "ICE" }} isLegacy={true}/></div>
                         <div className='text-center'>144</div>
                         <div className='text-center'>60</div>
                         <div className='text-center'>2.4</div>
                         <div className='text-left col-span-full -mt-1 italic'>30% chance -1 ATK enemy</div>
 
-                        <div><MoveLabel className='flex-none font-semibold' move={{ name: "Fusion Flare", type: "fire" }} isElite={true}/></div>
+                        <div><MoveLabel className='flex-none font-semibold' move={{ name: "Fusion Flare", type: "FIRE" }} isElite={true}/></div>
                         <div className='text-center'>90</div>
                         <div className='text-center'>45</div>
                         <div className='text-center'>2</div>
 
-                        <div><MoveLabel className='flex-none' move={{ name: "Dragon Pulse", type: "dragon" }}/></div>
+                        <div><MoveLabel className='flex-none' move={{ name: "Dragon Pulse", type: "DRAGON" }}/></div>
                         <div className='text-center'>108</div>
                         <div className='text-center'>55</div>
                         <div className='text-center'>1.96</div>
 
-                        <div><MoveLabel className='flex-none' move={{ name: "Focus Blast", type: "fighting" }}/></div>
+                        <div><MoveLabel className='flex-none' move={{ name: "Focus Blast", type: "FIGHTING" }}/></div>
                         <div className='text-center'>150</div>
                         <div className='text-center'>75</div>
                         <div className='text-center'>2</div>
                         
-                        <div><MoveLabel className='flex-none' move={{ name: "Ancient Power", type: "rock" }}/></div>
+                        <div><MoveLabel className='flex-none' move={{ name: "Ancient Power", type: "ROCK" }}/></div>
                         <div className='text-center'>60</div>
                         <div className='text-center'>45</div>
                         <div className='text-center'>1.33</div>
                         <div className='text-left col-span-full -mt-1 italic'>10% chance +1 ATK, +1 DEF self</div>
 
-                        <div><MoveLabel className='flex-none' move={{ name: "Blizzard", type: "ice" }}/></div>
+                        <div><MoveLabel className='flex-none' move={{ name: "Blizzard", type: "ICE" }}/></div>
                         <div className='text-center'>168</div>
                         <div className='text-center'>75</div>
                         <div className='text-center'>2.24</div>

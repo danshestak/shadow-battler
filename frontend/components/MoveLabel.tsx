@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 import { Move } from '@/types/Move'
-import { creatureTypeToColor } from '@/util/creatureTypeToColor'
+import { Type } from '@/types/Type'
 import React from 'react'
 
 interface MoveLabelProps {
@@ -11,7 +11,7 @@ interface MoveLabelProps {
 }
 
 const MoveLabel = ({ className, move, isElite, isLegacy }: MoveLabelProps) => {
-    const color = creatureTypeToColor(move.type);
+    const color = Type.toHex(move.type);
     return (
         <span 
         className={cn(className, "rounded border p-0.5")}

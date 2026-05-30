@@ -1,6 +1,5 @@
 import { cn } from '@/lib/utils'
-import { CreatureType } from '@/types/Type';
-import { creatureTypeToColor } from '@/util/creatureTypeToColor';
+import { Type } from '@/types/Type';
 import React from 'react'
 
 interface MeterProps {
@@ -13,7 +12,7 @@ interface MeterProps {
     label?: string,
 }
 
-const colors = ["fire", "electric", "grass"].map(v => creatureTypeToColor(v as CreatureType))
+const colors = ["FIRE", "ELECTRIC", "GRASS"].map(v => Type.toHex(v as Type))
 
 function lerpColor(color1: string, color2: string, factor: number): string {
     const hexToRgb = (hex: string) => {

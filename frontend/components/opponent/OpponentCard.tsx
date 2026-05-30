@@ -1,19 +1,19 @@
-import React from 'react'
+'use client';
+
+import React from 'react';
 import OpponentCardRow from './OpponentCardRow'
 import Link from 'next/link'
 import TypeLabel from '../TypeLabel'
 import { Opponent, OpponentTitle } from '@/types/Opponent'
 import { Lineup } from '@/types/Lineup'
-import { getSpecies } from '@/lib/data'
+import { useSpecies } from '@/context/SpeciesContext';
 
 interface OpponentCardProps {
     opponent: Opponent
 }
 
-const OpponentCard = async ({ opponent }: OpponentCardProps) => {
-  const species = await getSpecies();
-
-  console.log(opponent);
+const OpponentCard = ({ opponent }: OpponentCardProps) => {
+  const species = useSpecies();
   
   return (
     <div className='p-2 bg-theme3 border border-theme4 rounded shadow-lg'>
