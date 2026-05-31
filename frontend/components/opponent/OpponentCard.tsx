@@ -1,19 +1,16 @@
-'use client';
-
-import React from 'react';
 import OpponentCardRow from './OpponentCardRow'
 import Link from 'next/link'
 import TypeLabel from '../TypeLabel'
 import { Opponent, OpponentTitle } from '@/types/Opponent'
 import { Lineup } from '@/types/Lineup'
-import { useSpecies } from '@/context/SpeciesContext';
+import { getSpecies } from '@/lib/serverData'
 
 interface OpponentCardProps {
     opponent: Opponent
 }
 
-const OpponentCard = ({ opponent }: OpponentCardProps) => {
-  const species = useSpecies();
+const OpponentCard = async ({ opponent }: OpponentCardProps) => {
+  const species = await getSpecies();
   
   return (
     <div className='p-2 bg-theme3 border border-theme4 rounded shadow-lg'>
@@ -30,7 +27,7 @@ const OpponentCard = ({ opponent }: OpponentCardProps) => {
             {Lineup.toArray(opponent.lineup).map((speciesIds, i) => 
                 <OpponentCardRow 
                 key={i} 
-                speciesArr={speciesIds.map(id => species[id])} 
+                speciesArr={speciesIds.map(id => species[id])}
                 slotNumber={i+1} 
                 asteriskCount={opponent.encounterSlots.includes(i+1) ? (i+1 === 2 ? 2 : 1) : undefined}
                 />
@@ -38,8 +35,9 @@ const OpponentCard = ({ opponent }: OpponentCardProps) => {
         </div>
 
         <div className='pt-2 flex justify-end'>
-            <Link href="/counters/normal_type_grunt" className='
-            bg-highlight p-2 rounded border border-transparent shadow
+            <Link 
+            href={`/counters/${opponent.opponentId}`} 
+            className='bg-highlight p-2 rounded border border-transparent shadow
             hover:bg-theme2 hover:border-highlight transition
             active:border-text'
             >View counters &#9656;

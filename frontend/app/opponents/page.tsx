@@ -1,12 +1,10 @@
 import React from 'react'
 import OpponentCard from '@/components/opponent/OpponentCard'
-import { getOpponents } from '@/lib/data'
+import { getOpponents, getSpecies } from '@/lib/serverData'
 import { Opponent } from '@/types/Opponent';
 
 const OpponentsPage = async () => {
   const opponents = await getOpponents();
-
-  console.log(opponents);
   
   return (
     <div className='max-w-3xl m-auto'>
