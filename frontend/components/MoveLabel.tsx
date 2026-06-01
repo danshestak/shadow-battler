@@ -1,16 +1,16 @@
 import { cn } from '@/lib/utils'
 import { Move } from '@/types/Move'
+import { Species } from '@/types/Species'
 import { Type } from '@/types/Type'
 import React from 'react'
 
 interface MoveLabelProps {
     className?: string,
     move: Move,
-    isElite?: boolean,
-    isLegacy?: boolean
+    species?: Species
 }
 
-const MoveLabel = ({ className, move, isElite, isLegacy }: MoveLabelProps) => {
+const MoveLabel = ({ className, move, species }: MoveLabelProps) => {
     const color = Type.toHex(move.type);
     return (
         <span 
@@ -20,8 +20,8 @@ const MoveLabel = ({ className, move, isElite, isLegacy }: MoveLabelProps) => {
         borderColor: `${color}80`,
         }}>
             {move.name}
-            {isElite && "*"}
-            {isLegacy && <sup>&#8224;</sup>}
+            {species?.eliteMoves?.includes(move.moveId) && "*"}
+            {species?.legacyMoves?.includes(move.moveId) && <sup>&#8224;</sup>}
         </span>
     )
 }

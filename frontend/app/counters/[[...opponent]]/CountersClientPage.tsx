@@ -15,6 +15,7 @@ import CountersTableRow from '@/components/counters/CountersTableRow';
 import { CountersTableDescription } from '@/components/counters/CountersTableDescription';
 import { useClientData } from '@/lib/clientData';
 import { Opponent } from '@/types/Opponent';
+import { BattleResult } from '@/types/BattleResult';
 
 const countersTableDescription: CountersTableDescription = {
   dropdownIndicator: true,
@@ -44,6 +45,24 @@ const CountersClientPage = () => {
 
   const selectedOpponent = Object.values(clientData.opponents).find((o) => o.opponentId === opponentSlug);
 
+  const battleResults: BattleResult[] = [
+      {
+        id: 1,
+        timeElapsed: 95000,
+        timeElapsedVariance: 50,
+        winPercent: 0.99,
+        hpPercent: 0.95,
+        score: 2000,
+        playerFastMove: 'BITE',
+        playerChargedMove1: 'HYDRO_CANNON',
+        playerChargedMove2: 'ICE_BEAM',
+        playerSpecies: 'blastoise_shadow',
+        opponent: 'grunt_m_fire',
+        playerLevel: 50,
+        trainerLevel: 70,
+    }
+  ].map(raw => BattleResult.fromRaw(raw, clientData));
+
   const handleValueChange = (name?: string | null) => {
     if (!name) return;
 
@@ -54,13 +73,11 @@ const CountersClientPage = () => {
   };
 
   return (
-    <div>
+    <>
       <Combobox
         items={Object.values(clientData.opponents)
           .sort(Opponent.compare)
-          .map(o => {
-            return { name: o.name, id: o.opponentId };
-          })}
+          .map(o => {return { name: o.name, id: o.opponentId };})}
         value={selectedOpponent?.name}
         onValueChange={handleValueChange}
       >
@@ -87,13 +104,16 @@ const CountersClientPage = () => {
 
         {selectedOpponent &&
           <CountersTable description={countersTableDescription}>
-            <CountersTableRow description={countersTableDescription} />
-            <CountersTableRow description={countersTableDescription} />
-            <CountersTableRow description={countersTableDescription} />
+            {battleResults.map((br, i) => (
+              <CountersTableRow key={i} 
+              description={countersTableDescription}
+              battleResult={br}
+              clientData={clientData}/>
+            ))}
           </CountersTable>
         }
       </div>
-    </div>
+    </>
   );
 };
 

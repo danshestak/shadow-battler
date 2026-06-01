@@ -9,11 +9,11 @@ export type CountersTableDescription = {
 
 export function getGridColsByDesc(desc:CountersTableDescription) {
     return [
-        desc.dropdownIndicator ? "minmax(1ch, 0)" : "",
+        desc.dropdownIndicator ? "max-content" : "",
         desc.species ? "minmax(0, 4fr)" : "",
         desc.moves ? "minmax(0, 3fr)" : "",
-        desc.time ? "minmax(0, 1fr)" : "",
-        desc.winpercent ? "minmax(0, 1fr)" : "",
-        desc.score ? "minmax(0, 1fr)" : "",
+        desc.time ? "minmax(max-content, 1fr)" : "",
+        desc.winpercent ? "minmax(max-content, 1fr)" : "",
+        desc.score ? "minmax(max-content, 1fr)" : "",
     ].filter(Boolean).join(" ")
 }

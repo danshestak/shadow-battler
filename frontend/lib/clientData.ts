@@ -1,3 +1,4 @@
+import { ClientData } from '@/types/ClientData';
 import { Move } from '@/types/Move';
 import { Opponent } from '@/types/Opponent';
 import { Species } from '@/types/Species';
@@ -7,11 +8,7 @@ import useSWR from 'swr';
 const fetcher = (url:string) => fetch(url).then((res) => res.json());
 
 export function useClientData(): {
-  clientData: {
-    opponents: Record<string, Opponent>,
-    species: Record<string, Species>
-    moves: Record<string, Move>
-  },
+  clientData: ClientData,
   isError: boolean,
   isLoading: boolean
 } {
@@ -23,7 +20,7 @@ export function useClientData(): {
   });
 
   return {
-    clientData: data,
+    clientData: data as ClientData,
     isError: error,
     isLoading
   };
