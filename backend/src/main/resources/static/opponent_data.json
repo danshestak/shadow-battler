@@ -1,7 +1,7 @@
 [
     {
         "opponentId": "boss_giovanni",
-        "name": "Giovanni",
+        "name": "Boss Giovanni",
         "title": "rocket_boss",
         "limit": 100000,
         "lineup": {
@@ -13,7 +13,7 @@
     },
     {
         "opponentId": "leader_cliff",
-        "name": "Cliff",
+        "name": "Leader Cliff",
         "title": "rocket_leader",
         "limit": 100000,
         "lineup": {
@@ -51,7 +51,7 @@
     },
     {
         "opponentId": "grunt_f_water",
-        "name": "Female Water-type Grunt",
+        "name": "Water-type Grunt (Female)",
         "title": "rocket_grunt",
         "limit": 100000,
         "lineup": {
