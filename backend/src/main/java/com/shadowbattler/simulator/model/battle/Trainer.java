@@ -1,5 +1,7 @@
 package com.shadowbattler.simulator.model.battle;
 
+import java.util.Arrays;
+
 import com.shadowbattler.simulator.model.Creature;
 import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Stats3;
@@ -11,7 +13,7 @@ import com.shadowbattler.simulator.model.Team;
  * go rocket/team leader lineups
  */
 public class Trainer {
-    final private Team<BattlingCreature> team;
+    final private BattlingCreature[] creatures;
     private int activeSlot;
     private BattlingCreature active;
     private int shields;
@@ -28,31 +30,32 @@ public class Trainer {
     private int defBuff;
     
     public Trainer(Team<Creature> team, int shields) {
-        this.team = new Team<>(
+        //converting team to array to reduce object overhead and improve locality
+        this.creatures = new BattlingCreature[]{
             team.getFirst() != null ? new BattlingCreature(team.getFirst()) : null,
             team.getSecond() != null ? new BattlingCreature(team.getSecond()) : null,
             team.getThird() != null ? new BattlingCreature(team.getThird()) : null
-        );
+        };
         this.activeSlot = 1;
-        this.active = this.team.getByInt(1);
+        this.active = this.creatures[0];
         this.shields = shields;
         this.queuedAction = null;
         this.queuedActionFulfills = 0;
         this.switchCooldownEnds = 0;
-        this.remainingCreatures = this.team.size();
+        this.remainingCreatures = team.size();
         this.stunQueued = false;
         this.atkBuff = 0;
         this.defBuff = 0;
     }
 
     public Trainer(Trainer other) {
-        this.team = new Team<>(
-            other.team.getFirst() != null ? new BattlingCreature(other.team.getFirst()) : null,
-            other.team.getSecond() != null ? new BattlingCreature(other.team.getSecond()) : null,
-            other.team.getThird() != null ? new BattlingCreature(other.team.getThird()) : null
-        );
+        this.creatures = new BattlingCreature[]{
+            other.creatures[0] != null ? new BattlingCreature(other.creatures[0]) : null,
+            other.creatures[1] != null ? new BattlingCreature(other.creatures[1]) : null,
+            other.creatures[2] != null ? new BattlingCreature(other.creatures[2]) : null
+        };
         this.activeSlot = other.activeSlot;
-        this.active = this.team.getByInt(other.activeSlot);
+        this.active = this.creatures[other.activeSlot-1];
         this.shields = other.shields;
         this.queuedAction = other.queuedAction;
         this.queuedActionFulfills = other.queuedActionFulfills;
@@ -63,8 +66,12 @@ public class Trainer {
         this.defBuff = other.defBuff;
     }
 
-    public Team<BattlingCreature> getTeam() {
-        return this.team;
+    public BattlingCreature[] getBattlingCreatures() {
+        return this.creatures;
+    }
+
+    public BattlingCreature getSlot(int slot) {
+        return this.creatures[slot-1];
     }
 
     public int getActiveSlot() {
@@ -73,7 +80,7 @@ public class Trainer {
 
     public void setActiveSlot(int activeSlot) {
         this.activeSlot = activeSlot;
-        this.active = this.team.getByInt(activeSlot);
+        this.active = this.creatures[activeSlot-1];
     }
 
     public BattlingCreature getActive() {
@@ -165,9 +172,9 @@ public class Trainer {
     }
 
     public void switchTo(int slot) {
-        if (this.getTeam().getByInt(slot).isFainted()) throw new IllegalArgumentException(
-            String.format("attempted to switch to slot %n, which is fainted", slot)
-        );
+        // if (this.creatures[slot-1].isFainted()) throw new IllegalArgumentException(
+        //     String.format("attempted to switch to slot %n, which is fainted", slot)
+        // );
         this.setActiveSlot(slot);
         this.atkBuff = 0;
         this.defBuff = 0;
@@ -175,7 +182,7 @@ public class Trainer {
 
     @Override
     public String toString() {
-        return "Trainer [team=" + team + ", activeSlot=" + activeSlot + ", shields=" + shields + ", queuedAction="
+        return "Trainer [creatures=" + Arrays.toString(creatures) + ", activeSlot=" + activeSlot + ", shields=" + shields + ", queuedAction="
                 + queuedAction + ", queuedActionFulfills=" + queuedActionFulfills + ", switchCooldownEnds="
                 + switchCooldownEnds + ", remainingCreatures=" + remainingCreatures + ", stunQueued=" + stunQueued
                 + ", atkBuff=" + atkBuff + ", defBuff=" + defBuff + "]";

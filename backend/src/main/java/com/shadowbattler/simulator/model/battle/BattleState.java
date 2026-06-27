@@ -325,8 +325,9 @@ public class BattleState {
 
                 int firstSwitch = -1;
                 for (int i = 1; i <= 3; i++) {
-                    final BattlingCreature ithSlot = this.player.getTeam().getByInt(i);
-                    if (ithSlot == null || ithSlot.isFainted()) continue;
+                    final BattlingCreature ithSlot = this.player.getSlot(i);
+                    if (ithSlot == null) break;
+                    if (ithSlot.isFainted()) continue;
 
                     if (firstSwitch < 0) {
                         firstSwitch = i;
@@ -418,12 +419,12 @@ public class BattleState {
             key |= (long) (this.enemy.getActiveSlot() & 0x3) << 14;
             key |= (long) (this.player.getRemainingCreatures() & 0x3) << 16;
             key |= (long) (this.enemy.getRemainingCreatures() & 0x3) << 18;
-            key |= getCreatureStatusCode(this.player.getTeam().getFirst()) << 20;
-            key |= getCreatureStatusCode(this.player.getTeam().getSecond()) << 22;
-            key |= getCreatureStatusCode(this.player.getTeam().getThird()) << 24;
-            key |= getCreatureStatusCode(this.enemy.getTeam().getFirst()) << 26;
-            key |= getCreatureStatusCode(this.enemy.getTeam().getSecond()) << 28;
-            key |= getCreatureStatusCode(this.enemy.getTeam().getThird()) << 30;
+            key |= getCreatureStatusCode(this.player.getSlot(1)) << 20;
+            key |= getCreatureStatusCode(this.player.getSlot(2)) << 22;
+            key |= getCreatureStatusCode(this.player.getSlot(3)) << 24;
+            key |= getCreatureStatusCode(this.enemy.getSlot(1)) << 26;
+            key |= getCreatureStatusCode(this.enemy.getSlot(2)) << 28;
+            key |= getCreatureStatusCode(this.enemy.getSlot(3)) << 30;
             this.comparisonKey = key;
         }
         return this.comparisonKey;
@@ -450,13 +451,13 @@ public class BattleState {
         if (this.enemy.getAtkBuff() < other.enemy.getAtkBuff()) return false;
         if (this.enemy.getDefBuff() < other.enemy.getDefBuff()) return false;
 
-        if (!isCreatureDominated(this.player.getTeam().getFirst(), other.player.getTeam().getFirst(), true)) return false;
-        if (!isCreatureDominated(this.player.getTeam().getSecond(), other.player.getTeam().getSecond(), true)) return false;
-        if (!isCreatureDominated(this.player.getTeam().getThird(), other.player.getTeam().getThird(), true)) return false;
+        if (!isCreatureDominated(this.player.getSlot(1), other.player.getSlot(1), true)) return false;
+        if (!isCreatureDominated(this.player.getSlot(2), other.player.getSlot(2), true)) return false;
+        if (!isCreatureDominated(this.player.getSlot(3), other.player.getSlot(3), true)) return false;
 
-        if (!isCreatureDominated(this.enemy.getTeam().getFirst(), other.enemy.getTeam().getFirst(), false)) return false;
-        if (!isCreatureDominated(this.enemy.getTeam().getSecond(), other.enemy.getTeam().getSecond(), false)) return false;
-        return isCreatureDominated(this.enemy.getTeam().getThird(), other.enemy.getTeam().getThird(), false);
+        if (!isCreatureDominated(this.enemy.getSlot(1), other.enemy.getSlot(1), false)) return false;
+        if (!isCreatureDominated(this.enemy.getSlot(2), other.enemy.getSlot(2), false)) return false;
+        return isCreatureDominated(this.enemy.getSlot(3), other.enemy.getSlot(3), false);
     }
 
     private boolean isCreatureDominated(BattlingCreature c1, BattlingCreature c2, boolean isPlayer) {

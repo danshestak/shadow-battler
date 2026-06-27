@@ -1,6 +1,7 @@
 package com.shadowbattler.simulator.model.battle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -110,7 +111,7 @@ public class TeamBattleSolver implements BattleSolver {
             this.battleResult = new BattleResult(
                 fastestWin.getTimeElapsed(),
                 fastestWin.playerWon() ? 1.0 : 0.0,
-                fastestWin.getPlayer().getTeam().stream()
+                Arrays.stream(fastestWin.getPlayer().getBattlingCreatures())
                     .filter(Objects::nonNull)
                     .mapToDouble((bc) -> bc.getRemainingHp()/bc.getCreature().getStats().getHp())
                     .average()
