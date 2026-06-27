@@ -57,12 +57,12 @@ public class TeamBattleSolverTest {
 
     @BeforeEach
     public void setup() {
-        this.pLead = helper("espeon", "CONFUSION", "PSYCHIC_FANGS", null);
+        this.pLead = helper("charizard", "CONFUSION", "PSYCHIC_FANGS", null);
         this.pSwitch = null; //helper("regice", "LOCK_ON", "BLIZZARD", null);
         this.pCloser = null; //helper("regirock", "LOCK_ON", "STONE_EDGE", null);
-        this.eLead = shadowHelper("magikarp_shadow", "SPLASH", "STRUGGLE");
-        this.eSwitch = shadowHelper("cradily_shadow", "ACID", "GRASS_KNOT");
-        this.eCloser = shadowHelper("camerupt_shadow", "INCINERATE", "EARTH_POWER");
+        this.eLead = shadowHelper("squirtle", "SPLASH", "STRUGGLE");
+        this.eSwitch = shadowHelper("bulbasaur", "ACID", "GRASS_KNOT");
+        this.eCloser = shadowHelper("charizard", "INCINERATE", "EARTH_POWER");
     }
 
     // @Test

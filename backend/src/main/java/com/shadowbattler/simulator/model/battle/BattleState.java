@@ -19,6 +19,7 @@ public class BattleState {
     private int timeElapsed;
     private boolean finished;
     final private BattleLog log;
+    private long comparisonKey;
 
     /** how long it takes for a turn/step to pass */
     final private static int TURN_TIME = 500;
@@ -46,6 +47,7 @@ public class BattleState {
         this.timeElapsed = 0;
         this.finished = false;
         this.log = isLogged ? new BattleLog() : null;
+        this.comparisonKey = -1;
     }
     
     public BattleState(BattleState other) {
@@ -55,6 +57,7 @@ public class BattleState {
         this.timeElapsed = other.timeElapsed;
         this.finished = other.finished;
         this.log = other.log != null ? new BattleLog(other.log) : null;
+        this.comparisonKey = -1;
     }
 
     public Trainer getPlayer() {
@@ -82,23 +85,7 @@ public class BattleState {
     }
 
     public boolean playerWon() {
-        boolean anyPlayerAlive = false;
-        for (int i = 1; i <= 3; i++) {
-            BattlingCreature c = player.getTeam().getByInt(i);
-            if (c != null && !c.isFainted()) {
-                anyPlayerAlive = true;
-                break;
-            }
-        }
-        if (!anyPlayerAlive) return false;
-
-        for (int i = 1; i <= 3; i++) {
-            BattlingCreature c = enemy.getTeam().getByInt(i);
-            if (c != null && !c.isFainted()) {
-                return false;
-            }
-        }
-        return true;
+        return this.player.getRemainingCreatures() > 0 && this.enemy.getRemainingCreatures() <= 0;
     }
 
     public BattleLog getLog() {
@@ -310,6 +297,7 @@ public class BattleState {
      * @return a list of new states created from branching player decisions. the current state is also advanced
      */
     public List<BattleState> step() {
+        this.comparisonKey = -1;
         this.processQueuedActions();
         if (this.finished) return new ArrayList<>();
 
@@ -423,19 +411,22 @@ public class BattleState {
      * @return
      */
     public long getComparisonKey() {
-        long key = 0L;
-        key |= (long) (this.turnsElapsed & 0xFFF);
-        key |= (long) (this.player.getActiveSlot() & 0x3) << 12;
-        key |= (long) (this.enemy.getActiveSlot() & 0x3) << 14;
-        key |= (long) (this.player.getRemainingCreatures() & 0x3) << 16;
-        key |= (long) (this.enemy.getRemainingCreatures() & 0x3) << 18;
-        key |= getCreatureStatusCode(this.player.getTeam().getFirst()) << 20;
-        key |= getCreatureStatusCode(this.player.getTeam().getSecond()) << 22;
-        key |= getCreatureStatusCode(this.player.getTeam().getThird()) << 24;
-        key |= getCreatureStatusCode(this.enemy.getTeam().getFirst()) << 26;
-        key |= getCreatureStatusCode(this.enemy.getTeam().getSecond()) << 28;
-        key |= getCreatureStatusCode(this.enemy.getTeam().getThird()) << 30;
-        return key;
+        if (this.comparisonKey < 0) {
+            long key = 0L;
+            key |= (long) (this.turnsElapsed & 0xFFF);
+            key |= (long) (this.player.getActiveSlot() & 0x3) << 12;
+            key |= (long) (this.enemy.getActiveSlot() & 0x3) << 14;
+            key |= (long) (this.player.getRemainingCreatures() & 0x3) << 16;
+            key |= (long) (this.enemy.getRemainingCreatures() & 0x3) << 18;
+            key |= getCreatureStatusCode(this.player.getTeam().getFirst()) << 20;
+            key |= getCreatureStatusCode(this.player.getTeam().getSecond()) << 22;
+            key |= getCreatureStatusCode(this.player.getTeam().getThird()) << 24;
+            key |= getCreatureStatusCode(this.enemy.getTeam().getFirst()) << 26;
+            key |= getCreatureStatusCode(this.enemy.getTeam().getSecond()) << 28;
+            key |= getCreatureStatusCode(this.enemy.getTeam().getThird()) << 30;
+            this.comparisonKey = key;
+        }
+        return this.comparisonKey;
     }
 
     /**
@@ -451,31 +442,6 @@ public class BattleState {
      * This includes being equal, which allows for pruning identical states.
      */
     public boolean isDominatedBy(BattleState other) {
-        //checks to see if states are comparable are commented out
-
-        // if (this.turnsElapsed != other.turnsElapsed ||
-        //     this.player.getActiveSlot() != other.player.getActiveSlot() ||
-        //     this.enemy.getActiveSlot() != other.enemy.getActiveSlot() ||
-        //     this.player.getRemainingCreatures() != other.player.getRemainingCreatures() ||
-        //     this.enemy.getRemainingCreatures() != other.enemy.getRemainingCreatures()
-        // ) {
-        //     return false;
-        // }
-
-        // for (int i = 1; i <= 3; i++) {
-        //     BattlingCreature thisPC = this.player.getTeam().getByInt(i);
-        //     BattlingCreature otherPC = other.player.getTeam().getByInt(i);
-        //     if ((thisPC == null) != (otherPC == null) || (thisPC != null && thisPC.isFainted() != (otherPC != null && otherPC.isFainted()))) {
-        //         return false;
-        //     }
-
-        //     BattlingCreature thisEC = this.enemy.getTeam().getByInt(i);
-        //     BattlingCreature otherEC = other.enemy.getTeam().getByInt(i);
-        //     if ((thisEC == null) != (otherEC == null) || (thisEC != null && thisEC.isFainted() != (otherEC != null && otherEC.isFainted()))) {
-        //         return false;
-        //     }
-        // }
-
         if (this.timeElapsed < other.timeElapsed) return false;
         if (this.player.getShields() > other.player.getShields()) return false;
         if (this.enemy.getShields() < other.enemy.getShields()) return false;
@@ -484,22 +450,25 @@ public class BattleState {
         if (this.enemy.getAtkBuff() < other.enemy.getAtkBuff()) return false;
         if (this.enemy.getDefBuff() < other.enemy.getDefBuff()) return false;
 
-        for (int i = 1; i <= 3; i++) {
-            BattlingCreature thisPC = this.player.getTeam().getByInt(i);
-            if (thisPC != null && !thisPC.isFainted()) {
-                BattlingCreature otherPC = other.player.getTeam().getByInt(i);
-                if (thisPC.getRemainingHp() > otherPC.getRemainingHp()) return false;
-                if (thisPC.getEnergy() > otherPC.getEnergy()) return false;
-            }
+        if (!isCreatureDominated(this.player.getTeam().getFirst(), other.player.getTeam().getFirst(), true)) return false;
+        if (!isCreatureDominated(this.player.getTeam().getSecond(), other.player.getTeam().getSecond(), true)) return false;
+        if (!isCreatureDominated(this.player.getTeam().getThird(), other.player.getTeam().getThird(), true)) return false;
 
-            BattlingCreature thisEC = this.enemy.getTeam().getByInt(i);
-            if (thisEC != null && !thisEC.isFainted()) {
-                BattlingCreature otherEC = other.enemy.getTeam().getByInt(i);
-                if (thisEC.getRemainingHp() < otherEC.getRemainingHp()) return false;
-                if (thisEC.getEnergy() < otherEC.getEnergy()) return false;
+        if (!isCreatureDominated(this.enemy.getTeam().getFirst(), other.enemy.getTeam().getFirst(), false)) return false;
+        if (!isCreatureDominated(this.enemy.getTeam().getSecond(), other.enemy.getTeam().getSecond(), false)) return false;
+        return isCreatureDominated(this.enemy.getTeam().getThird(), other.enemy.getTeam().getThird(), false);
+    }
+
+    private boolean isCreatureDominated(BattlingCreature c1, BattlingCreature c2, boolean isPlayer) {
+        if (c1 != null && !c1.isFainted()) {
+            if (isPlayer) {
+                if (c1.getRemainingHp() > c2.getRemainingHp()) return false;
+                if (c1.getEnergy() > c2.getEnergy()) return false;
+            } else {
+                if (c1.getRemainingHp() < c2.getRemainingHp()) return false;
+                if (c1.getEnergy() < c2.getEnergy()) return false;
             }
         }
-
         return true;
     }
 

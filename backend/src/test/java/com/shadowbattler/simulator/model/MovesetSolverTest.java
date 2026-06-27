@@ -20,7 +20,7 @@ public class MovesetSolverTest {
     void testGetMovesetScores() {
         MovesetSolver movesetSolver = new MovesetSolver(
             (fast, charged) -> new Creature(
-                speciesDataService.getSpeciesById("gyarados_shadow"), 
+                speciesDataService.getSpeciesById("charizard_shadow"), 
                 Stats3.getMaxIVs(), 
                 50, 
                 fast, 
@@ -28,7 +28,7 @@ public class MovesetSolverTest {
             ),
             (playerCreature) -> new OpponentBattleSolver(
                 new Team<>(playerCreature, null, null), 
-                opponentDataService.getOpponentById("leader_cliff"),
+                opponentDataService.getOpponentById("grunt_f_fire"),
                 80
             )
         );

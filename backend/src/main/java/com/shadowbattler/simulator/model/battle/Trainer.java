@@ -13,6 +13,7 @@ import com.shadowbattler.simulator.model.Team;
 public class Trainer {
     final private Team<BattlingCreature> team;
     private int activeSlot;
+    private BattlingCreature active;
     private int shields;
     private Action queuedAction;
     private int queuedActionFulfills;
@@ -33,6 +34,7 @@ public class Trainer {
             team.getThird() != null ? new BattlingCreature(team.getThird()) : null
         );
         this.activeSlot = 1;
+        this.active = this.team.getByInt(1);
         this.shields = shields;
         this.queuedAction = null;
         this.queuedActionFulfills = 0;
@@ -50,6 +52,7 @@ public class Trainer {
             other.team.getThird() != null ? new BattlingCreature(other.team.getThird()) : null
         );
         this.activeSlot = other.activeSlot;
+        this.active = this.team.getByInt(other.activeSlot);
         this.shields = other.shields;
         this.queuedAction = other.queuedAction;
         this.queuedActionFulfills = other.queuedActionFulfills;
@@ -70,10 +73,11 @@ public class Trainer {
 
     public void setActiveSlot(int activeSlot) {
         this.activeSlot = activeSlot;
+        this.active = this.team.getByInt(activeSlot);
     }
 
     public BattlingCreature getActive() {
-        return this.team.getByInt(this.activeSlot);
+        return this.active;
     }
 
     public int getShields() {
