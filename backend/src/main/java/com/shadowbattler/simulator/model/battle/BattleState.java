@@ -445,13 +445,10 @@ public class BattleState {
     public boolean isDominatedBy(BattleState other) {
         if (this.timeElapsed < other.timeElapsed) return false;
 
-        if (!isCreatureDominated(this.player.getSlot(1), other.player.getSlot(1), true)) return false;
-        if (!isCreatureDominated(this.player.getSlot(2), other.player.getSlot(2), true)) return false;
-        if (!isCreatureDominated(this.player.getSlot(3), other.player.getSlot(3), true)) return false;
- 
-        if (!isCreatureDominated(this.enemy.getSlot(1), other.enemy.getSlot(1), false)) return false;
-        if (!isCreatureDominated(this.enemy.getSlot(2), other.enemy.getSlot(2), false)) return false;
-        if (!isCreatureDominated(this.enemy.getSlot(3), other.enemy.getSlot(3), false)) return false;
+        if (this.player.getActive().getRemainingHp() > other.player.getActive().getRemainingHp()) return false;
+        if (this.player.getActive().getEnergy() > other.player.getActive().getEnergy()) return false;
+        if (this.enemy.getActive().getRemainingHp() < other.enemy.getActive().getRemainingHp()) return false;
+        if (this.enemy.getActive().getEnergy() < other.enemy.getActive().getEnergy()) return false;
 
         if (this.player.getShields() > other.player.getShields()) return false;
         if (this.enemy.getShields() < other.enemy.getShields()) return false;
@@ -459,6 +456,7 @@ public class BattleState {
         if (this.player.getDefBuff() > other.player.getDefBuff()) return false;
         if (this.enemy.getAtkBuff() < other.enemy.getAtkBuff()) return false;
         if (this.enemy.getDefBuff() < other.enemy.getDefBuff()) return false;
+        
         if (this.enemy.getQueuedAction() == Action.STUN) {
             if (other.enemy.getQueuedAction() != Action.STUN) return false;
             if (this.enemy.getQueuedActionFulfills() > other.enemy.getQueuedActionFulfills()) return false;
@@ -468,25 +466,35 @@ public class BattleState {
         return !(this.enemy.hasStunQueued() && !other.enemy.hasStunQueued());
 
         /*
+        since enemies always use creatures front to back and simulations are currently only run
+        with one creature, these are not currently necessary
+        */
+        // for (int i = 1; i <= 3; i++) {
+        //     if (i == pActiveSlot) continue; // Already checked active
+        //     BattlingCreature c1 = this.player.getSlot(i);
+        //     if (c1 != null && !c1.isFainted()) {
+        //         BattlingCreature c2 = other.player.getSlot(i);
+        //         if (c1.getRemainingHp() > c2.getRemainingHp()) return false;
+        //         if (c1.getEnergy() > c2.getEnergy()) return false;
+        //     }
+        // }
+        // for (int i = 1; i <= 3; i++) {
+        //     if (i == eActiveSlot) continue; // Already checked active
+        //     BattlingCreature c1 = this.enemy.getSlot(i);
+        //     if (c1 != null && !c1.isFainted()) {
+        //         BattlingCreature c2 = other.enemy.getSlot(i);
+        //         if (c1.getRemainingHp() < c2.getRemainingHp()) return false;
+        //         if (c1.getEnergy() < c2.getEnergy()) return false;
+        //     }
+        // }
+
+        /*
         commented out as fast attacks should always align (as switching mid battle is not allowed currently),
         making this check redundant. if things change, should be added back
         */
         // if (this.player.getQueuedAction() == Action.FAST_ATTACK && other.player.getQueuedAction() == Action.FAST_ATTACK) {
         //     if (this.player.getQueuedActionFulfills() < other.player.getQueuedActionFulfills()) return false;
         // }
-    }
-
-    private boolean isCreatureDominated(BattlingCreature c1, BattlingCreature c2, boolean isPlayer) {
-        if (c1 != null && !c1.isFainted()) {
-            if (isPlayer) {
-                if (c1.getRemainingHp() > c2.getRemainingHp()) return false;
-                if (c1.getEnergy() > c2.getEnergy()) return false;
-            } else {
-                if (c1.getRemainingHp() < c2.getRemainingHp()) return false;
-                if (c1.getEnergy() < c2.getEnergy()) return false;
-            }
-        }
-        return true;
     }
 
     @Override

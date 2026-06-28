@@ -35,8 +35,16 @@ public class TeamBattleSolver implements BattleSolver {
     }
     
     private void addStateWithPruning(List<BattleState> states, BattleState newState) {
-        for (BattleState existingState : states) {
-            if (newState.isDominatedBy(existingState)) return;
+        for (int i = 0; i < states.size(); i++) {
+            BattleState existingState = states.get(i);
+            if (newState.isDominatedBy(existingState)) {
+                if (i > 0) {
+                    final BattleState killer = states.get(i);
+                    states.set(i, states.get(i - 1));
+                    states.set(i - 1, killer);
+                }
+                return;
+            }
         }
 
         states.removeIf((existingState) -> existingState.isDominatedBy(newState));
