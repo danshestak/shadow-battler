@@ -60,7 +60,7 @@ public class TeamBattleSolver implements BattleSolver {
 
         while (!activeStates.isEmpty()) {
             //grouping states by how comparable they are to reduce the n in O(n^2) for pruning
-            Map<Long, List<BattleState>> groupedStates = new HashMap<>();
+            Map<Integer, List<BattleState>> groupedStates = new HashMap<>();
             for (BattleState state : activeStates) {
                 List<BattleState> newBranches = state.step();
 

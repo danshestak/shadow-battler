@@ -18,8 +18,8 @@ public class BattleState {
     private int turnsElapsed;
     private int timeElapsed;
     private boolean finished;
+    private int comparisonKey;
     final private BattleLog log;
-    private long comparisonKey;
 
     /** how long it takes for a turn/step to pass */
     final private static int TURN_TIME = 500;
@@ -46,8 +46,8 @@ public class BattleState {
         this.turnsElapsed = 0;
         this.timeElapsed = 0;
         this.finished = false;
+        this.comparisonKey = this.createComparisonKey();
         this.log = isLogged ? new BattleLog() : null;
-        this.comparisonKey = -1;
     }
     
     public BattleState(BattleState other) {
@@ -56,8 +56,8 @@ public class BattleState {
         this.turnsElapsed = other.turnsElapsed;
         this.timeElapsed = other.timeElapsed;
         this.finished = other.finished;
+        this.comparisonKey = other.comparisonKey;
         this.log = other.log != null ? new BattleLog(other.log) : null;
-        this.comparisonKey = -1;
     }
 
     public Trainer getPlayer() {
@@ -126,10 +126,10 @@ public class BattleState {
      * as that method considers ties and priority, and handles fainting
      * @param user the trainer who will use their queued action
      */
-    private void processQueuedAction(Trainer user) {
+    private void processQueuedAction(Trainer user, boolean isPlayer) {
         if (user.getQueuedAction() == null) return;
 
-        final Trainer opp = this.getOpponentTo(user);
+        final Trainer opp = isPlayer ? this.enemy : this.player;
         final int beforeHp = opp.getActive().getRemainingHp();
 
         if (user.getQueuedAction().isSwitch()) {
@@ -138,6 +138,10 @@ public class BattleState {
                 user.setSwitchCooldownEnds(this.timeElapsed + BattleState.SWITCH_COOLDOWN);
             } 
             user.switchTo(user.getQueuedAction().get());
+            
+            final int offset = isPlayer ? 12 : 14;
+            this.comparisonKey &= ~(0x3 << offset);
+            this.comparisonKey |= (user.getQueuedAction().get() << offset);
 
             this.enemy.setStunQueued(true);
         } else if (user.getQueuedAction().isChargedAttack()) {
@@ -165,11 +169,11 @@ public class BattleState {
 
             //apply floating fast moves
             if (opp.getQueuedActionFulfills() <= this.turnsElapsed && !opp.getActive().isFainted()) {
-                this.processQueuedAction(opp);
+                this.processQueuedAction(opp, !isPlayer);
             }
             
             //account for charge time 
-            this.timeElapsed += user == this.player ? BattleState.PLAYER_CHARGE_TIME : BattleState.ENEMY_CHARGE_TIME;
+            this.timeElapsed += isPlayer ? BattleState.PLAYER_CHARGE_TIME : BattleState.ENEMY_CHARGE_TIME;
 
             this.enemy.setStunQueued(true);
         } else if (user.getQueuedAction() == Action.FAST_ATTACK) {
@@ -251,25 +255,25 @@ public class BattleState {
 
             if (considerPriority) {
                 if (playerPriority) {
-                    this.processQueuedAction(this.player);
-                    if (!enemyActive.isFainted()) this.processQueuedAction(this.enemy);
+                    this.processQueuedAction(this.player, true);
+                    if (!enemyActive.isFainted()) this.processQueuedAction(this.enemy, false);
                 } else {
-                    this.processQueuedAction(this.enemy);
-                    if (!playerActive.isFainted()) this.processQueuedAction(this.player);
+                    this.processQueuedAction(this.enemy, false);
+                    if (!playerActive.isFainted()) this.processQueuedAction(this.player, true);
                 }
             } else {
-                this.processQueuedAction(this.player);
-                this.processQueuedAction(this.enemy);
+                this.processQueuedAction(this.player, true);
+                this.processQueuedAction(this.enemy, false);
             }
         } else if (playerFulfilledAction != null && enemyFulfilledAction == null) {
-            this.processQueuedAction(this.player);
+            this.processQueuedAction(this.player, true);
         } else if (playerFulfilledAction == null && enemyFulfilledAction != null) {
-            this.processQueuedAction(this.enemy);
+            this.processQueuedAction(this.enemy, false);
         }
 
         if (playerFulfilledAction != null || enemyFulfilledAction != null) {
-            this.checkTrainerFaint(this.player);
-            this.checkTrainerFaint(this.enemy);
+            this.checkTrainerFaint(this.player, true);
+            this.checkTrainerFaint(this.enemy, false);
         }
 
         //end battle after 12 minutes
@@ -278,9 +282,10 @@ public class BattleState {
         }
     }
 
-    private void checkTrainerFaint(Trainer trainer) {
+    private void checkTrainerFaint(Trainer trainer, boolean isPlayer) {
         if (!trainer.getActive().isFainted()) return;
         trainer.adjustRemainingCreatures(-1);
+        this.comparisonKey |= (1 << (trainer.getActiveSlot() + (isPlayer ? 15 : 18)));
 
         if (trainer.getRemainingCreatures() <= 0) {
             this.finished = true;
@@ -297,7 +302,6 @@ public class BattleState {
      * @return a list of new states created from branching player decisions. the current state is also advanced
      */
     public List<BattleState> step() {
-        this.comparisonKey = -1;
         this.processQueuedActions();
         if (this.finished) return new ArrayList<>();
 
@@ -387,47 +391,43 @@ public class BattleState {
         }
 
         this.turnsElapsed++;
+        this.comparisonKey++; //don't need any masking logic as the first section represents turnsElapsed
 
         return newBranches;
     }
 
-    private long getCreatureStatusCode(BattlingCreature c) {
-        if (c == null) return 0;
-        if (c.isFainted()) return 1;
-        return 2; // Creature is active and not fainted
-    }
-
+    
     /**
      * for two states to be able to be comparable, they must both return the same comparisonKey
      * from this method. if they are comparable, then they can be compared using the isDominatedBy
      * method
      * 
-     * the key is a long with its bits representing the following data:
-     * - bits 0-11:  turnsElapsed (up to 4095)
+     * the key is an int with its bits representing the following data:
+     * - bits 0-11:  turnsElapsed (up to 4095) [cannot overflow because of timeElapsed limit]
      * - bits 12-13: playerActiveSlot (1-3)
      * - bits 14-15: enemyActiveSlot (1-3)
-     * - bits 16-17: playerRemaining (0-3)
-     * - bits 18-19: enemyRemaining (0-3)
-     * - bits 20-31: Status for all 6 creatures (2 bits: null, fainted, or active)
+     * - bits 16-22: status for all 6 creatures (1 bit: active (0) or fainted/null (1))
      * @return
-     */
-    public long getComparisonKey() {
-        if (this.comparisonKey < 0) {
-            long key = 0L;
-            key |= (long) (this.turnsElapsed & 0xFFF);
-            key |= (long) (this.player.getActiveSlot() & 0x3) << 12;
-            key |= (long) (this.enemy.getActiveSlot() & 0x3) << 14;
-            key |= (long) (this.player.getRemainingCreatures() & 0x3) << 16;
-            key |= (long) (this.enemy.getRemainingCreatures() & 0x3) << 18;
-            key |= getCreatureStatusCode(this.player.getSlot(1)) << 20;
-            key |= getCreatureStatusCode(this.player.getSlot(2)) << 22;
-            key |= getCreatureStatusCode(this.player.getSlot(3)) << 24;
-            key |= getCreatureStatusCode(this.enemy.getSlot(1)) << 26;
-            key |= getCreatureStatusCode(this.enemy.getSlot(2)) << 28;
-            key |= getCreatureStatusCode(this.enemy.getSlot(3)) << 30;
-            this.comparisonKey = key;
-        }
-        return this.comparisonKey;
+    */
+    public int getComparisonKey() {
+       return this.comparisonKey;
+    }
+    
+    private int getCreatureStatusCode(BattlingCreature c) {
+        return (c == null || c.isFainted()) ? 1 : 0;
+    }
+
+    private int createComparisonKey() {
+        int key = this.turnsElapsed;
+        key |= (this.player.getActiveSlot() << 12);
+        key |= (this.enemy.getActiveSlot() << 14);
+        key |= (getCreatureStatusCode(this.player.getSlot(1)) << 16);
+        key |= (getCreatureStatusCode(this.player.getSlot(2)) << 17);
+        key |= (getCreatureStatusCode(this.player.getSlot(3)) << 18);
+        key |= (getCreatureStatusCode(this.enemy.getSlot(1)) << 19);
+        key |= (getCreatureStatusCode(this.enemy.getSlot(2)) << 20);
+        key |= (getCreatureStatusCode(this.enemy.getSlot(3)) << 21);
+        return key; 
     }
 
     /**
@@ -437,27 +437,43 @@ public class BattleState {
      * not do any checks at runtime to see if states are comparable. to check that, compare these
      * states' comparison keys from the getComparisonKey method
      * @param other the state to compare against
-     * @return true if this state is dominated by the other, false otherwise. also returns false if the
-     * states are not comparable. Note: this implementation uses weak dominance, meaning a state
-     * is considered dominated if it is not strictly better than the other state in any aspect.
-     * This includes being equal, which allows for pruning identical states.
+     * @return true if this state is dominated by the other, false otherwise. NOTE: this 
+     * implementation uses weak dominance, meaning a state is considered dominated if it is not 
+     * strictly better than the other state in any aspect. this includes being equal, which allows
+     * for pruning identical states
      */
     public boolean isDominatedBy(BattleState other) {
         if (this.timeElapsed < other.timeElapsed) return false;
+
+        if (!isCreatureDominated(this.player.getSlot(1), other.player.getSlot(1), true)) return false;
+        if (!isCreatureDominated(this.player.getSlot(2), other.player.getSlot(2), true)) return false;
+        if (!isCreatureDominated(this.player.getSlot(3), other.player.getSlot(3), true)) return false;
+ 
+        if (!isCreatureDominated(this.enemy.getSlot(1), other.enemy.getSlot(1), false)) return false;
+        if (!isCreatureDominated(this.enemy.getSlot(2), other.enemy.getSlot(2), false)) return false;
+        if (!isCreatureDominated(this.enemy.getSlot(3), other.enemy.getSlot(3), false)) return false;
+
         if (this.player.getShields() > other.player.getShields()) return false;
         if (this.enemy.getShields() < other.enemy.getShields()) return false;
         if (this.player.getAtkBuff() > other.player.getAtkBuff()) return false;
         if (this.player.getDefBuff() > other.player.getDefBuff()) return false;
         if (this.enemy.getAtkBuff() < other.enemy.getAtkBuff()) return false;
         if (this.enemy.getDefBuff() < other.enemy.getDefBuff()) return false;
+        if (this.enemy.getQueuedAction() == Action.STUN) {
+            if (other.enemy.getQueuedAction() != Action.STUN) return false;
+            if (this.enemy.getQueuedActionFulfills() > other.enemy.getQueuedActionFulfills()) return false;
+        } else if (this.enemy.getQueuedAction() == Action.FAST_ATTACK && other.enemy.getQueuedAction() == Action.FAST_ATTACK) {
+            if (this.enemy.getQueuedActionFulfills() > other.enemy.getQueuedActionFulfills()) return false;
+        }
+        return !(this.enemy.hasStunQueued() && !other.enemy.hasStunQueued());
 
-        if (!isCreatureDominated(this.player.getSlot(1), other.player.getSlot(1), true)) return false;
-        if (!isCreatureDominated(this.player.getSlot(2), other.player.getSlot(2), true)) return false;
-        if (!isCreatureDominated(this.player.getSlot(3), other.player.getSlot(3), true)) return false;
-
-        if (!isCreatureDominated(this.enemy.getSlot(1), other.enemy.getSlot(1), false)) return false;
-        if (!isCreatureDominated(this.enemy.getSlot(2), other.enemy.getSlot(2), false)) return false;
-        return isCreatureDominated(this.enemy.getSlot(3), other.enemy.getSlot(3), false);
+        /*
+        commented out as fast attacks should always align (as switching mid battle is not allowed currently),
+        making this check redundant. if things change, should be added back
+        */
+        // if (this.player.getQueuedAction() == Action.FAST_ATTACK && other.player.getQueuedAction() == Action.FAST_ATTACK) {
+        //     if (this.player.getQueuedActionFulfills() < other.player.getQueuedActionFulfills()) return false;
+        // }
     }
 
     private boolean isCreatureDominated(BattlingCreature c1, BattlingCreature c2, boolean isPlayer) {
