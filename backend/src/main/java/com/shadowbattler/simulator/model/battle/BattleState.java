@@ -20,6 +20,8 @@ public class BattleState {
     private boolean finished;
     private int comparisonKey;
     final private BattleLog log;
+    private int projTimeElapsedLowerBoundAddend;
+    final private double[] maxDps;
 
     /** how long it takes for a turn/step to pass */
     final private static int TURN_TIME = 500;
@@ -33,12 +35,12 @@ public class BattleState {
      * charging
      */
     final private static int ENEMY_CHARGE_TIME = 7000;
-    /** how long it takes for the player to switch to their next creature after their active faints */
-    final private static int PLAYER_FAINT_TIME = 1000;
-    /** how long it takes for the enemy to switch to their next creature after their active faints */
-    final private static int ENEMY_FAINT_TIME = 2000;
+    /** how long it takes either trainer to switch to their next creature after their active faints */
+    final private static int FAINT_TIME = 1000;
     /** how many turns the enemy is stunned for after a trainer switches/uses a charged move */
     final private static int STUN_TURNS = 8;
+
+    final protected static double BUFF_APPLY_THRESHOLD = 0.8;
 
     public BattleState(Team<Creature> playerTeam, Team<Creature> opponentTeam, int opponentStartingShields, boolean isLogged) {
         this.player = new Trainer(playerTeam, 2);
@@ -48,6 +50,7 @@ public class BattleState {
         this.finished = false;
         this.comparisonKey = this.createComparisonKey();
         this.log = isLogged ? new BattleLog() : null;
+        this.maxDps = BattleState.createMaxDpsArr(this.player.getBattlingCreatures(), this.enemy.getBattlingCreatures());
     }
     
     public BattleState(BattleState other) {
@@ -58,6 +61,7 @@ public class BattleState {
         this.finished = other.finished;
         this.comparisonKey = other.comparisonKey;
         this.log = other.log != null ? new BattleLog(other.log) : null;
+        this.maxDps = other.maxDps;
     }
 
     public Trainer getPlayer() {
@@ -125,6 +129,7 @@ public class BattleState {
      * consumes and processes the user's queued action. should not be used outside of processQueuedActions,
      * as that method considers ties and priority, and handles fainting
      * @param user the trainer who will use their queued action
+     * @param isPlayer true if user is the player, false if user is the enemy
      */
     private void processQueuedAction(Trainer user, boolean isPlayer) {
         if (user.getQueuedAction() == null) return;
@@ -136,12 +141,17 @@ public class BattleState {
             //forced switch after fainting has no effect on cooldown
             if (!user.getActive().isFainted()) {
                 user.setSwitchCooldownEnds(this.timeElapsed + BattleState.SWITCH_COOLDOWN);
-            } 
+            }
             user.switchTo(user.getQueuedAction().get());
             
             final int offset = isPlayer ? 12 : 14;
             this.comparisonKey &= ~(0x3 << offset);
             this.comparisonKey |= (user.getQueuedAction().get() << offset);
+
+            //projTimeElapsedLowerBoundAddend changes when enemy's active changes
+            if (!isPlayer) {
+                this.projTimeElapsedLowerBoundAddend = this.calculateProjTimeElapsedLowerBoundAddend();
+            }
 
             this.enemy.setStunQueued(true);
         } else if (user.getQueuedAction().isChargedAttack()) {
@@ -209,6 +219,15 @@ public class BattleState {
     private void processQueuedActions() {
         final Action playerFulfilledAction = this.player.getQueuedActionFulfills() <= this.turnsElapsed ? this.player.getQueuedAction() : null;
         final Action enemyFulfilledAction = this.enemy.getQueuedActionFulfills() <= this.turnsElapsed ? this.enemy.getQueuedAction() : null;
+
+        /*
+        fainted creatures are forced to switch with no other action being available that turn, so assume both
+        fulfilled actions are a switch or null and there is at least one switch if either creature is fainted
+        */
+        if (this.enemy.getActive().isFainted() || this.player.getActive().isFainted()) {
+            //account for time needed to switch. an OR statement to avoid double counting if both trainers switch
+            this.timeElapsed += BattleState.FAINT_TIME;
+        }
 
         if (playerFulfilledAction != null && enemyFulfilledAction != null) {
             boolean playerPriority = false;
@@ -315,18 +334,11 @@ public class BattleState {
             if (enemyActive.isFainted()) {
                 //switch to next slot
                 enemyAction = Action.getSwitch(this.enemy.getActiveSlot() + 1);
-                //account for time for enemy to switch
-                this.timeElapsed += BattleState.ENEMY_FAINT_TIME;
             } else {
                 enemyAction = null;
             }
             
             if (playerActive.isFainted()) {
-                //account for time for player to switch without double counting
-                if (enemyAction != null && !enemyAction.isSwitch()) {
-                    this.timeElapsed += BattleState.PLAYER_FAINT_TIME;
-                }
-
                 int firstSwitch = -1;
                 for (int i = 1; i <= 3; i++) {
                     final BattlingCreature ithSlot = this.player.getSlot(i);
@@ -495,6 +507,117 @@ public class BattleState {
         // if (this.player.getQueuedAction() == Action.FAST_ATTACK && other.player.getQueuedAction() == Action.FAST_ATTACK) {
         //     if (this.player.getQueuedActionFulfills() < other.player.getQueuedActionFulfills()) return false;
         // }
+    }
+
+    /**
+     * calculates how long it would take to win if each of the opponent's creatures was being
+     * dealt the highest possible dps that the player's team can deal. the value returned by this
+     * method will never exceed a solution of this state's timeElapsed.
+     * @return the lower bound of the projection of timeElapsed
+     */
+    public int getProjTimeElapsedLowerBound() {
+        return this.timeElapsed
+         + this.projTimeElapsedLowerBoundAddend
+         + (int)((this.enemy.getActive().getRemainingHp() / this.maxDps[this.enemy.getActiveSlot()-1]) * 1000);
+    }
+
+    /**
+     * calculates the maxDps array for a state. this array is used to get the projected timeElapsed lower bound
+     * @param playerTeam the state's player's battling creatures
+     * @param enemyTeam the state's enemy's battling creatures
+     * @return an array where each value corresponds to the highest dps that the opponent's creature at the same
+     * index can receive. for example, createMaxDpsArr()[2] is the maximum dps that any creature on playerTeam can 
+     * deal to the creature at enemyTeam[2] 
+     */
+    private static double[] createMaxDpsArr(BattlingCreature[] playerTeam, BattlingCreature[] enemyTeam) {
+        final double[] maxDpsArr = new double[enemyTeam.length];
+
+        for (final BattlingCreature playerCreature : playerTeam) {
+            if (playerCreature == null) break;
+
+            boolean canPcBoostPcAttack = false;
+            boolean canPcLowerEcDefense = false;
+
+            final Move pcFastMove = playerCreature.getCreature().getFastMove();
+            final List<Move> pcChargedMoves = playerCreature.getCreature().getChargedMoves();
+
+            for (Move chargedMove : pcChargedMoves) {
+                if (chargedMove.buffApplyChance() > BattleState.BUFF_APPLY_THRESHOLD) {
+                    final var buffsSelf = chargedMove.buffsSelf();
+                    final var buffsOpponent = chargedMove.buffsOpponent();
+                    if (buffsSelf != null && buffsSelf.getAtk() > 0 && !canPcBoostPcAttack) {
+                        canPcBoostPcAttack = true;
+                    }
+                    if (buffsOpponent != null && buffsOpponent.getDef() < 0 && !canPcLowerEcDefense) {
+                        canPcLowerEcDefense = true;
+                    }
+                }
+            }
+
+            int i = 0;
+            boolean canEcBoostPcAttack = false;
+            for (BattlingCreature enemyCreature : enemyTeam) {
+                if (enemyCreature == null) break;
+
+                boolean canEcLowerEcDefense = false;
+                
+                final Move ecChargedMove = enemyCreature.getCreature().getChargedMoves().get(0);
+
+                if (ecChargedMove.buffApplyChance() > BattleState.BUFF_APPLY_THRESHOLD) {
+                    final var buffsOpponent = ecChargedMove.buffsOpponent();
+                    final var buffsSelf = ecChargedMove.buffsSelf();
+                    if (buffsOpponent != null && buffsOpponent.getAtk() > 0 && !canEcBoostPcAttack) {
+                        canEcBoostPcAttack = true;
+                    }
+                    if (buffsSelf != null && buffsSelf.getDef() < 0 && !canEcLowerEcDefense) {
+                        canEcLowerEcDefense = true;
+                    }
+                }
+
+                double pcMaxDps = playerCreature.calculateDamageAgainst(
+                    enemyCreature, 
+                    pcFastMove, 
+                    (canPcBoostPcAttack || canEcBoostPcAttack) ? BattlingCreature.MAX_BUFF_STAGES : 0, 
+                    (canPcLowerEcDefense || canEcLowerEcDefense) ? -BattlingCreature.MAX_BUFF_STAGES : 0
+                ) / (pcFastMove.turns() * 0.5);
+
+                for (Move pcChargedMove : pcChargedMoves) {
+                    final double pcCmDps = playerCreature.calculateDamageAgainst(
+                        enemyCreature, 
+                        pcChargedMove, 
+                        (canPcBoostPcAttack || canEcBoostPcAttack) ? BattlingCreature.MAX_BUFF_STAGES : 0, 
+                        (canPcLowerEcDefense || canEcLowerEcDefense) ? -BattlingCreature.MAX_BUFF_STAGES : 0
+                    ) / (BattleState.PLAYER_CHARGE_TIME / 1000.0);
+
+                    if (pcCmDps > pcMaxDps) pcMaxDps = pcCmDps;
+                }
+
+                if (pcMaxDps > maxDpsArr[i]) maxDpsArr[i] = pcMaxDps;
+                i++;
+            }
+        }
+
+        return maxDpsArr;
+    }
+    
+    /**
+     * calculates the lower bound of how long it takes to defeat the enemy's battling creatures that
+     * are not active or already fainted. this number only changes when the opponent's active creature 
+     * faints, so it's cached then to avoid extra operations when calculating the projected timeElapsed 
+     * lower bound.
+     * @return a projected timeElapsed lower bound addend
+     */
+    private int calculateProjTimeElapsedLowerBoundAddend() {
+        int result = 0;
+        //i starts at 1 above the index of the active battling creature. this is intentional as we are not interested 
+        //in the active creature
+        final BattlingCreature[] battlingCreatures = this.enemy.getBattlingCreatures();
+        for (int i = this.enemy.getActiveSlot(); i < battlingCreatures.length; i++) {
+            //remaining hp should be the same as the starting hp since these creatures haven't battled
+            result += BattleState.FAINT_TIME + (int)((battlingCreatures[i].getRemainingHp() / this.maxDps[i-1]) * 1000);
+        }
+
+        return result;
     }
 
     @Override

@@ -165,7 +165,7 @@ public class Trainer {
      * @param target the target of the move's Trainer
      */
     public void applyMoveBuffsChance(Move move, Trainer target) {
-        if (move.buffApplyChance() > 0.8) {
+        if (move.buffApplyChance() > BattleState.BUFF_APPLY_THRESHOLD) {
             this.processBuff(move.buffsSelf());
             target.processBuff(move.buffsOpponent());
         }

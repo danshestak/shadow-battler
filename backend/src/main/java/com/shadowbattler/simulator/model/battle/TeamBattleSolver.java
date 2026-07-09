@@ -36,18 +36,23 @@ public class TeamBattleSolver implements BattleSolver {
     
     private void addStateWithPruning(List<BattleState> states, BattleState newState) {
         for (int i = 0; i < states.size(); i++) {
-            BattleState existingState = states.get(i);
-            if (newState.isDominatedBy(existingState)) {
+            if (newState.isDominatedBy(states.get(i))) {
                 if (i > 0) {
                     final BattleState killer = states.get(i);
-                    states.set(i, states.get(i - 1));
-                    states.set(i - 1, killer);
+                    states.set(i, states.get(0));
+                    states.set(0, killer);
                 }
                 return;
             }
         }
 
-        states.removeIf((existingState) -> existingState.isDominatedBy(newState));
+        for (int i = states.size() - 1; i >= 0; i--) {
+            if (states.get(i).isDominatedBy(newState)) {
+                final int last = states.size() - 1;
+                states.set(i, states.get(last));
+                states.remove(last);
+            }
+        }
         states.add(newState);
     }
 
@@ -77,7 +82,7 @@ public class TeamBattleSolver implements BattleSolver {
                     if (state.playerWon()) {
                         fastestWinTime = Math.min(fastestWinTime, state.getTimeElapsed());
                     }
-                } else if (state.getTimeElapsed() < fastestWinTime) {
+                } else if (state.getProjTimeElapsedLowerBound() < fastestWinTime) {
                     groupedStates.computeIfAbsent(state.getComparisonKey(), k -> new ArrayList<>()).add(state);
                 }
 
@@ -87,7 +92,7 @@ public class TeamBattleSolver implements BattleSolver {
                         if (branch.playerWon()) {
                             fastestWinTime = Math.min(fastestWinTime, branch.getTimeElapsed());
                         }
-                    } else if (branch.getTimeElapsed() < fastestWinTime) {
+                    } else if (branch.getProjTimeElapsedLowerBound() < fastestWinTime) {
                         groupedStates.computeIfAbsent(branch.getComparisonKey(), k -> new ArrayList<>()).add(branch);
                     }
                 }
@@ -118,7 +123,7 @@ public class TeamBattleSolver implements BattleSolver {
         if (fastestWin != null) {
             this.battleResult = new BattleResult(
                 fastestWin.getTimeElapsed(),
-                fastestWin.playerWon() ? 1.0 : 0.0,
+                1.0,
                 Arrays.stream(fastestWin.getPlayer().getBattlingCreatures())
                     .filter(Objects::nonNull)
                     .mapToDouble((bc) -> bc.getRemainingHp()/bc.getCreature().getStats().getHp())
