@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.shadowbattler.simulator.model.Opponent;
 import com.shadowbattler.simulator.model.Opponent.Title;
 
@@ -23,6 +25,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "opponents")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "opponentId")
 public class OpponentEntity {
     @Id
     private String opponentId;

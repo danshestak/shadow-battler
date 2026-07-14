@@ -3,6 +3,7 @@ package com.shadowbattler.simulator.persistence.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.shadowbattler.simulator.model.Opponent;
@@ -25,11 +26,11 @@ public class OpponentEntityService {
         return this.opponentEntityRepository.findAllWithLineups();
     }
 
-    public Optional<OpponentEntity> getOpponentEntityById(String id) {
+    public Optional<OpponentEntity> getOpponentEntityById(@NonNull String id) {
         return this.opponentEntityRepository.findById(id);
     }
 
-    public OpponentEntity getReferenceById(String id) {
+    public OpponentEntity getReferenceById(@NonNull String id) {
         return this.opponentEntityRepository.getReferenceById(id);
     }
 

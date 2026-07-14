@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Stats3;
 
@@ -17,6 +19,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "moves")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "moveId")
 public class MoveEntity {
     @Id
     private String moveId;

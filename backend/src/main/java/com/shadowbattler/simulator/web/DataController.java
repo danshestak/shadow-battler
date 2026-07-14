@@ -1,5 +1,6 @@
 package com.shadowbattler.simulator.web;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Opponent;
 import com.shadowbattler.simulator.model.Species;
+import com.shadowbattler.simulator.persistence.entity.BattleResultEntity;
+import com.shadowbattler.simulator.persistence.service.BattleResultEntityService;
 import com.shadowbattler.simulator.service.MovesDataService;
 import com.shadowbattler.simulator.service.OpponentDataService;
 import com.shadowbattler.simulator.service.SpeciesDataService;
@@ -20,15 +23,18 @@ public class DataController {
     private final SpeciesDataService speciesDataService;
     private final MovesDataService movesDataService;
     private final OpponentDataService opponentDataService;
+    private final BattleResultEntityService battleResultEntityService;
 
     public DataController(
         SpeciesDataService speciesDataService, 
         MovesDataService movesDataService,
-        OpponentDataService opponentDataService
+        OpponentDataService opponentDataService,
+        BattleResultEntityService battleResultEntityService
     ) {
         this.speciesDataService = speciesDataService;
         this.movesDataService = movesDataService;
         this.opponentDataService = opponentDataService;
+        this.battleResultEntityService = battleResultEntityService;
     }
 
     @GetMapping("/species/{id}")
@@ -59,5 +65,10 @@ public class DataController {
     @GetMapping("/opponents")
     public Map<String, Opponent> getAllOpponents() {
         return this.opponentDataService.getAllOpponentsMap();
+    }
+
+    @GetMapping("/counters/{opponentId}")
+    public List<BattleResultEntity> getCounters(@PathVariable String opponentId) {
+        return this.battleResultEntityService.getTopScoringBRsPerSpecies(opponentId);
     }
 }

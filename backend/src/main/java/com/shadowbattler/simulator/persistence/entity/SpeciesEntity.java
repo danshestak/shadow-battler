@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.shadowbattler.simulator.model.Species;
 
 import jakarta.persistence.CascadeType;
@@ -24,6 +26,7 @@ elite or legacy moves)
 */
 @Entity
 @Table(name = "species")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "speciesId")
 public class SpeciesEntity {
     @Id
     private String speciesId;

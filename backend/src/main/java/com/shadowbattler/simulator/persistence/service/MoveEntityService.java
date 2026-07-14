@@ -3,6 +3,7 @@ package com.shadowbattler.simulator.persistence.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import com.shadowbattler.simulator.model.Move;
@@ -21,15 +22,15 @@ public class MoveEntityService {
         return this.moveEntityRepository.findAll();
     }
 
-    public Optional<MoveEntity> getMoveEntityById(String id) {
+    public Optional<MoveEntity> getMoveEntityById(@NonNull String id) {
         return this.moveEntityRepository.findById(id);
     }
 
-    public MoveEntity getReferenceById(String id) {
+    public MoveEntity getReferenceById(@NonNull String id) {
         return this.moveEntityRepository.getReferenceById(id);
     }
 
-    public MoveEntity saveMove(Move move) {
+    public MoveEntity saveMove(@NonNull Move move) {
         MoveEntity entity = this.moveEntityRepository.findById(move.moveId()).orElse(new MoveEntity());
         
         entity.updateFromMove(move);

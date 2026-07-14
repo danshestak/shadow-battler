@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,13 +19,17 @@ public class BattleResultEntityService {
         this.battleResultEntityRepository = battleResultEntityRepository;
     }
 
-    public BattleResultEntity save(BattleResultEntity battleResultEntity) {
+    public BattleResultEntity save(@NonNull BattleResultEntity battleResultEntity) {
         return this.battleResultEntityRepository.save(battleResultEntity);
     }
 
-    public List<BattleResultEntity> saveAll(List<BattleResultEntity> battleResultEntities) {
+    public List<BattleResultEntity> saveAll(@NonNull List<BattleResultEntity> battleResultEntities) {
         return this.battleResultEntityRepository.saveAll(battleResultEntities);
     }
+
+    public List<BattleResultEntity> getTopScoringBRsPerSpecies(String opponentId) {
+        return this.battleResultEntityRepository.findTopScoringBRsPerSpecies(opponentId);
+    } 
 
     @Transactional(readOnly = true)
     public Map<String, Long> getMovesetCountsPerSpecies() {
