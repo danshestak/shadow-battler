@@ -1,8 +1,24 @@
 import CountersClientPage from './CountersClientPage';
 import Link from 'next/link';
 import CodeBlock from '@/components/CodeBlock';
+import { getBackendUrl } from '@/lib/env';
 
-const CountersPage = async () => {
+interface CountersPageProps {
+  params: Promise<{ opponent?: string[] }>;
+}
+
+const CountersPage = async ({ params }: CountersPageProps) => {
+  const resolvedParams = await params;
+  const opponentSlug = resolvedParams && Array.isArray(resolvedParams.opponent) ? resolvedParams.opponent[0] : undefined;
+
+  let initialBattleResults = null;
+  if (opponentSlug) {
+    const res = await fetch(`${getBackendUrl()}/api/counters/${opponentSlug}`);
+    if (res.ok) {
+      initialBattleResults = await res.json();
+    }
+  }
+
   return (
     <div className="max-w-4xl m-auto">
       <h1 className="text-2xl mb-4">Counters</h1>
@@ -26,7 +42,7 @@ const CountersPage = async () => {
       <h1 className="text-xl mb-4 pt-4 border-t border-theme4">
         Select an opponent below:
       </h1>
-      <CountersClientPage/>
+      <CountersClientPage initialBattleResults={initialBattleResults}/>
     </div>
   )
 };

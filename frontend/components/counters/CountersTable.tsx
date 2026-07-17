@@ -32,14 +32,14 @@ const CountersTable = ({ children, className, description }: CountersTableProps)
     
     return (
         <div className={cn(className, "w-full text-left flex flex-col")}>
-            <div className={cn('grid border-b border-theme4 px-2')} style={{ gridTemplateColumns: gridCols, gap: '0.5rem' }}>
+            <div className={cn('grid border-b border-theme4 px-2')} style={{ gridTemplateColumns: gridCols }}>
                 {Object.entries(description).filter(e => e[1] && e[0] !== "dropdownIndicator").map(e => 
                     <div key={e[0]} className={cn(cellStyle, e[0] === 'score' ? "font-bold" : "font-normal", e[0] === firstCol ? "col-span-2" : "")}>
                         {colNames[e[0]]}
                     </div>
                 )}
             </div>
-            <div className="flex flex-col pt-2 gap-2">
+            <div className="flex flex-col">
                 {children}
             </div>
         </div>

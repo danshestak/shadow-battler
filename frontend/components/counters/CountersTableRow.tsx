@@ -14,8 +14,9 @@ interface CountersTableRowProps {
     clientData: ClientData
 }
 
-const roundNumber = (n: number) => Math.round(n * 1000)/1000;
-const cellStyle = "pt-2 pb-2";
+const roundNumber = (n: number) => Math.round(n * 100)/100;
+const cellStyle = 'py-2 pr-1';
+const openCategoryStyle = 'md:p-4 md:pt-0 p-2 pt-0 flex-1'
 
 const CountersTableRow = ({ description, battleResult, clientData }: CountersTableRowProps) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -25,10 +26,10 @@ const CountersTableRow = ({ description, battleResult, clientData }: CountersTab
 
     return (
         <div className={cn('bg-theme3 rounded border border-transparent transition-colors duration-150', isOpen && 'bg-theme2 border-theme4 shadow-lg')}>
-            <button onClick={() => setIsOpen(!isOpen)} className={cn('w-full text-left cursor-pointer grid items-center px-2')} style={{ gridTemplateColumns: gridCols, gap: '0.5rem' }}>
+            <button onClick={() => setIsOpen(!isOpen)} className={cn('w-full text-left cursor-pointer grid items-center gap-1 px-2')} style={{ gridTemplateColumns: gridCols }}>
                 {description.dropdownIndicator && <div className={cn("transition-transform text-xs text-right", isOpen && "rotate-90")}>&#128898;</div>}
                 {description.species && <div className={cellStyle}>
-                    <div className='text-sm flex items-center'>
+                    <div className='text-sm flex items-center gap-1'>
                         <Sprite species={battleResult.playerSpecies} />
                         <span className='tracking-tight'>{battleResult.playerSpecies.speciesName}</span>
                     </div>
@@ -37,15 +38,15 @@ const CountersTableRow = ({ description, battleResult, clientData }: CountersTab
                     <div className='flex flex-wrap gap-0.5 items-start text-xs'>
                         {(['playerFastMove', 'playerChargedMove1', 'playerChargedMove2'] as const).map((s, i) => (
                             <MoveLabel
-                                key={i}
-                                move={battleResult[s]}
-                                species={battleResult.playerSpecies} />
+                            key={i}
+                            move={battleResult[s]}
+                            species={battleResult.playerSpecies}/>
                         ))}
                     </div>
                 </div>}
                 {description.time &&
-                    <div className={cn(cellStyle, "text-sm tracking-tight")}>
-                        {(battleResult.timeElapsed/1000).toFixed(1)}s
+                    <div className={cn(cellStyle, "text-sm tracking-tight", battleResult.winPercent === 0 ? 'italic' : '')}>
+                        {battleResult.winPercent !== 0 ? `${(battleResult.timeElapsed/1000).toFixed(1)}s` : 'DNF'}
                     </div>
                 }
                 {description.winpercent && 
@@ -60,8 +61,8 @@ const CountersTableRow = ({ description, battleResult, clientData }: CountersTab
                 }
             </button>
             {isOpen && (
-                <div className='p-1 border-t flex flex-col md:flex-row border-theme4 divide-y md:divide-x md:divide-y-0 divide-theme4 gap-y-2'>
-                    <div className='p-2 flex-1'>
+                <div className='pt-2 md:pb-2 px-2 md:px-0 border-t flex flex-col md:flex-row border-theme4 divide-y md:divide-x md:divide-y-0 divide-theme4 gap-y-2'>
+                    <div className={openCategoryStyle}>
                         <h3 className='mb-2 text-lg flex justify-between items-center'>
                             <span>Stats</span>
                             <span className='text-sm text-right'>@Level {battleResult.playerLevel.toFixed(1)}, 15/15/15 IVs</span>
@@ -90,7 +91,7 @@ const CountersTableRow = ({ description, battleResult, clientData }: CountersTab
 
                         <div className='text-xs text-center'>Shadow Pokémon have a 20% higher attack and 20% lower defense during damage calculations</div>
                     </div>
-                    <div className='p-2 flex-1'>
+                    <div className={openCategoryStyle}>
                         <h3 className='mb-2 text-lg flex justify-between items-center'>
                             <span>Moves</span>
                         </h3>
@@ -159,7 +160,7 @@ const CountersTableRow = ({ description, battleResult, clientData }: CountersTab
                             <li>Unobtainable by any TM<sup>&dagger;</sup></li>
                         </ul>
                     </div>
-                    <div className='p-2 flex-1'>
+                    <div className={openCategoryStyle}>
                         <h3 className='text-lg mb-2'>Performance</h3>
 
                         <div className='text-xs mb-2'>

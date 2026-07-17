@@ -9,59 +9,72 @@ import {
   ComboboxList,
 } from '@/components/ui/combobox';
 import { useParams, useRouter } from 'next/navigation';
+import useSWR from 'swr';
 import Link from 'next/link';
 import CountersTable from '@/components/counters/CountersTable';
 import CountersTableRow from '@/components/counters/CountersTableRow';
 import { CountersTableDescription } from '@/components/counters/CountersTableDescription';
 import { useClientData } from '@/lib/clientData';
 import { Opponent } from '@/types/Opponent';
-import { BattleResult } from '@/types/BattleResult';
+import { BattleResult, BattleResultRaw } from '@/types/BattleResult';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 
-const countersTableDescription: CountersTableDescription = {
-  dropdownIndicator: true,
-  species: true,
-  moves: true,
-  time: true,
-  winpercent: true,
-  score: true
+interface CountersClientPageProps {
+  initialBattleResults: BattleResultRaw[] | null
 }
 
-const CountersClientPage = () => {
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+const getLoadingOrErrorText = (isLoading: boolean, isError: boolean, isCountersLoading: boolean, isCountersError: boolean) => {
+  if (isLoading || isCountersLoading) {
+    return `Loading ${isLoading ? 'game data' : 'counters'}...`;
+  } else if (isError || isCountersError) {
+    return `There was an error loading ${isError ? 'game data' : 'counters'}.`;
+  } else {
+    return '';
+  }
+}
+
+const CountersClientPage = ({ initialBattleResults }: CountersClientPageProps) => {
+  const isSm = useMediaQuery(`(min-width: 640px)`);
+
   const { clientData, isError, isLoading } = useClientData()
   const router = useRouter();
   const params = useParams();
 
-  if (isLoading || isError) {
+  const opponentSlug = Array.isArray(params.opponent) ? params.opponent[0] : undefined;
+  const { 
+    data: rawBattleResults, 
+    error: isCountersError, 
+    isLoading: isCountersLoading 
+  } = useSWR<BattleResultRaw[]>(
+    opponentSlug ? `/api/counters?opponentId=${opponentSlug}` : null, 
+    fetcher,
+    { fallbackData: initialBattleResults || undefined}
+  );
+  
+  const isCountersPending = !rawBattleResults && !isCountersError && opponentSlug;
+
+  if (isLoading || isError || isCountersError || isCountersPending) {
     return (
-      <div className={`text-center italic p-2 bg-theme3 rounded border transition shadow-lg ${isLoading ? 'border-theme4' : 'border-highlight'}`}>
-        {isLoading ? 'Loading data...' : 'There was an error loading data.'}
+      <div className={`text-center italic p-2 bg-theme3 rounded border transition shadow-lg ${(isError || isCountersError) ? 'border-highlight' : 'border-theme4'}`}>
+        {getLoadingOrErrorText(isLoading, isError, isCountersLoading, isCountersError)}
       </div>
     )
   }
 
-  const opponentSlug = Array.isArray(params.opponent)
-    ? params.opponent[0]
-    : undefined;
-
   const selectedOpponent = Object.values(clientData.opponents).find((o) => o.opponentId === opponentSlug);
 
-  const battleResults: BattleResult[] = [
-      {
-        id: 1,
-        timeElapsed: 95000,
-        timeElapsedVariance: 50,
-        winPercent: 0.99,
-        hpPercent: 0.95,
-        score: 2000,
-        playerFastMove: 'BITE',
-        playerChargedMove1: 'HYDRO_CANNON',
-        playerChargedMove2: 'ICE_BEAM',
-        playerSpecies: 'blastoise_shadow',
-        opponent: 'grunt_m_fire',
-        playerLevel: 50,
-        trainerLevel: 70,
-    }
-  ].map(raw => BattleResult.fromRaw(raw, clientData));
+  const battleResults: BattleResult[] = rawBattleResults ? rawBattleResults.map(raw => BattleResult.fromRaw(raw, clientData)) : [];
+
+  const countersTableDescription: CountersTableDescription = {
+    dropdownIndicator: true,
+    species: true,
+    moves: true,
+    time: isSm,
+    winpercent: isSm,
+    score: true
+  };
 
   const handleValueChange = (name?: string | null) => {
     if (!name) return;

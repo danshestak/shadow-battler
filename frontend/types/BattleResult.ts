@@ -10,13 +10,13 @@ export type BattleResultRaw = {
     winPercent: number,
     hpPercent: number,
     score: number,
-    playerFastMove: string,
-    playerChargedMove1: string,
-    playerChargedMove2: string,
-    playerSpecies: string,
-    opponent: string,
     playerLevel: number,
     trainerLevel: number,
+    playerFastMoveId: string,
+    playerChargedMove1Id: string,
+    playerChargedMove2Id: string,
+    playerSpeciesId: string,
+    opponentId: string,
 }
 
 export type BattleResult = {
@@ -26,13 +26,13 @@ export type BattleResult = {
     winPercent: number,
     hpPercent: number,
     score: number,
+    playerLevel: number,
+    trainerLevel: number,
     playerFastMove: Move,
     playerChargedMove1: Move,
     playerChargedMove2: Move,
     playerSpecies: Species,
     opponent: Opponent,
-    playerLevel: number,
-    trainerLevel: number,
 }
 
 export const BattleResult = {
@@ -44,11 +44,11 @@ export const BattleResult = {
             winPercent: raw.winPercent,
             hpPercent: raw.hpPercent,
             score: raw.score,
-            playerFastMove: clientData.moves[raw.playerFastMove],
-            playerChargedMove1: clientData.moves[raw.playerChargedMove1],
-            playerChargedMove2: clientData.moves[raw.playerChargedMove2],
-            playerSpecies: clientData.species[raw.playerSpecies],
-            opponent: clientData.opponents[raw.opponent],
+            playerFastMove: clientData.moves[raw.playerFastMoveId],
+            playerChargedMove1: clientData.moves[raw.playerChargedMove1Id],
+            playerChargedMove2: clientData.moves[raw.playerChargedMove2Id],
+            playerSpecies: clientData.species[raw.playerSpeciesId],
+            opponent: clientData.opponents[raw.opponentId],
             playerLevel: raw.playerLevel,
             trainerLevel: raw.trainerLevel
         }

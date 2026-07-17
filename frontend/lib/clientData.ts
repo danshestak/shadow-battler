@@ -1,7 +1,4 @@
 import { ClientData } from '@/types/ClientData';
-import { Move } from '@/types/Move';
-import { Opponent } from '@/types/Opponent';
-import { Species } from '@/types/Species';
 import 'client-only'
 import useSWR from 'swr';
 
