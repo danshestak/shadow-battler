@@ -25,7 +25,7 @@ const CountersTableRow = ({ description, battleResult, clientData }: CountersTab
     const stats = Species.getStats(battleResult.playerSpecies, battleResult.playerLevel, {atk: 15, def: 15, hp: 15})
 
     return (
-        <div className={cn('bg-theme3 rounded border border-transparent transition-colors duration-150', isOpen && 'bg-theme2 border-theme4 shadow-lg')}>
+        <div className={cn('bg-theme3 rounded border border-transparent transition-colors duration-150', isOpen && 'bg-theme2 border-theme4 shadow-lg mb-1')}>
             <button onClick={() => setIsOpen(!isOpen)} className={cn('w-full text-left cursor-pointer grid items-center gap-1 px-2')} style={{ gridTemplateColumns: gridCols }}>
                 {description.dropdownIndicator && <div className={cn("transition-transform text-xs text-right", isOpen && "rotate-90")}>&#128898;</div>}
                 {description.species && <div className={cellStyle}>

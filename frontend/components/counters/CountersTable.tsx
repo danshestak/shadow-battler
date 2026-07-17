@@ -18,7 +18,6 @@ const colNames: Record<string, string> = {
 
 const CountersTable = ({ children, className, description }: CountersTableProps) => {
     const gridCols = getGridColsByDesc(description);
-    const cellStyle = "pb-2";
 
     let firstCol: string | undefined = undefined;
     if (description.dropdownIndicator)  {
@@ -32,9 +31,9 @@ const CountersTable = ({ children, className, description }: CountersTableProps)
     
     return (
         <div className={cn(className, "w-full text-left flex flex-col")}>
-            <div className={cn('grid border-b border-theme4 px-2')} style={{ gridTemplateColumns: gridCols }}>
+            <div className={cn('grid border-b border-theme4 px-2 pb-2 mb-1')} style={{ gridTemplateColumns: gridCols }}>
                 {Object.entries(description).filter(e => e[1] && e[0] !== "dropdownIndicator").map(e => 
-                    <div key={e[0]} className={cn(cellStyle, e[0] === 'score' ? "font-bold" : "font-normal", e[0] === firstCol ? "col-span-2" : "")}>
+                    <div key={e[0]} className={cn(e[0] === 'score' ? "font-bold" : "font-normal", e[0] === firstCol ? "col-span-2" : "")}>
                         {colNames[e[0]]}
                     </div>
                 )}
