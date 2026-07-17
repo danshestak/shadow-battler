@@ -11,11 +11,15 @@ const CountersPage = async ({ params }: CountersPageProps) => {
   const resolvedParams = await params;
   const opponentSlug = resolvedParams && Array.isArray(resolvedParams.opponent) ? resolvedParams.opponent[0] : undefined;
 
-  let initialBattleResults = null;
+  let initialBattleResults = undefined;
   if (opponentSlug) {
-    const res = await fetch(`${getBackendUrl()}/api/counters/${opponentSlug}`);
-    if (res.ok) {
-      initialBattleResults = await res.json();
+    try {
+      const res = await fetch(`${getBackendUrl()}/api/counters/${opponentSlug}`);
+      if (res.ok) {
+        initialBattleResults = await res.json();
+      }
+    } catch {
+
     }
   }
 

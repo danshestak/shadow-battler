@@ -20,10 +20,17 @@ import { BattleResult, BattleResultRaw } from '@/types/BattleResult';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 
 interface CountersClientPageProps {
-  initialBattleResults: BattleResultRaw[] | null
+  initialBattleResults: BattleResultRaw[] | undefined
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ message: res.statusText }));
+    throw new Error(errorData.message || `HTTP error! status: ${res.status}`);
+  }
+  return res.json();
+};
 
 const getLoadingOrErrorText = (isLoading: boolean, isError: boolean, isCountersLoading: boolean, isCountersError: boolean) => {
   if (isLoading || isCountersLoading) {
@@ -50,7 +57,7 @@ const CountersClientPage = ({ initialBattleResults }: CountersClientPageProps) =
   } = useSWR<BattleResultRaw[]>(
     opponentSlug ? `/api/counters?opponentId=${opponentSlug}` : null, 
     fetcher,
-    { fallbackData: initialBattleResults || undefined}
+    { fallbackData: initialBattleResults }
   );
   
   const isCountersPending = !rawBattleResults && !isCountersError && opponentSlug;
@@ -64,7 +71,6 @@ const CountersClientPage = ({ initialBattleResults }: CountersClientPageProps) =
   }
 
   const selectedOpponent = Object.values(clientData.opponents).find((o) => o.opponentId === opponentSlug);
-
   const battleResults: BattleResult[] = rawBattleResults ? rawBattleResults.map(raw => BattleResult.fromRaw(raw, clientData)) : [];
 
   const countersTableDescription: CountersTableDescription = {
