@@ -63,7 +63,7 @@ public class TeamBattleSolver implements BattleSolver {
         int fastestWinTime = Integer.MAX_VALUE;
 
         activeStates.add(
-            new BattleState(
+            new OldBattleState(
                 this.playerTeam,
                 this.opponentTeam,
                 this.opponentStartingShields,
@@ -75,7 +75,7 @@ public class TeamBattleSolver implements BattleSolver {
             //grouping states by how comparable they are to reduce the n in O(n^2) for pruning
             Map<Integer, List<BattleState>> groupedStates = new HashMap<>();
             for (BattleState state : activeStates) {
-                List<BattleState> newBranches = state.step();
+                List<? extends BattleState> newBranches = state.step();
 
                 if (state.isFinished()) {
                     finishedStates.add(state);

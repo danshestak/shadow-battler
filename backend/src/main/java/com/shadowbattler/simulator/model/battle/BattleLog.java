@@ -58,7 +58,7 @@ public class BattleLog {
      * @param afterHp the hp of the opponent after the action
      * @throws IllegalStateException if an action is added which occurred before an already existing entry
      */
-    public void addEntry(BattleState state, Trainer user, Action action, int beforeHp, int afterHp) {
+    public void addEntry(OldBattleState state, Trainer user, Action action, int beforeHp, int afterHp) {
         if (!list.isEmpty()) {
             final LogEntry last = this.list.getLast();
             if (last.time() > state.getTimeElapsed() || last.turn() > state.getTurnsElapsed()) {
