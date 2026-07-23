@@ -6,7 +6,7 @@ import java.util.List;
 import com.shadowbattler.simulator.model.Creature;
 import com.shadowbattler.simulator.model.Team;
 
-public class FastBattleState {
+public final class FastBattleState {
     public final FastBattleContext context;
     public final BattleLog log;
 
@@ -14,8 +14,10 @@ public class FastBattleState {
     public int timeElapsed;
     public boolean finished;
     
-    public final short[] hp = new short[6];
-    public final byte[] energy = new byte[6];
+    //using longs instead of arrays to reduce object allocations
+    public long playerHpLong;
+    public long enemyHpLong;
+    public long energyLong;
     
     public byte playerActiveIndex;
     public byte enemyActiveIndex;
@@ -56,8 +58,12 @@ public class FastBattleState {
         this.turnsElapsed = 0;
         this.timeElapsed = 0;
         this.finished = false;
-        
-        System.arraycopy(this.context.maxHp, 0, this.hp, 0, this.hp.length);
+
+        for (int i = 0; i < this.context.maxHp.length; i++) {
+            this.setHp(i, this.context.maxHp[i]);
+        }
+
+        this.energyLong = 0;
         
         this.playerActiveIndex = 0;
         this.enemyActiveIndex = 3;
@@ -87,9 +93,10 @@ public class FastBattleState {
         this.turnsElapsed = other.turnsElapsed;
         this.timeElapsed = other.timeElapsed;
         this.finished = other.finished;
-        
-        System.arraycopy(other.hp, 0, this.hp, 0, this.hp.length);
-        System.arraycopy(other.energy, 0, this.energy, 0, this.energy.length);
+
+        this.playerHpLong = other.playerHpLong;
+        this.enemyHpLong = other.enemyHpLong;
+        this.energyLong = other.energyLong;
         
         this.playerActiveIndex = other.playerActiveIndex;
         this.enemyActiveIndex = other.enemyActiveIndex;
@@ -110,6 +117,33 @@ public class FastBattleState {
 
         this.projTimeElapsedLowerBoundAddend = other.projTimeElapsedLowerBoundAddend;
         this.comparisonKey = other.comparisonKey;
+    }
+
+    public byte getEnergy(int index) {
+        return (byte) ((this.energyLong >>> (index << 3)) & 0xFF);
+    }
+
+    public void setEnergy(int index, byte value) {
+        final int shift = index << 3;
+        this.energyLong = (this.energyLong & ~(0xFFL << shift)) | ((value & 0xFFL) << shift);
+    }
+
+    public short getHp(int index) {
+        if (index < 3) {
+            return (short)((this.playerHpLong >>> (index << 4)) & 0xFFFF);
+        } else {
+            return (short)((this.enemyHpLong >>> ((index - 3) << 4)) & 0xFFFF);
+        }
+    }
+
+    public void setHp(int index, short value) {
+        if (index < 3) {
+            final int shift = index << 4;
+            this.playerHpLong = (this.playerHpLong & ~(0xFFFFL << shift)) | ((value & 0xFFFFL) << shift);
+        } else {
+            final int shift = (index - 3) << 4;
+            this.enemyHpLong = (this.enemyHpLong & ~(0xFFFFL << shift)) | ((value & 0xFFFFL) << shift);
+        }
     }
 
     /**
@@ -148,11 +182,10 @@ public class FastBattleState {
     private void processQueuedAction(boolean isPlayer) {
         final byte queuedAction = isPlayer ? this.playerQueuedAction : this.enemyQueuedAction;
         if (queuedAction == Actions.NONE) return;
-
         final byte userActiveIndex = isPlayer ? this.playerActiveIndex : this.enemyActiveIndex;
         final byte targetActiveIndex = isPlayer ? this.enemyActiveIndex : this.playerActiveIndex;
 
-        final short targetStartingHp = this.hp[targetActiveIndex];
+        final short targetStartingHp = this.getHp(targetActiveIndex);
 
         if (queuedAction == Actions.FAST_ATTACK) {
             final short dmg = this.context.getFastDmgWithBuff(
@@ -162,16 +195,18 @@ public class FastBattleState {
                 isPlayer ? this.enemyDefBuff : this.playerDefBuff
             );
 
-            if (dmg > this.hp[targetActiveIndex]) {
-                this.hp[targetActiveIndex] = 0;
+            final short currHp = this.getHp(targetActiveIndex);
+            if (dmg > currHp) {
+                this.setHp(targetActiveIndex, (short)0);
             } else {
-                this.hp[targetActiveIndex] -= dmg;
+                this.setHp(targetActiveIndex, (short)(currHp - dmg));
             }
 
-            this.energy[userActiveIndex] = (byte)Math.min(
-                this.energy[userActiveIndex] + this.context.fastEnrg[userActiveIndex], 
+            final byte currEnergy = getEnergy(userActiveIndex);
+            setEnergy(userActiveIndex, (byte) Math.min(
+                currEnergy + this.context.fastEnrg[userActiveIndex], 
                 100
-            );
+            ));
         } else if (Actions.isChargedAttack(queuedAction)) {
             /*
              * the enemy ai always shields if they have them available, and for the player
@@ -205,20 +240,22 @@ public class FastBattleState {
                     );
                 }
 
-                if (dmg > this.hp[targetActiveIndex]) {
+                final short currHp = this.getHp(targetActiveIndex);
+                if (dmg > currHp) {
+                    this.setHp(targetActiveIndex, (short)0);
                     targetFainted = true;
-                    this.hp[targetActiveIndex] = 0;
                 } else {
-                    this.hp[targetActiveIndex] -= dmg;
+                    this.setHp(targetActiveIndex, (short)(currHp - dmg));
                 }
             }
 
-            final byte[] buffs;
+            final byte currEnergy = getEnergy(userActiveIndex);
+            final byte buffs[];
             if (queuedAction == Actions.CHARGED_ATTACK0) {
-                this.energy[userActiveIndex] -= this.context.charged0Enrg[userActiveIndex];
+                setEnergy(userActiveIndex, (byte)(currEnergy - this.context.charged0Enrg[userActiveIndex]));
                 buffs = this.context.charged0Buff;
             } else { // CHARGED_ATTACK1
-                this.energy[userActiveIndex] -= this.context.charged1Enrg[userActiveIndex];
+                setEnergy(userActiveIndex, (byte)(currEnergy - this.context.charged1Enrg[userActiveIndex]));
                 buffs = this.context.charged1Buff;
             }
 
@@ -248,7 +285,7 @@ public class FastBattleState {
             this.enemyStunQueued = true;
         } else if (Actions.isSwitch(queuedAction)) {
             // forced switch after fainting has no effect on cooldown
-            if (hp[userActiveIndex] != 0) {
+            if (this.getHp(userActiveIndex) > 0) {
                 if (isPlayer) {
                     this.playerSwitchCooldownEnds = this.timeElapsed + FastBattleContext.SWITCH_COOLDOWN;
                 } else {
@@ -312,7 +349,7 @@ public class FastBattleState {
         fainted creatures are forced to switch with no other action being available that turn, so assume both
         fulfilled actions are a switch or null and there is at least one switch if either creature is fainted
         */
-        if (this.hp[this.playerActiveIndex] <= 0 || this.hp[this.enemyActiveIndex] <= 0) {
+        if (this.getHp(this.playerActiveIndex) <= 0 || this.getHp(this.enemyActiveIndex) <= 0) {
             //account for time needed to switch. an OR statement to avoid double counting if both trainers switch
             this.timeElapsed += FastBattleContext.FAINT_TIME;
         }
@@ -342,7 +379,7 @@ public class FastBattleState {
 
             if (considerPriority) {
                 this.processQueuedAction(playerPriority);
-                if (this.hp[playerPriority ? this.enemyActiveIndex : this.playerActiveIndex] > 0) {
+                if (this.getHp(playerPriority ? this.enemyActiveIndex : this.playerActiveIndex) > 0) {
                     this.processQueuedAction(!playerPriority);
                 }
             } else {
@@ -365,7 +402,7 @@ public class FastBattleState {
     }
 
     private void checkTrainerFaint(boolean isPlayer) {
-        if (this.hp[isPlayer ? this.playerActiveIndex : this.enemyActiveIndex] > 0) return;
+        if (this.getHp(isPlayer ? this.playerActiveIndex : this.enemyActiveIndex) > 0) return;
 
         final byte newRemainingCreatures;
         if (isPlayer) {
@@ -402,18 +439,18 @@ public class FastBattleState {
 
         final byte enemyAction;
 
-        if (this.hp[this.playerActiveIndex] <= 0 || this.hp[this.enemyActiveIndex] <= 0) {
-            if (this.hp[this.enemyActiveIndex] <= 0) {
+        if (this.getHp(this.playerActiveIndex) <= 0 || this.getHp(this.enemyActiveIndex) <= 0) {
+            if (this.getHp(this.enemyActiveIndex) <= 0) {
                 //switch to next slot
                 enemyAction = Actions.getSwitch(this.enemyActiveIndex - 3 + 1);
             } else {
                 enemyAction = Actions.NONE;
             }
             
-            if (this.hp[this.playerActiveIndex] <= 0) {
+            if (this.getHp(this.playerActiveIndex) <= 0) {
                 byte firstSwitch = -1;
                 for (byte i = 0; i < 3; i++) {
-                    if (i == this.playerActiveIndex || this.hp[i] <= 0) continue;
+                    if (i == this.playerActiveIndex || this.getHp(i) <= 0) continue;
 
                     if (firstSwitch < 0) {
                         firstSwitch = i;
@@ -432,7 +469,7 @@ public class FastBattleState {
             //turns are not elapsed when switching due to a creature fainting
         } else {
             if (this.enemyQueuedAction == Actions.NONE) {
-                if (this.energy[this.enemyActiveIndex] >= this.context.charged0Enrg[this.enemyActiveIndex]) {
+                if (this.getEnergy(this.enemyActiveIndex) >= this.context.charged0Enrg[this.enemyActiveIndex]) {
                     //always uses charged move when available
                     enemyAction = Actions.CHARGED_ATTACK0;
                 } else if (this.enemyStunQueued) {
@@ -455,13 +492,13 @@ public class FastBattleState {
             }
 
             if (this.playerQueuedAction == Actions.NONE) {
-                if (this.energy[this.playerActiveIndex] >= this.context.charged0Enrg[this.playerActiveIndex]) {
+                if (this.getEnergy(this.playerActiveIndex) >= this.context.charged0Enrg[this.playerActiveIndex]) {
                     final FastBattleState branch = new FastBattleState(this);
                     branch.queueActions(Actions.CHARGED_ATTACK0, enemyAction);
                     newBranches.add(branch);
                 }
 
-                if (this.energy[this.playerActiveIndex] >= this.context.charged1Enrg[this.playerActiveIndex]) {
+                if (this.getEnergy(this.playerActiveIndex) >= this.context.charged1Enrg[this.playerActiveIndex]) {
                     //if the player does not have a second charged attack, then
                     //this.context.charged1Enrg[this.playerActiveIndex] always evaluates to false
                     final FastBattleState branch = new FastBattleState(this);
@@ -509,7 +546,7 @@ public class FastBattleState {
         key |= this.playerActiveIndex << 12;
         key |= (this.enemyActiveIndex - 3) << 14;
         for (byte i = 0; i < 6; i++) {
-            key |= (this.hp[i] <= 0 ? 1 : 0) << (16 + i);
+            key |= (this.getHp(i) <= 0 ? 1 : 0) << (16 + i);
         }
         return key; 
     }
@@ -529,10 +566,10 @@ public class FastBattleState {
     public boolean isDominatedBy(FastBattleState other) {
         if (this.timeElapsed < other.timeElapsed) return false;
 
-        if (this.hp[this.playerActiveIndex] > other.hp[this.playerActiveIndex]) return false;
-        if (this.hp[this.enemyActiveIndex] < other.hp[this.enemyActiveIndex]) return false;
-        if (this.energy[this.playerActiveIndex] > other.energy[this.playerActiveIndex]) return false;
-        if (this.energy[this.enemyActiveIndex] < other.energy[this.enemyActiveIndex]) return false;
+        if (this.getHp(this.playerActiveIndex) > other.getHp(this.playerActiveIndex)) return false;
+        if (this.getHp(this.enemyActiveIndex) < other.getHp(this.enemyActiveIndex)) return false;
+        if (this.getEnergy(this.playerActiveIndex) > other.getEnergy(this.playerActiveIndex)) return false;
+        if (this.getEnergy(this.enemyActiveIndex) < other.getEnergy(this.enemyActiveIndex)) return false;
 
         if (this.playerShields > other.playerShields) return false;
         if (this.enemyShields < other.enemyShields) return false;
@@ -559,7 +596,7 @@ public class FastBattleState {
     public int getProjTimeElapsedLowerBound() {
         return this.timeElapsed
             + this.projTimeElapsedLowerBoundAddend
-            + (int)((this.hp[this.enemyActiveIndex] / this.context.maxPlayerDps[this.enemyActiveIndex-3]) * 1000);
+            + (int)((this.getHp(this.enemyActiveIndex) / this.context.maxPlayerDps[this.enemyActiveIndex-3]) * 1000);
     }
 
     /**
@@ -574,7 +611,7 @@ public class FastBattleState {
         for (int i = this.enemyActiveIndex+1; i < 6; i++) {
             //remaining hp should be the same as the starting hp since these creatures haven't battled
             result += FastBattleContext.FAINT_TIME;
-            result += (int)((this.hp[i] / this.context.maxPlayerDps[i-3]) * 1000);
+            result += (int)((this.getHp(i) / this.context.maxPlayerDps[i-3]) * 1000);
         }
 
         return result;
