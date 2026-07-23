@@ -1,18 +1,16 @@
 package com.shadowbattler.simulator.model.battle;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import com.shadowbattler.simulator.model.Creature;
 import com.shadowbattler.simulator.model.Team;
 
 public class TeamBattleSolver implements BattleSolver {
     private BattleResult battleResult = null;
-    private BattleState battleState = null;
+    private FastBattleState fastBattleState = null;
     private final Team<Creature> playerTeam;
     private final Team<Creature> opponentTeam;
     private final int opponentStartingShields;
@@ -34,11 +32,11 @@ public class TeamBattleSolver implements BattleSolver {
         this.shouldLog = true;
     }
     
-    private void addStateWithPruning(List<BattleState> states, BattleState newState) {
+    private void addStateWithPruning(List<FastBattleState> states, FastBattleState newState) {
         for (int i = 0; i < states.size(); i++) {
             if (newState.isDominatedBy(states.get(i))) {
                 if (i > 0) {
-                    final BattleState killer = states.get(i);
+                    final FastBattleState killer = states.get(i);
                     states.set(i, states.get(0));
                     states.set(0, killer);
                 }
@@ -58,39 +56,39 @@ public class TeamBattleSolver implements BattleSolver {
 
     @Override
     public void solve() {
-        List<BattleState> activeStates = new ArrayList<>();
-        final List<BattleState> finishedStates = new ArrayList<>();
+        List<FastBattleState> activeStates = new ArrayList<>();
+        final List<FastBattleState> finishedStates = new ArrayList<>();
         int fastestWinTime = Integer.MAX_VALUE;
 
         activeStates.add(
-            new OldBattleState(
+            new FastBattleState(
                 this.playerTeam,
                 this.opponentTeam,
-                this.opponentStartingShields,
+                (byte)this.opponentStartingShields,
                 this.shouldLog
             )
         );
 
         while (!activeStates.isEmpty()) {
             //grouping states by how comparable they are to reduce the n in O(n^2) for pruning
-            Map<Integer, List<BattleState>> groupedStates = new HashMap<>();
-            for (BattleState state : activeStates) {
-                List<? extends BattleState> newBranches = state.step();
+            Map<Integer, List<FastBattleState>> groupedStates = new HashMap<>();
+            for (FastBattleState state : activeStates) {
+                List<? extends FastBattleState> newBranches = state.step();
 
-                if (state.isFinished()) {
+                if (state.finished) {
                     finishedStates.add(state);
                     if (state.playerWon()) {
-                        fastestWinTime = Math.min(fastestWinTime, state.getTimeElapsed());
+                        fastestWinTime = Math.min(fastestWinTime, state.timeElapsed);
                     }
                 } else if (state.getProjTimeElapsedLowerBound() < fastestWinTime) {
                     groupedStates.computeIfAbsent(state.getComparisonKey(), k -> new ArrayList<>()).add(state);
                 }
 
-                for (BattleState branch : newBranches) {
-                    if (branch.isFinished()) {
+                for (FastBattleState branch : newBranches) {
+                    if (branch.finished) {
                         finishedStates.add(branch);
                         if (branch.playerWon()) {
-                            fastestWinTime = Math.min(fastestWinTime, branch.getTimeElapsed());
+                            fastestWinTime = Math.min(fastestWinTime, branch.timeElapsed);
                         }
                     } else if (branch.getProjTimeElapsedLowerBound() < fastestWinTime) {
                         groupedStates.computeIfAbsent(branch.getComparisonKey(), k -> new ArrayList<>()).add(branch);
@@ -98,10 +96,10 @@ public class TeamBattleSolver implements BattleSolver {
                 }
             }
 
-            List<BattleState> nextActiveStates = new ArrayList<>();
-            for (List<BattleState> group : groupedStates.values()) {
-                List<BattleState> prunedGroup = new ArrayList<>();
-                for (BattleState state : group) {
+            List<FastBattleState> nextActiveStates = new ArrayList<>();
+            for (List<FastBattleState> group : groupedStates.values()) {
+                List<FastBattleState> prunedGroup = new ArrayList<>();
+                for (FastBattleState state : group) {
                     addStateWithPruning(prunedGroup, state);
                 }
                 nextActiveStates.addAll(prunedGroup);
@@ -110,25 +108,21 @@ public class TeamBattleSolver implements BattleSolver {
             activeStates = nextActiveStates;
         }
 
-        BattleState fastestWin = null;
-        for (BattleState state : finishedStates) {
-            if (!state.isFinished() || !state.playerWon()) continue;
+        FastBattleState fastestWin = null;
+        for (FastBattleState state : finishedStates) {
+            if (!state.finished || !state.playerWon()) continue;
 
-            if (fastestWin == null || state.getTimeElapsed() < fastestWin.getTimeElapsed()) {
+            if (fastestWin == null || state.timeElapsed < fastestWin.timeElapsed) {
                 fastestWin = state;
             }
         }
-        this.battleState = fastestWin;
+        this.fastBattleState = fastestWin;
 
         if (fastestWin != null) {
             this.battleResult = new BattleResult(
-                fastestWin.getTimeElapsed(),
+                fastestWin.timeElapsed,
                 1.0,
-                Arrays.stream(fastestWin.getPlayer().getBattlingCreatures())
-                    .filter(Objects::nonNull)
-                    .mapToDouble((bc) -> bc.getRemainingHp()/bc.getCreature().getStats().getHp())
-                    .average()
-                    .orElse(0.0)
+                0.5 //TODO: calculate hp percent
             );
         } else {
             this.battleResult = BattleResult.getLoss();
@@ -140,7 +134,7 @@ public class TeamBattleSolver implements BattleSolver {
         return this.battleResult;
     }
 
-    public BattleState getBattleState() {
-        return this.battleState;
+    public FastBattleState getFastBattleState() {
+        return this.fastBattleState;
     }
 }

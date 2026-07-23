@@ -116,7 +116,7 @@ public class TeamBattleSolverTest {
         battle.enableLogging();
         battle.solve();
 
-        System.out.printf("TeamBattleSolver test BattleResult: %s\n", battle.getBattleResult());
-        System.out.printf("log: %s\n", battle.getBattleState().getLog());
+        // System.out.printf("TeamBattleSolver test BattleResult: %s\n", battle.getBattleResult());
+        // System.out.printf("log: %s\n", battle.getBattleState().getLog());
     }
 }
