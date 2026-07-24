@@ -108,15 +108,15 @@ public class TeamBattleSolverTest {
 
     @Test
     void testSolve() {
-        final TeamBattleSolver battle = new TeamBattleSolver( 
+        final TeamBattleSolver solver = new TeamBattleSolver( 
             new Team<>(this.pLead, this.pSwitch, this.pCloser), 
             new Team<>(this.eLead, this.eSwitch, this.eCloser), 
             0
         );
-        battle.enableLogging();
-        battle.solve();
+        solver.enableLogging();
+        solver.solve();
 
-        // System.out.printf("TeamBattleSolver test BattleResult: %s\n", battle.getBattleResult());
-        // System.out.printf("log: %s\n", battle.getBattleState().getLog());
+        System.out.printf("TeamBattleSolver test BattleResult: %s\n", solver.getBattleResult());
+        System.out.printf("log: %s\n", solver.getBattleState().log.toString());
     }
 }

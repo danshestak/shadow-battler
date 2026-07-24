@@ -6,7 +6,7 @@ import com.shadowbattler.simulator.model.Creature;
 import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Stats3;
 
-public final class FastBattleContext {
+public final class BattleContext {
     private final static float BONUS_MULTIPLIER = 1.3f;
     private final static float STAB_MULTIPLIER = 1.2f;
     private final static float SHADOW_ATK_MULTIPLIER = 6 / 5f;
@@ -61,7 +61,7 @@ public final class FastBattleContext {
 
     public final float[] maxPlayerDps = new float[3];
 
-    public FastBattleContext(Creature[] player, Creature[] enemy) {
+    public BattleContext(Creature[] player, Creature[] enemy) {
         for (int i = 0; i < 6; i++) {
             final Creature c = i < 3 ? player[i] : enemy[i - 3];
             if (c == null) continue;
@@ -232,19 +232,19 @@ public final class FastBattleContext {
     }
 
     public short getFastDmgWithBuff(int userIndex, int targetIndex, int userAtkBuff, int targetDefBuff) {
-        return (short) (1 + fastDmg[userIndex * 6 + targetIndex]
+        return (short)(1 + fastDmg[userIndex * 6 + targetIndex]
                 * BUFF_MULTIPLIERS[userAtkBuff + MAX_BUFF_STAGES]
                 * BUFF_MULTIPLIERS[MAX_BUFF_STAGES - targetDefBuff]);
     }
 
     public short getCharged0DmgWithBuff(int userIndex, int targetIndex, int userAtkBuff, int targetDefBuff) {
-        return (short) (1 + charged0Dmg[userIndex * 6 + targetIndex]
+        return (short)(1 + charged0Dmg[userIndex * 6 + targetIndex]
                 * BUFF_MULTIPLIERS[userAtkBuff + MAX_BUFF_STAGES]
                 * BUFF_MULTIPLIERS[MAX_BUFF_STAGES - targetDefBuff]);
     }
 
     public short getCharged1DmgWithBuff(int userIndex, int targetIndex, int userAtkBuff, int targetDefBuff) {
-        return (short) (1 + charged1Dmg[userIndex * 6 + targetIndex]
+        return (short)(1 + charged1Dmg[userIndex * 6 + targetIndex]
                 * BUFF_MULTIPLIERS[userAtkBuff + MAX_BUFF_STAGES]
                 * BUFF_MULTIPLIERS[MAX_BUFF_STAGES - targetDefBuff]);
     }

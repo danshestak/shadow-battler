@@ -15,17 +15,6 @@ public class Creature {
     private final Move fastMove;
     private final List<Move> chargedMoves;
 
-    private final double battleAtk;
-    private final double battleDef;
-    private final double inverseBattleDef;
-    private final double fastMovePowerWithStab;
-    private final double[] chargedMovePowersWithStab;
-
-    final private static double BONUS_MULTIPLIER = 1.2999999523162841796875;
-    final private static double STAB_MULTIPLIER= 1.2000000476837158203125;
-    final private static double SHADOW_ATK_MULTIPLIER = 1.2;
-    final private static double SHADOW_DEF_MULTIPLIER = 0.83333331;
-
     private static final double[] cpMultipliers = {
         0.094, //1.0
         0.13513743, //1.5
@@ -249,19 +238,6 @@ public class Creature {
 
         this.stats = new Stats3<>(atk, def, Math.max(10.0, Math.floor(hp)));
         this.cp = Creature.getCp(atk, def, hp);
-
-        this.battleAtk = atk * 0.5 * Creature.BONUS_MULTIPLIER * (species.isShadow() ? Creature.SHADOW_ATK_MULTIPLIER : 1);
-        this.battleDef = def * (species.isShadow() ? Creature.SHADOW_DEF_MULTIPLIER : 1.0);
-        this.inverseBattleDef = 1.0 / this.battleDef;
-
-        this.fastMovePowerWithStab = fastMove != null ? calculateMovePowerWithStab(fastMove) : 0;
-        
-        this.chargedMovePowersWithStab = new double[chargedMoves != null ? chargedMoves.size() : 0];
-        if (chargedMoves != null) {
-            for (int i = 0; i < chargedMoves.size(); i++) {
-                this.chargedMovePowersWithStab[i] = calculateMovePowerWithStab(chargedMoves.get(i));
-            }
-        }
     }
 
     public Creature(Species species, Opponent.Title rocketTitle, int trainerLevel, Move fastMove, Move chargedMove) {
@@ -288,19 +264,6 @@ public class Creature {
 
         this.stats = new Stats3<>(atk, def, Math.max(10.0, Math.floor(hp)));
         this.cp = Creature.getCp(atk, def, hp);
-
-        this.battleAtk = atk * 0.5 * Creature.BONUS_MULTIPLIER * (species.isShadow() ? Creature.SHADOW_ATK_MULTIPLIER : 1.0);
-        this.battleDef = def * (species.isShadow() ? Creature.SHADOW_DEF_MULTIPLIER : 1.0);
-        this.inverseBattleDef = 1.0 / this.battleDef;
-
-        this.fastMovePowerWithStab = fastMove != null ? calculateMovePowerWithStab(fastMove) : 0;
-        this.chargedMovePowersWithStab = new double[]{
-            chargedMove != null ? calculateMovePowerWithStab(chargedMove) : 0
-        };
-    }
-
-    private double calculateMovePowerWithStab(Move move) {
-        return move.power() * (species.givesStabTo(move) ? Creature.STAB_MULTIPLIER : 1.0);
     }
 
     public Species getSpecies() {
@@ -325,26 +288,6 @@ public class Creature {
 
     public List<Move> getChargedMoves() {
         return this.chargedMoves;
-    }
-
-    public double getBattleAtk() {
-        return this.battleAtk;
-    }
-
-    public double getBattleDef() {
-        return this.battleDef;
-    }
-
-    public double getInverseBattleDef() {
-        return this.inverseBattleDef;
-    }
-
-    public double getFastMovePowerWithStab() {
-        return this.fastMovePowerWithStab;
-    }
-
-    public double[] getChargedMovePowersWithStab() {
-        return this.chargedMovePowersWithStab;
     }
 
     public Move[] getMoveset() {

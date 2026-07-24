@@ -8,7 +8,7 @@ public class BattleLog {
 
     public static record LogEntry(
         boolean isPlayer,
-        Action action,
+        byte action,
         int beforeHp,
         int afterHp,
         int time,
@@ -25,9 +25,9 @@ public class BattleLog {
                 .append(this.isPlayer ? "PLAYER_" : "OPPONENT_")
                 .append(this.action);
             
-            if (this.action == Action.FAST_ATTACK || this.action.isChargedAttack()) {
+            if (this.action == Actions.FAST_ATTACK || Actions.isChargedAttack(this.action)) {
                 sb.append(" (");
-                if (this.beforeHp == this.afterHp && this.action.isChargedAttack()) {
+                if (this.beforeHp == this.afterHp && Actions.isChargedAttack(this.action)) {
                     sb.append("SHIELDED");
                 } else {
                     sb.append(this.beforeHp)
@@ -58,21 +58,21 @@ public class BattleLog {
      * @param afterHp the hp of the opponent after the action
      * @throws IllegalStateException if an action is added which occurred before an already existing entry
      */
-    public void addEntry(OldBattleState state, Trainer user, Action action, int beforeHp, int afterHp) {
+    public void addEntry(BattleState state, boolean isPlayer, byte action, int beforeHp, int afterHp) {
         if (!list.isEmpty()) {
             final LogEntry last = this.list.getLast();
-            if (last.time() > state.getTimeElapsed() || last.turn() > state.getTurnsElapsed()) {
+            if (last.time() > state.timeElapsed || last.turn() > state.turnsElapsed) {
                 throw new IllegalStateException("attempted to add log entry that occurs before previous entry");
             }
         }
 
         this.list.add(new LogEntry(
-            state.getPlayer() == user, 
+            isPlayer, 
             action, 
             beforeHp, 
             afterHp, 
-            state.getTimeElapsed(), 
-            state.getTurnsElapsed()
+            state.timeElapsed, 
+            state.turnsElapsed
         ));
     }
 
