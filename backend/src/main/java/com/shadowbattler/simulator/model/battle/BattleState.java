@@ -426,11 +426,9 @@ public final class BattleState {
      * the stepElapsed and timeElapsed
      * @return a list of new states created from branching player decisions. the current state is also advanced
      */
-    public List<BattleState> step() {
+    public List<BattleState> step(List<BattleState> newBranches) {
         this.processQueuedActions();
         if (this.finished) return new ArrayList<>();
-
-        final List<BattleState> newBranches = new ArrayList<>();
 
         final byte enemyAction;
 

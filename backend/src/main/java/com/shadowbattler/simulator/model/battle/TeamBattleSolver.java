@@ -20,12 +20,26 @@ public class TeamBattleSolver implements BattleSolver {
         this.playerTeam = playerTeam;
         this.opponentTeam = opponentTeam;
         this.opponentStartingShields = opponentStartingShields;
+
+        this.battleState = new BattleState(
+            this.playerTeam,
+            this.opponentTeam,
+            (byte)this.opponentStartingShields,
+            this.shouldLog
+        );
     }
 
     public TeamBattleSolver(Creature playerCreature, Team<Creature> opponentTeam, int opponentStartingShields) {
         this.playerTeam = new Team<>(playerCreature, null, null);
         this.opponentTeam = opponentTeam;
         this.opponentStartingShields = opponentStartingShields;
+        
+        this.battleState = new BattleState(
+            this.playerTeam,
+            this.opponentTeam,
+            (byte)this.opponentStartingShields,
+            this.shouldLog
+        );
     }
 
     public void enableLogging() {
@@ -60,20 +74,14 @@ public class TeamBattleSolver implements BattleSolver {
         final List<BattleState> finishedStates = new ArrayList<>();
         int fastestWinTime = Integer.MAX_VALUE;
 
-        activeStates.add(
-            new BattleState(
-                this.playerTeam,
-                this.opponentTeam,
-                (byte)this.opponentStartingShields,
-                this.shouldLog
-            )
-        );
+        activeStates.add(this.battleState);
 
         while (!activeStates.isEmpty()) {
             //grouping states by how comparable they are to reduce the n in O(n^2) for pruning
             Map<Integer, List<BattleState>> groupedStates = new HashMap<>();
+            List<BattleState> newBranches = new ArrayList<>();
             for (BattleState state : activeStates) {
-                List<? extends BattleState> newBranches = state.step();
+                state.step(newBranches);
 
                 if (state.finished) {
                     finishedStates.add(state);
@@ -94,6 +102,8 @@ public class TeamBattleSolver implements BattleSolver {
                         groupedStates.computeIfAbsent(branch.getComparisonKey(), k -> new ArrayList<>()).add(branch);
                     }
                 }
+
+                if (!newBranches.isEmpty()) newBranches.clear();
             }
 
             List<BattleState> nextActiveStates = new ArrayList<>();

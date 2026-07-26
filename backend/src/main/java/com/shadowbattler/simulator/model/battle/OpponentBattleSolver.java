@@ -1,7 +1,9 @@
 package com.shadowbattler.simulator.model.battle;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.shadowbattler.simulator.model.Creature;
 import com.shadowbattler.simulator.model.Move;
@@ -49,15 +51,48 @@ public class OpponentBattleSolver implements BattleSolver {
             }
         }
 
-        final List<BattleResult> battleResults = teams.parallelStream()
+        final Map<String, BattleResult> sharedResults = new HashMap<>();
+
+        final List<BattleResult> battleResults = teams.stream()
             .map(t -> {
                 final TeamBattleSolver teamBattleSolver = new TeamBattleSolver(
                     this.playerTeam,
                     t,
                     opponent.getTitle().getShields()
                 );
-                teamBattleSolver.solve();
-                return teamBattleSolver.getBattleResult();
+                final BattleContext context = teamBattleSolver.getBattleState().context;
+
+                boolean playerAtkDrop = (context.charged0Buff[0] < 0) || (context.charged1Buff[0] < 0);
+                final boolean[] enemyCanReachCharged = new boolean[]{true, true, true};
+                for (int i = 0; i < 3; i++) {
+                    final short playerfastDmg = context.getFastDmgWithBuff(0, 3+i, playerAtkDrop ? -BattleContext.MAX_BUFF_STAGES : 0, 0);
+                    final int fastAtksToKo = (int)Math.ceil((double)context.maxHp[i] / playerfastDmg);
+                    final int turns = context.fastTurns[0] * fastAtksToKo;
+                    final int enemyMinEnergy = (turns / context.fastTurns[3+i]) * context.fastEnrg[3+i];
+                    if (enemyMinEnergy < context.charged0Enrg[3+i]) {
+                        enemyCanReachCharged[i] = false;
+                    } else {
+                        if (!playerAtkDrop) {
+                            playerAtkDrop = (context.charged0Buff[4 * (3+i) + 2] < 0) || (context.charged1Buff[4 * (3+i) + 2] < 0);
+                        }
+                    }
+                }
+
+                if (enemyCanReachCharged[0] && enemyCanReachCharged[1] && enemyCanReachCharged[2]) {
+                    teamBattleSolver.solve();
+                    return teamBattleSolver.getBattleResult();
+                } else {
+                    final String key = OpponentBattleSolver.createEnemyTeamKey(t, enemyCanReachCharged);
+                    final BattleResult shared = sharedResults.get(key);
+                    if (shared != null) {
+                        return shared;
+                    } else {
+                        teamBattleSolver.solve();
+                        final BattleResult br = teamBattleSolver.getBattleResult();
+                        sharedResults.put(key, br);
+                        return br;
+                    }
+                }
             })
             .toList();
 
@@ -97,6 +132,22 @@ public class OpponentBattleSolver implements BattleSolver {
                 List.of(moveCombination[1])
             );
         }
+    }
+
+    private static String createEnemyTeamKey(Team<Creature> enemyTeam, boolean[] reachableChargedMoves) {
+        final StringBuilder keyBuilder = new StringBuilder();
+        for (int i = 0; i < 3; i++) {
+            final Creature c = enemyTeam.getByInt(i+1);
+            if (c == null) break;
+
+            keyBuilder.append(c.getSpecies().getSpeciesId());
+            keyBuilder.append(c.getFastMove().moveId());
+            
+            if (reachableChargedMoves[i] && !c.getChargedMoves().isEmpty()) {
+                keyBuilder.append(c.getChargedMoves().get(0).moveId());
+            }
+        }
+        return keyBuilder.toString();
     }
 
     @Override
