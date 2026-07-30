@@ -100,7 +100,7 @@ const CountersClientPage = ({ initialBattleResults }: CountersClientPageProps) =
         value={selectedOpponent?.name}
         onValueChange={handleValueChange}
       >
-        <ComboboxInput placeholder="Search opponents..." className={'text-base shadow-lg mb-4'} />
+        <ComboboxInput placeholder="Search opponents..." className={'text-base shadow-lg mb-4 p-1'} />
         <ComboboxContent className={"shadow-lg"}>
           <ComboboxEmpty>No opponent found.</ComboboxEmpty>
           <ComboboxList>

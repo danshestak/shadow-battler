@@ -19,7 +19,7 @@ const Header = () => {
       bg-theme1 border-b border-theme4 shadow-lg'>
         {/* left */}
         <Link className='flex items-center h-full text-3xl font-light tracking-tighter' href="/">
-          shadow<span className='text-highlight font-semibold tracking-tight'>KO!</span>
+          shadow<span className='text-highlight font-bold'>KO!</span>
         </Link>
 
         {/* right */}
