@@ -4,7 +4,7 @@ import { IconIndexes } from './IconIndexes';
 import { cn } from '@/lib/utils';
 
 interface SpriteProps {
-    species: Species;
+    species?: Species;
     className?: string;
     scale?: number;
 }
@@ -15,7 +15,7 @@ const spritesheetWidth = 480;
 const spritesheetHeight = 4110;
 
 const Sprite = ({ species, className, scale = 1 }: SpriteProps) => {
-  let id = species.speciesId.toLowerCase();
+  let id = species?.speciesId.toLowerCase() ?? 'none';
   let shadow = false;
   
   const shadowSubstring = "_shadow";
@@ -37,7 +37,7 @@ const Sprite = ({ species, className, scale = 1 }: SpriteProps) => {
 
   id = id.replaceAll("_", "");
 
-  const num = IconIndexes[id] ?? species.dex;
+  const num = IconIndexes[id] ?? species?.dex ?? 0;
 
 	const top = Math.floor(num / 12) * height;
 	const left = (num % 12) * width;
@@ -65,7 +65,7 @@ const Sprite = ({ species, className, scale = 1 }: SpriteProps) => {
   return (
     <div
       role="img"
-      aria-label={`${species.speciesId}_sprite`}
+      aria-label={`${id}_sprite`}
       className={cn(className, "flex-none")}
       style={style}
     />

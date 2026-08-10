@@ -7,6 +7,7 @@ import { CountersTableDescription, getGridColsByDesc } from './CountersTableDesc
 import { Species } from '@/types/Species';
 import { BattleResult } from '@/types/BattleResult';
 import { ClientData } from '@/types/ClientData';
+import { Move } from '@/types/Move';
 
 interface CountersTableRowProps {
   description: CountersTableDescription,
@@ -156,8 +157,8 @@ const CountersTableRow = ({ description, battleResult, clientData }: CountersTab
 
             <ul className='text-xs text-right mt-6'>
               <li className='font-bold'>Preferred move</li>
-              <li>Obtainable by Elite TM*</li>
-              <li>Unobtainable by any TM<sup>&dagger;</sup></li>
+              <li>Obtainable by Elite TM{(Move.eliteSymbol)}</li>
+              <li>Unobtainable by any TM{(Move.legacySymbol)}</li>
             </ul>
           </div>
           <div className={openCategoryStyle}>

@@ -2,16 +2,15 @@ import { cn } from '@/lib/utils'
 import { Move } from '@/types/Move'
 import { Species } from '@/types/Species'
 import { Type } from '@/types/Type'
-import React from 'react'
 
 interface MoveLabelProps {
     className?: string,
-    move: Move,
+    move?: Move,
     species?: Species
 }
 
 const MoveLabel = ({ className, move, species }: MoveLabelProps) => {
-    const color = Type.toHex(move.type);
+    const color = Type.toHex(move?.type ?? 'NONE');
     return (
         <span 
         className={cn(className, "rounded border p-0.5")}
@@ -19,9 +18,9 @@ const MoveLabel = ({ className, move, species }: MoveLabelProps) => {
         backgroundColor: `${color}80`,
         borderColor: `${color}80`,
         }}>
-            {move.name}
-            {species?.eliteMoves?.includes(move.moveId) && "*"}
-            {species?.legacyMoves?.includes(move.moveId) && <sup>&#8224;</sup>}
+            {move?.name ?? 'None'}
+            {move !== undefined && species?.eliteMoves?.includes(move.moveId) && "*"}
+            {move !== undefined && species?.legacyMoves?.includes(move.moveId) && <>&dagger;</>}
         </span>
     )
 }

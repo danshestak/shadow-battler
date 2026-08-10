@@ -15,7 +15,7 @@ const Sidebar = (p: SidebarProps) => {
       {/* overlay */}
       <div
         className={`fixed inset-0 z-20 md:hidden
-            bg-theme1/80
+            bg-theme1/75 backdrop-blur-xs
             transition-opacity duration-300 ease-in-out ${p.isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={p.onClose}
         aria-hidden="true"
