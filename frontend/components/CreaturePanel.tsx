@@ -12,12 +12,17 @@ import { Creature } from "@/types/Creature"
 import { useState } from "react";
 import { useClientData } from "@/lib/clientData";
 import { Stats3 } from "@/types/Stats3";
+import { cn } from "@/lib/utils";
+
+const getName = (creature: Creature, isLoading: boolean, isError: boolean) => {
+  if (isLoading) return 'Loading data...';
+  if (isError) return 'Error loading data!';
+  return creature.species?.speciesName ?? 'None';
+}
 
 const CreaturePanel = () => {
   const { clientData, isError, isLoading } = useClientData();
   const [creature, setCreature] = useState(new Creature());
-  
-  if (isError || isLoading) return <></>;
   
   const handleCreatureChange = <K extends keyof Creature>(key: K, value: Creature[K]) => {
     const clone = creature.clone();
@@ -34,16 +39,16 @@ const CreaturePanel = () => {
   return (
     <Dialog>
       <DialogTrigger>
-        <div className='flex justify-between items-stretch p-2 text-sm text-start bg-theme1 border border-theme4 hover:border-highlight transition rounded shadow-lg cursor-pointer'>
+        <div className={cn('flex justify-between items-stretch p-2 text-sm text-start bg-theme1 border border-theme4 transition rounded shadow-lg', !(isLoading || isError) && 'hover:border-highlight cursor-pointer')}>
           <div className='flex flex-col grow gap-1 items-stretch'>
             <h4 className='text-base'>
-              {(creature.species?.speciesName ?? 'None') + ' '}
+              {getName(creature, isLoading, isError) + ' '}
               {creature.species && <span className='text-nowrap text-sm tracking-tight px-1 rounded border border-theme4 bg-theme3'>
                 {creature.cp} CP
               </span>}
             </h4>
 
-            {!creature.species && <div className="italic">
+            {(!creature.species && !isLoading && !isError) && <div className="italic">
               Click to select a Pokémon!
             </div>}
 
@@ -66,6 +71,8 @@ const CreaturePanel = () => {
           </div>
         </div>
       </DialogTrigger>
+
+      {!(isLoading || isError) && (
       <DialogContent className="flex flex-col sm:max-w-sm" showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>Edit Pokémon</DialogTitle>
@@ -169,7 +176,7 @@ const CreaturePanel = () => {
             disabled={creature.species === undefined}
           />
         </div>
-      </DialogContent>
+      </DialogContent>)}
     </Dialog>
   )
 }
