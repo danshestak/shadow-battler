@@ -4,46 +4,47 @@ import TypeLabel from '../TypeLabel'
 import { Opponent, OpponentTitle } from '@/types/Opponent'
 import { Lineup } from '@/types/Lineup'
 import { getSpecies } from '@/lib/serverData'
+import { buttonVariants } from '../ui/button'
+import { cn } from '@/lib/utils'
 
 interface OpponentCardProps {
-    opponent: Opponent
+  opponent: Opponent
 }
 
 const OpponentCard = async ({ opponent }: OpponentCardProps) => {
   const species = await getSpecies();
   
   return (
-    <div className='p-2 bg-theme3 border border-theme4 rounded shadow-lg'>
-        <div className='flex justify-between items-center border-b border-theme4 pb-2'>
-            <div>
-                <div className='text-xl'>{opponent.name}</div>
-                <div className='text-sm italic'>{OpponentTitle.toFull(opponent.title)}</div>
-            </div>
+  <div className='p-2 bg-theme3 border border-theme4 rounded shadow-lg'>
+    <div className='flex justify-between items-center border-b border-theme4 pb-2'>
+      <div>
+        <div className='text-xl'>{opponent.name}</div>
+        <div className='text-sm italic'>{OpponentTitle.toFull(opponent.title)}</div>
+      </div>
 
-            <TypeLabel type={opponent.specialtyType ?? "NONE"}/>
-        </div>
+      <TypeLabel type={opponent.specialtyType ?? "NONE"}/>
+    </div>
 
-        <div className='grid grid-rows-3 pt-2 gap-2 border-b border-theme4 pb-2'>
-            {Lineup.toArray(opponent.lineup).map((speciesIds, i) => 
-                <OpponentCardRow 
-                key={i} 
-                speciesArr={speciesIds.map(id => species[id])}
-                slotNumber={i+1} 
-                asteriskCount={opponent.encounterSlots.includes(i+1) ? (i+1 === 2 ? 2 : 1) : undefined}
-                />
-            )}
-        </div>
+    <div className='grid grid-rows-3 pt-2 gap-2 border-b border-theme4 pb-2'>
+      {Lineup.toArray(opponent.lineup).map((speciesIds, i) => 
+        <OpponentCardRow 
+        key={i} 
+        speciesArr={speciesIds.map(id => species[id])}
+        slotNumber={i+1} 
+        asteriskCount={opponent.encounterSlots.includes(i+1) ? (i+1 === 2 ? 2 : 1) : undefined}
+        />
+      )}
+    </div>
 
         <div className='pt-2 flex justify-end'>
-            <Link 
-            href={`/counters/${opponent.opponentId}`} 
-            className='bg-highlight p-2 rounded border border-transparent shadow
-            hover:bg-theme2 hover:border-highlight transition
-            active:border-text'
-            >View counters &#9656;
-            </Link>
+          <Link
+            href={`/counters/${opponent.opponentId}`}
+            className={cn(buttonVariants({ variant: 'highlight' }), 'p-2')}
+          >
+            View counters &#9656;
+          </Link>
         </div>
-    </div>
+  </div>
   )
 }
 

@@ -30,7 +30,7 @@ const Sidebar = (p: SidebarProps) => {
         aria-modal="true"
         aria-labelledby="sidebar-title"
       >
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col justify-end gap-2">
             <div className='h-12 flex justify-end'>
                 <button onClick={p.onClose} className="h-full aspect-square flex justify-center items-center p-1 rounded-full border border-transparent transition cursor-pointer hover:bg-theme2 hover:text-text hover:border-highlight">
                     <svg width="1.5em" height="1.5em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>

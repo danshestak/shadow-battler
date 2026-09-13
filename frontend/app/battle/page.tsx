@@ -1,13 +1,6 @@
-import CreaturePanel from '@/components/CreaturePanel';
-import { getMoves, getSpecies } from '@/lib/serverData';
-import { Creature } from '@/types/Creature';
+import BattleClientPage from './BattleClientPage';
 
 const BattlePage = async () => {
-  const species = await getSpecies();
-  const moves = await getMoves();
-  const creature = new Creature();
-  // creature.species = species['charizard_shadow'];
-
   return (
     <div className="max-w-3xl m-auto">
       <h1 className="text-2xl mb-4">Battle</h1>
@@ -16,9 +9,7 @@ const BattlePage = async () => {
         Simulate battles between a Pokémon and an opponent team or lineup.
       </p>
 
-      <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-        <CreaturePanel/>
-      </div>
+      <BattleClientPage/>
     </div>
   )
 }

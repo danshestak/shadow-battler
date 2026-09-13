@@ -1,0 +1,293 @@
+'use client';
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import Sprite from "./sprite/Sprite"
+import TypeLabel from "./TypeLabel"
+import MoveLabel from "./MoveLabel"
+import SpeciesCombobox from "./battle/SpeciesCombobox"
+import NumberSelect from "./battle/NumberSelect"
+import MoveCombobox from "./battle/MoveCombobox"
+import Meter from "./Meter"
+import { Creature, OpponentCreature, PlayerCreature } from "@/types/Creature"
+import { Stats3 } from "@/types/Stats3";
+import { useClientData } from "@/lib/clientData";
+import { Species } from "@/types/Species";
+
+const getName = (creature: Creature, isLoading: boolean, isError: boolean) => {
+  if (isLoading) return 'Loading data...';
+  if (isError) return 'Error loading data!';
+  return creature.species?.speciesName ?? 'None';
+}
+
+interface CreaturePanelProps<T extends Creature> {
+  species?: string[];
+  creature: T;
+  setCreature: React.Dispatch<React.SetStateAction<T>>;
+  hide?: ('moves')[]
+  disabled?: boolean
+}
+
+function CreaturePanel<T extends Creature>({ species, creature, setCreature, hide = [], disabled = false }: CreaturePanelProps<T>) {
+  const { clientData, isError, isLoading } = useClientData();
+  const c = creature.user === 'player' ? creature as unknown as PlayerCreature : creature as unknown as OpponentCreature;
+  const isDisabled = disabled || isError || isLoading;
+  const isReady = !isLoading && !isError;
+  
+  const handleCreatureChange = (transform: (currCreature: typeof c) => void) => {
+    const clone = c.clone();
+    transform(clone);
+    setCreature(clone as unknown as T);
+  };
+
+  const handleIvsChange = (key: keyof Stats3<number>, value: number) => {
+    const clone = c.clone();
+    clone.ivs[key] = value;
+    setCreature(clone as unknown as T);
+  }
+
+  let speciesData: Record<string, Species> = {};
+  if (isReady) {
+    if (species !== undefined) {
+      for (const id of species) {
+        if (clientData.species.hasOwnProperty(id)) {
+          speciesData[id] = clientData.species[id];
+        } else {
+          console.warn(`species ${id} not found in client data`);
+        }
+      }
+    } else {
+      speciesData = clientData.species;
+    }
+  }
+
+  const triggerContent = (
+    <>
+      <div className='flex flex-col grow gap-1 items-stretch'>
+        <h4 className='text-base'>
+          {getName(c, isLoading, isError) + ' '}
+          {c.species && <span className='text-nowrap text-sm tracking-tight px-1 rounded border border-theme4 bg-theme3'>
+            {c.cp} CP
+          </span>}
+        </h4>
+
+        {(!c.species && isReady) && <div className="italic">
+          Click to select a Pokémon!
+        </div>}
+
+        <div className='flex gap-0.5 mb-2'>
+          {c.species?.types
+            .filter(t => t !== 'NONE')
+            .map((t, i) => <TypeLabel type={t} key={i}/>) }
+        </div>
+
+        {
+          !hide.includes('moves') && 
+          <div className='flex flex-wrap gap-0.5 items-start text-xs'>
+            {
+              [
+                c.fast,
+                c.charged1,
+                c.user === 'player' ? c.charged2 : undefined
+              ]
+                .filter(v => v !== undefined)
+                .map((m, i) => <MoveLabel move={m} species={c.species} key={i} />)
+            }
+          </div>
+        }
+      </div>
+      <div className="flex items-center">
+        <Sprite species={c.species} scale={2} />
+      </div>
+    </>
+  );
+
+  return (
+    <Dialog>
+      {isReady ? (
+        <DialogTrigger 
+          disabled={isDisabled}
+          data-disabled={isDisabled}
+          className='flex justify-between items-stretch min-h-25 p-2 text-sm text-start bg-theme1 border border-theme4 transition rounded shadow-lg data-[disabled=true]:opacity-50 data-[disabled=false]:hover:border-highlight data-[disabled=false]:active:border-text data-[disabled=false]:cursor-pointer'
+        >
+          {triggerContent}
+        </DialogTrigger>
+      ) : (
+        <div
+          className='flex justify-between items-stretch min-h-25 p-2 text-sm text-start bg-theme1 border border-theme4 transition rounded shadow-lg opacity-50'
+        >
+          {triggerContent}
+        </div>
+      )}
+        <div className='flex flex-col grow gap-1 items-stretch'>
+          <h4 className='text-base'>
+            {getName(c, isLoading, isError) + ' '}
+            {c.species && <span className='text-nowrap text-sm tracking-tight px-1 rounded border border-theme4 bg-theme3'>
+              {c.cp} CP
+            </span>}
+          </h4>
+
+          {(!c.species && !isLoading && !isError) && <div className="italic">
+            Click to select a Pokémon!
+          </div>}
+
+          <div className='flex gap-0.5 mb-2'>
+            {c.species?.types
+              .filter(t => t !== 'NONE')
+              .map((t, i) => <TypeLabel type={t} key={i}/>)}
+          </div>
+
+          {
+            !hide.includes('moves') && 
+            <div className='flex flex-wrap gap-0.5 items-start text-xs'>
+              {
+                [
+                  c.fast,
+                  c.charged1,
+                  c.user === 'player' ? c.charged2 : undefined
+                ]
+                  .filter(v => v !== undefined)
+                  .map((m, i) => <MoveLabel move={m} species={c.species} key={i} />)
+              }
+            </div>
+          }
+        </div>
+        <div className="flex items-center">
+          <Sprite species={c.species} scale={2} />
+        </div>
+      </DialogTrigger>
+
+      {isReady && (
+      <DialogContent className="flex flex-col sm:max-w-sm" showCloseButton={false}>
+        <DialogHeader>
+          <DialogTitle>Edit Pokémon</DialogTitle>
+        </DialogHeader>
+
+        <div className='flex justify-between items-center'>
+          <span>Species</span>
+          <SpeciesCombobox 
+            speciesData={speciesData}
+            value={c.species?.speciesId} 
+            onValueChange={(id) => handleCreatureChange((c) => {
+              c.species = id !== null ? clientData.species[id] : undefined;
+            })}
+          />
+        </div>
+        
+        {
+          c.user === 'player' && <>
+            <div className='flex justify-between items-center'>
+              <span>Level</span>
+              <NumberSelect 
+                value={c.level}
+                onValueChange={(v) => handleCreatureChange((c) => {
+                  if (v === null) return;
+                  (c as unknown as PlayerCreature).level = v;
+                })}
+                min={1} 
+                max={51} 
+                step={0.5}
+              />
+            </div>
+            <div className='flex justify-between items-center'>
+              <span>IVs (ATK/DEF/HP)</span>
+              <span className="flex flex-wrap items-center justify-end gap-0.5">
+                <NumberSelect
+                  value={c.ivs.atk}
+                  onValueChange={(v) => v !== null && handleIvsChange('atk', v)}
+                  min={0} 
+                  max={15}
+                />
+                /
+                <NumberSelect 
+                  value={c.ivs.def}
+                  onValueChange={(v) => v !== null && handleIvsChange('def', v)}
+                  min={0} 
+                  max={15}
+                />
+                /
+                <NumberSelect 
+                  value={c.ivs.hp}
+                  onValueChange={(v) => v !== null && handleIvsChange('hp', v)}
+                  min={0} 
+                  max={15}
+                />
+              </span>
+            </div>
+          </>
+        }
+
+        <div className="p-2 bg-theme3 shadow-lg border border-theme4 rounded text-xs grid grid-cols-[1fr_1fr_8fr] items-center gap-2">
+          <div className='text-sm'>CP:</div>
+          <div className='col-span-2'>{c.cp}</div>
+
+          <div className='text-sm'>ATK:</div>
+          <div>{c.stats.atk.toFixed(1)}</div>
+          <Meter value={c.stats.atk} max={400} colorSensitivity={2} colorOffset={100} label="Attack" className='h-2.5' />
+
+          <div className='text-sm'>DEF:</div>
+          <div>{c.stats.def.toFixed(1)}</div>
+          <Meter value={c.stats.def} max={400} colorSensitivity={2} colorOffset={100} label="Defense" className='h-2.5' />
+
+          <div className='text-sm'>HP:</div>
+          <div>{c.stats.hp}</div>
+          <Meter value={c.stats.hp} max={400} colorSensitivity={2} colorOffset={100} label="HP" className='h-2.5' />
+        </div>
+
+        {
+          c.user === 'opponent' && <span className='text-center text-sm italic'>
+            Team GO Rocket Pokémon stats depend on the player&apos;s trainer level
+            and the enemy&apos;s title (i.e. grunt, leader, boss)
+          </span>
+        }
+
+        {
+          !hide.includes('moves') && <>
+            <div className='flex justify-between items-center pt-2 border-t border-theme4'>
+              <span>Fast move</span>
+              <MoveCombobox 
+                movesData={clientData.moves}
+                userSpecies={c.species}
+                selectableMoveIds={c.possibleFastMoves}
+                value={c.fast?.moveId}
+                onValueChange={(id) => handleCreatureChange((c) => {
+                  c.fast = id !== null ? clientData.moves[id] : undefined;
+                })}
+                disabled={c.species === undefined}
+              />
+            </div>
+
+            <div className='flex justify-between items-center'>
+              <span>Charged move 1</span>
+              <MoveCombobox 
+                movesData={clientData.moves}
+                userSpecies={c.species}
+                selectableMoveIds={c.user === 'player' ? c.possibleChargedMoves.filter(id => id !== c.charged2?.moveId) : c.possibleChargedMoves}
+                value={c.charged1?.moveId}
+                onValueChange={(id) => handleCreatureChange((c) => {
+                  c.charged1 = id !== null ? clientData.moves[id] : undefined;
+                })}
+                disabled={c.species === undefined}
+              />
+            </div>
+
+            {c.user === 'player' && <div className='flex justify-between items-center'>
+              <span>Charged move 2</span>
+              <MoveCombobox 
+                movesData={clientData.moves}
+                userSpecies={c.species}
+                selectableMoveIds={c.possibleChargedMoves.filter(id => id !== c.charged1?.moveId)}
+                value={(c as unknown as PlayerCreature).charged2?.moveId}
+                onValueChange={(id) => handleCreatureChange((c) => {
+                  (c as unknown as PlayerCreature).charged2 = id !== null ? clientData.moves[id] : undefined;
+                })}
+                disabled={c.species === undefined}
+              />
+            </div>}
+          </>
+        }
+      </DialogContent>)}
+    </Dialog>
+  )
+}
+
+export default CreaturePanel

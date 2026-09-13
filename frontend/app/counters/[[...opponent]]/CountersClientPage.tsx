@@ -1,13 +1,5 @@
 'use client';
 
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from '@/components/ui/combobox';
 import { useParams, useRouter } from 'next/navigation';
 import useSWR from 'swr';
 import Link from 'next/link';
@@ -15,9 +7,9 @@ import CountersTable from '@/components/counters/CountersTable';
 import CountersTableRow from '@/components/counters/CountersTableRow';
 import { CountersTableDescription } from '@/components/counters/CountersTableDescription';
 import { useClientData } from '@/lib/clientData';
-import { Opponent } from '@/types/Opponent';
 import { BattleResult, BattleResultRaw } from '@/types/BattleResult';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import OpponentCombobox from '@/components/battle/OpponentCombobox';
 
 interface CountersClientPageProps {
   initialBattleResults: BattleResultRaw[] | undefined
@@ -70,7 +62,7 @@ const CountersClientPage = ({ initialBattleResults }: CountersClientPageProps) =
     )
   }
 
-  const selectedOpponent = Object.values(clientData.opponents).find((o) => o.opponentId === opponentSlug);
+  const selectedOpponent = opponentSlug ? clientData.opponents[opponentSlug] : undefined;
   const battleResults: BattleResult[] = rawBattleResults ? rawBattleResults.map(raw => BattleResult.fromRaw(raw, clientData)) : [];
 
   const countersTableDescription: CountersTableDescription = {
@@ -82,36 +74,14 @@ const CountersClientPage = ({ initialBattleResults }: CountersClientPageProps) =
     score: true
   };
 
-  const handleValueChange = (name?: string | null) => {
-    if (!name) return;
-
-    const newOpponent = Object.values(clientData.opponents).find(o => o.name === name);
-    if (newOpponent) {
-      router.push(`/counters/${newOpponent.opponentId}`);
-    }
-  };
-
   return (
     <>
-      <Combobox
-        items={Object.values(clientData.opponents)
-          .sort(Opponent.compare)
-          .map(o => {return { name: o.name, id: o.opponentId };})}
-        value={selectedOpponent?.name}
-        onValueChange={handleValueChange}
-      >
-        <ComboboxInput placeholder="Search opponents..." className={'text-base shadow-lg mb-4 p-1'} />
-        <ComboboxContent className={"shadow-lg"}>
-          <ComboboxEmpty>No opponent found.</ComboboxEmpty>
-          <ComboboxList>
-            {(item) => (
-              <ComboboxItem key={item.id} value={item.name}>
-                {item.name}
-              </ComboboxItem>
-            )}
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
+      <OpponentCombobox
+        className='text-base shadow-lg mb-4 p-1'
+        opponentsData={clientData.opponents}
+        value={selectedOpponent?.name ?? null}
+        onValueChange={(id) => id && router.push(`/counters/${id}`) }
+      />
 
       {selectedOpponent && <p className="mb-4">
         Viewing counters for {selectedOpponent.name}. View more details about them and

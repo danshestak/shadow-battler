@@ -1,6 +1,6 @@
 import React from 'react'
 import OpponentCard from '@/components/opponent/OpponentCard'
-import { getOpponents, getSpecies } from '@/lib/serverData'
+import { getOpponents } from '@/lib/serverData'
 import { Opponent } from '@/types/Opponent';
 
 const OpponentsPage = async () => {
@@ -11,7 +11,7 @@ const OpponentsPage = async () => {
       <h1 className='text-2xl mb-4'>Opponents</h1>
 
       <p className='mb-4'>
-        This is a list of every opponent in the game and the lineup of Pokémon they are currently using. Opponent&apos;s teams consist of one random Pokémon from each lineup slot.
+        This is a list of every opponent in Pokémon GO, and the lineup of Pokémon they are currently using. When battling an opponent, they will use one random Pokémon from each lineup slot.
       </p>
 
       <p className='mb-4'>

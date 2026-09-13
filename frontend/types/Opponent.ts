@@ -37,6 +37,11 @@ const order: Record<OpponentTitle, number> = {
     ROCKET_LEADER: 1,
     ROCKET_GRUNT: 2
 }
+const multiplier: Record<OpponentTitle, number> = {
+    ROCKET_BOSS: 1.15,
+    ROCKET_LEADER: 1.05,
+    ROCKET_GRUNT: 1.0
+}
 export const OpponentTitle = {
     toFull(title: OpponentTitle): string {
         return full[title];
@@ -45,4 +50,8 @@ export const OpponentTitle = {
     toOrder(title: OpponentTitle): number {
         return order[title];
     },
+
+    toMultiplier(title: OpponentTitle): number {
+        return multiplier[title];
+    }
 }

@@ -1,4 +1,5 @@
 import { Move } from "./Move"
+import { OpponentTitle } from "./Opponent"
 import { Stats3 } from "./Stats3"
 import { Type } from "./Type"
 
@@ -137,6 +138,82 @@ const cpMultipliers = [
   0.8653 //55.0
 ];
 
+const rocketCpMultipliers = [
+  0.299, //8
+  0.352, //9
+  0.4, //...
+  0.444,
+  0.487,
+  0.529,
+  0.569,
+  0.608,
+  0.646,
+  0.683,
+  0.72,
+  0.755,
+  0.796,
+  0.808,
+  0.82,
+  0.832,
+  0.844,
+  0.855,
+  0.867,
+  0.878,
+  0.89,
+  0.901,
+  0.912,
+  0.923,
+  0.934,
+  0.945,
+  0.955,
+  0.965,
+  0.976,
+  0.986,
+  0.997,
+  1.007,
+  1.016,
+  1.026,
+  1.036,
+  1.046,
+  1.056,
+  1.065,
+  1.075,
+  1.084,
+  1.093,
+  1.102,
+  1.111,
+  1.12,
+  1.128,
+  1.137,
+  1.145,
+  1.153,
+  1.161,
+  1.168,
+  1.176,
+  1.184,
+  1.191,
+  1.199,
+  1.206,
+  1.214,
+  1.221,
+  1.229,
+  1.236,
+  1.243,
+  1.251,
+  1.258,
+  1.265,
+  1.27,
+  1.275,
+  1.28,
+  1.285,
+  1.29,
+  1.295,
+  1.3,
+  1.305,
+  1.31,
+  1.315
+];
+
 export const Species = {
   givesStab(species: Species, move: Move) {
     return species.types.includes(move.type)
@@ -147,10 +224,24 @@ export const Species = {
       throw new Error(`expected level to be between 1.0 and 55.0, received ${level}`)
     }
     
-    const cpMultiplier = cpMultipliers[Math.round((level-1.0)*2)];
-    const atk = (species.baseStats.atk + ivs.atk)*cpMultiplier;
-    const def = (species.baseStats.def + ivs.def)*cpMultiplier;
-    const hp = (species.baseStats.hp + ivs.hp)*cpMultiplier;
+    const cpm = cpMultipliers[Math.round((level-1.0)*2)];
+    const atk = (species.baseStats.atk + ivs.atk) * cpm;
+    const def = (species.baseStats.def + ivs.def) * cpm;
+    const hp = (species.baseStats.hp + ivs.hp) * cpm;
+
+    return { atk: atk, def: def, hp: Math.max(10.0, Math.floor(hp))};
+  },
+
+  getOpponentStats(species: Species, trainerLevel: number, title: OpponentTitle): Stats3<number> {
+    if (trainerLevel < 8 || trainerLevel > 80 || !Number.isInteger(trainerLevel)) {
+      throw new Error(`expected level to be int between 8 and 80, received ${trainerLevel}`)
+    }
+
+    const rank = OpponentTitle.toMultiplier(title);
+    const rcpm = rocketCpMultipliers[trainerLevel - 8];
+    const atk = Math.floor((species.baseStats.atk + 15) * 5/3) * rank * rcpm;
+    const def = (species.baseStats.def + 15) * rank * rcpm;
+    const hp = Math.floor((species.baseStats.hp + 15) * 3/5) * rank * rcpm;
 
     return { atk: atk, def: def, hp: Math.max(10.0, Math.floor(hp))};
   },

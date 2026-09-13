@@ -18,8 +18,8 @@ const Header = () => {
       flex justify-between 
       bg-theme1 border-b border-theme4 shadow-lg'>
         {/* left */}
-        <Link className='flex items-center h-full text-3xl font-light tracking-tighter' href="/">
-          shadow<span className='text-highlight font-bold'>KO!</span>
+        <Link className='flex items-center h-full text-3xl tracking-tighter font-extralight' href="/">
+          shadow<span className='text-highlight font-extrabold'>KO!</span>
         </Link>
 
         {/* right */}
