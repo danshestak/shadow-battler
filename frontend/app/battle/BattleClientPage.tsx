@@ -6,7 +6,6 @@ import CreaturePanel from "@/components/CreaturePanel"
 import OpponentCardRow from "@/components/opponent/OpponentCardRow";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useClientData } from "@/lib/clientData";
@@ -14,39 +13,56 @@ import { PlayerCreature, OpponentCreature, Creature } from "@/types/Creature";
 import { Lineup } from "@/types/Lineup";
 import { Opponent } from "@/types/Opponent";
 import { cn } from "cn";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 const panelClass = 'bg-theme3 border border-theme4 rounded p-2 flex flex-col gap-2 shadow-lg flex-1 text-sm';
 const betweenClass = 'flex justify-between items-center gap-2';
 const creaturePanelMinH = 'min-h-25';
 const enemyCreaturePanelDisabledMsg = 'No opponent selected'
 
-const initTrainerLevel = 70;
+interface BattleClientPageProps {
+  initPlayerCreature: PlayerCreature,
+  initEnemyCreature1: OpponentCreature,
+  initEnemyCreature2: OpponentCreature,
+  initEnemyCreature3: OpponentCreature,
+  initSolveForMoveset: boolean,
+  initEnemyMode: 'team' | 'lineup',
+  initOpponent: Opponent | null,
+  initTrainerLevel: number
+} 
 
-const BattleClientPage = () => {
+const BattleClientPage = (
+  {
+    initPlayerCreature,
+    initEnemyCreature1,
+    initEnemyCreature2,
+    initEnemyCreature3,
+    initSolveForMoveset,
+    initEnemyMode,
+    initOpponent,
+    initTrainerLevel
+  }: BattleClientPageProps
+) => {
   const { clientData, isError, isLoading } = useClientData();
   const isReady = !isError && !isLoading;
 
-  console.log(`client data: ${isError} ${isLoading} ${JSON.stringify(clientData)}`)
-
-  const [playerCreature, setPlayerCreature] = useState(new PlayerCreature());
-  const [enemyCreature1, setEnemyCreature1] = useState(new OpponentCreature(initTrainerLevel, 'ROCKET_GRUNT'));
-  const [enemyCreature2, setEnemyCreature2] = useState(new OpponentCreature(initTrainerLevel, 'ROCKET_GRUNT'));
-  const [enemyCreature3, setEnemyCreature3] = useState(new OpponentCreature(initTrainerLevel, 'ROCKET_GRUNT'));
+  const [playerCreature, setPlayerCreature] = useState(initPlayerCreature);
+  const [enemyCreature1, setEnemyCreature1] = useState(initEnemyCreature1);
+  const [enemyCreature2, setEnemyCreature2] = useState(initEnemyCreature2);
+  const [enemyCreature3, setEnemyCreature3] = useState(initEnemyCreature3);
   const enemyCreatureStates = [[enemyCreature1, setEnemyCreature1], [enemyCreature2, setEnemyCreature2], [enemyCreature3, setEnemyCreature3]] as const;
 
   const setEnemyCreatures = (transform: (c: OpponentCreature, i: number) => void) => {
     enemyCreatureStates.forEach((arr, i) => {
-      const clone = arr[0].clone();
+      const clone = { ...arr[0] };
       transform(clone, i);
       arr[1](clone);
     });
   };
   
-  const [solveForMoveset, setSolveForMoveset] = useState(false);
-  const statefulSetSolveForMoveset = (v: boolean) => { setSolveForMoveset(v) }
-  const [enemyMode, setEnemyMode] = useState<'team' | 'lineup'>('team');
-  const [opponent, setOpponent] = useState<null | Opponent>(null);
+  const [solveForMoveset, setSolveForMoveset] = useState(initSolveForMoveset);
+  const [enemyMode, setEnemyMode] = useState(initEnemyMode);
+  const [opponent, setOpponent] = useState(initOpponent);
   const statefulSetOpponent = (v: Opponent | null) => {
     const lineupArr = v !== null ? Lineup.toArray(v.lineup) : [];
 
@@ -54,15 +70,15 @@ const BattleClientPage = () => {
       if (v !== null) {
         c.title = v.title;
         if (lineupArr[i].length === 1) {
-          c.species = clientData.species[lineupArr[i][0]];
+          OpponentCreature.statefulSetSpecies(c, clientData.species[lineupArr[i][0]]);
           c.fast = undefined;
           c.charged1 = undefined;
         } else {
-          c.species = undefined;
+          OpponentCreature.statefulSetSpecies(c, undefined)
         }
       } else {
+        OpponentCreature.statefulSetSpecies(c, undefined);
         c.title = 'ROCKET_GRUNT';
-        c.species = undefined;
       }
     });
 
@@ -124,8 +140,8 @@ const BattleClientPage = () => {
         <div className={panelClass}>
           <h2 className='text-xl'>Player</h2>
           <div className={betweenClass}>
-              Solve for moveset:
-              <Switch checked={solveForMoveset} onCheckedChange={statefulSetSolveForMoveset}/>
+            Solve for moveset:
+            <Switch checked={solveForMoveset} onCheckedChange={setSolveForMoveset}/>
           </div>
           <CreaturePanel 
             creature={playerCreature} 
@@ -202,17 +218,17 @@ const BattleClientPage = () => {
             />
           </> : <>
             <OpponentCardRow 
-              speciesArr={opponent?.lineup.first.map(id => clientData.species[id]) ?? undefined}
+              speciesArr={opponent?.lineup.first.map(id => clientData?.species[id]) ?? undefined}
               className={creaturePanelMinH}
               cpDependencies={{ trainerLevel: trainerLevel, title: opponent?.title ?? 'ROCKET_GRUNT' }}
             />
             <OpponentCardRow 
-              speciesArr={opponent?.lineup.second.map(id => clientData.species[id]) ?? undefined}
+              speciesArr={opponent?.lineup.second.map(id => clientData?.species[id]) ?? undefined}
               className={creaturePanelMinH}
               cpDependencies={{ trainerLevel: trainerLevel, title: opponent?.title ?? 'ROCKET_GRUNT' }}
             />
             <OpponentCardRow 
-              speciesArr={opponent?.lineup.third.map(id => clientData.species[id]) ?? undefined}
+              speciesArr={opponent?.lineup.third.map(id => clientData?.species[id]) ?? undefined}
               className={creaturePanelMinH}
               cpDependencies={{ trainerLevel: trainerLevel, title: opponent?.title ?? 'ROCKET_GRUNT' }}
             />

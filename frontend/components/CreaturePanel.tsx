@@ -15,6 +15,7 @@ import { Species } from "@/types/Species";
 import { cn } from "@/lib/utils";
 import CombatPowerLabel from "./CombatPowerLabel";
 import { buttonVariants } from "./ui/button";
+import { useMemo } from "react";
 
 const triggerClass = 'flex justify-between items-stretch p-2 text-sm text-start bg-theme1 border border-theme4 transition rounded shadow-lg';
 
@@ -41,14 +42,26 @@ function CreaturePanel<T extends Creature>({ species, creature, setCreature, hid
   const isDisabled = disabled || isError || isLoading;
   const isReady = !isLoading && !isError;
 
+  const stats = useMemo(() => {
+    if (c.user === 'player') {
+      return PlayerCreature.getStats(c);
+    } else {
+      return OpponentCreature.getStats(c);
+    }
+  }, [c]);
+
+  const cp = useMemo(() => {
+    return Species.getCp(stats);
+  }, [stats]);
+
   const handleCreatureChange = (transform: (currCreature: typeof c) => void) => {
-    const clone = c.clone();
+    const clone = { ...c };
     transform(clone);
     setCreature(clone as unknown as T);
   };
 
   const handleIvsChange = (key: keyof Stats3<number>, value: number) => {
-    const clone = c.clone();
+    const clone = { ...c };
     clone.ivs[key] = value;
     setCreature(clone as unknown as T);
   }
@@ -76,7 +89,7 @@ function CreaturePanel<T extends Creature>({ species, creature, setCreature, hid
       <div className='flex flex-col grow gap-1 items-stretch'>
         <h4 className='text-base'>
           {(c.species?.speciesName ?? '???') + ' '}
-          {c.species && <CombatPowerLabel cp={c.cp}/>}
+          {c.species && <CombatPowerLabel cp={cp}/>}
         </h4>
 
         {!c.species && <div className="italic">
@@ -129,7 +142,11 @@ function CreaturePanel<T extends Creature>({ species, creature, setCreature, hid
               speciesData={speciesData}
               value={c.species?.speciesId}
               onValueChange={(id) => handleCreatureChange((c) => {
-                c.species = id !== null ? clientData.species[id] : undefined;
+                if (c.user === 'player') {
+                  PlayerCreature.statefulSetSpecies(c, id !== null ? clientData.species[id] : undefined)
+                } else {
+                  OpponentCreature.statefulSetSpecies(c, id !== null ? clientData.species[id] : undefined)
+                }
               })}
             />
           </div>
@@ -179,19 +196,19 @@ function CreaturePanel<T extends Creature>({ species, creature, setCreature, hid
 
           <div className="p-2 bg-theme3 shadow-lg border border-theme4 rounded text-xs grid grid-cols-[1fr_1fr_8fr] items-center gap-2">
             <div className='text-sm'>CP:</div>
-            <div className='col-span-2'>{c.cp}</div>
+            <div className='col-span-2'>{cp}</div>
 
             <div className='text-sm'>ATK:</div>
-            <div>{c.stats.atk.toFixed(1)}</div>
-            <Meter value={c.stats.atk} max={400} colorSensitivity={2} colorOffset={100} label="Attack" className='h-2.5' />
+            <div>{stats.atk.toFixed(1)}</div>
+            <Meter value={stats.atk} max={400} colorSensitivity={2} colorOffset={100} label="Attack" className='h-2.5' />
 
             <div className='text-sm'>DEF:</div>
-            <div>{c.stats.def.toFixed(1)}</div>
-            <Meter value={c.stats.def} max={400} colorSensitivity={2} colorOffset={100} label="Defense" className='h-2.5' />
+            <div>{stats.def.toFixed(1)}</div>
+            <Meter value={stats.def} max={400} colorSensitivity={2} colorOffset={100} label="Defense" className='h-2.5' />
 
             <div className='text-sm'>HP:</div>
-            <div>{c.stats.hp}</div>
-            <Meter value={c.stats.hp} max={400} colorSensitivity={2} colorOffset={100} label="HP" className='h-2.5' />
+            <div>{stats.hp}</div>
+            <Meter value={stats.hp} max={400} colorSensitivity={2} colorOffset={100} label="HP" className='h-2.5' />
           </div>
 
           {c.user === 'opponent' && (
