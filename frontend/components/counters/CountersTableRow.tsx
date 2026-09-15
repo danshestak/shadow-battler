@@ -39,7 +39,7 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
     c.charged1 = battleResult.playerChargedMove1;
     c.charged2 = battleResult.playerChargedMove2;
 
-    battleUrl = `/battle/?opponent=${opponent?.opponentId}&p1=${PlayerCreature.toSearchParams(c)}&enemy_mode=lineup`
+    battleUrl = `/battle/?opponent=${opponent?.opponentId}&p1=${PlayerCreature.toSearchParams(c)}&trainer_level=${battleResult.trainerLevel}&enemy_mode=lineup`;
   }
 
   return (
