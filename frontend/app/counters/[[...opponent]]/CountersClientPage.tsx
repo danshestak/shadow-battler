@@ -94,10 +94,13 @@ const CountersClientPage = ({ initialBattleResults }: CountersClientPageProps) =
         {selectedOpponent &&
           <CountersTable description={countersTableDescription}>
             {battleResults.map((br, i) => (
-              <CountersTableRow key={i} 
-              description={countersTableDescription}
-              battleResult={br}
-              clientData={clientData}/>
+              <CountersTableRow 
+                key={i} 
+                description={countersTableDescription}
+                battleResult={br}
+                opponent={selectedOpponent}
+                clientData={clientData}
+              />
             ))}
           </CountersTable>
         }

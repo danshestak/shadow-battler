@@ -67,15 +67,15 @@ export const PlayerCreature = {
   
   toSearchParams(c: PlayerCreature) {
     return [
-      c.species ?? '_',
+      c.species?.speciesId ?? '_',
       c.level, 
       c.ivs.atk,
       c.ivs.def,
       c.ivs.hp,
-      c.fast ?? '_',
-      c.charged1 ?? '_',
-      c.charged2 ?? '_'
-    ].join(',');
+      c.fast?.moveId ?? '_',
+      c.charged1?.moveId ?? '_',
+      c.charged2?.moveId ?? '_'
+    ].join(',').toLowerCase();
   },
 
   fromSearchParams(speciesData: Record<string, Species>, movesData: Record<string, Move>,  params: string) {

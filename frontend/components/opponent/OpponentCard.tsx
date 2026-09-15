@@ -18,7 +18,7 @@ const OpponentCard = async ({ opponent }: OpponentCardProps) => {
   <div className='p-2 bg-theme3 border border-theme4 rounded shadow-lg'>
     <div className='flex justify-between items-center border-b border-theme4 pb-2'>
       <div>
-        <div className='text-xl'>{opponent.name}</div>
+        <h2 className='text-xl'>{opponent.name}</h2>
         <div className='text-sm italic'>{OpponentTitle.toFull(opponent.title)}</div>
       </div>
 
@@ -36,12 +36,18 @@ const OpponentCard = async ({ opponent }: OpponentCardProps) => {
       )}
     </div>
 
-        <div className='pt-2 flex justify-end'>
+        <div className='pt-2 flex justify-end gap-2'>
+          <Link
+            href={`/battle/?opponent=${opponent.opponentId}&enemy_mode=lineup`}
+            className={cn(buttonVariants(), 'py-1')}
+          >
+            Battle
+          </Link>
           <Link
             href={`/counters/${opponent.opponentId}`}
-            className={cn(buttonVariants({ variant: 'highlight' }), 'p-2')}
+            className={cn(buttonVariants({ variant: 'highlight' }), 'py-1')}
           >
-            View counters &#9656;
+            View counters
           </Link>
         </div>
   </div>
