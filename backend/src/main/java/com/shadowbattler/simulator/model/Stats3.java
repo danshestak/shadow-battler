@@ -1,6 +1,7 @@
 package com.shadowbattler.simulator.model;
 
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class Stats3<T> {
     private final T atk;
@@ -31,6 +32,10 @@ public class Stats3<T> {
 
     public T getHp() {
         return hp;
+    }
+
+    public Stream<T> toStream() {
+        return Stream.of(this.atk, this.def, this.hp);
     }
 
     public static Stats3<Integer> getMaxIVs() {

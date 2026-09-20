@@ -26,6 +26,13 @@ public class Team<T> {
         this.validate();
     }
 
+    public Team(T[] arr) {
+        this.first = arr.length > 0 ? arr[0] : null;
+        this.second = arr.length > 1 ? arr[1] : null;
+        this.third = arr.length > 2 ? arr[2] : null;
+        this.validate();
+    }
+
     public Team(List<T> list) {
         this.first = (list != null && !list.isEmpty()) ? list.get(0) : null;
         this.second = (list != null && list.size() > 1) ? list.get(1) : null;
@@ -58,7 +65,7 @@ public class Team<T> {
             case 1 -> this.first;
             case 2 -> this.second;
             case 3 -> this.third;
-            default -> throw new IllegalArgumentException(String.format("argument %n must be 1, 2, or 3", i));
+            default -> throw new IllegalArgumentException(String.format("argument %d must be 1, 2, or 3", i));
         };
     }
 

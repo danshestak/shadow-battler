@@ -52,7 +52,7 @@ public class BattleResultEntity {
     @JsonIdentityReference(alwaysAsId = true)
     private OpponentEntity opponent;
     //null for great/ultra league team leaders
-    private Integer playerLevel;
+    private Double playerLevel;
     //null for team leaders since only rocket battles consider trainer level
     private Integer trainerLevel;
 
@@ -144,11 +144,11 @@ public class BattleResultEntity {
         this.opponent = opponent;
     }
 
-    public Integer getPlayerLevel() {
+    public Double getPlayerLevel() {
         return this.playerLevel;
     }
 
-    public void setPlayerLevel(Integer playerLevel) {
+    public void setPlayerLevel(Double playerLevel) {
         this.playerLevel = playerLevel;
     }
 
