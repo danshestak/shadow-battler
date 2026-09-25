@@ -1,5 +1,6 @@
 package com.shadowbattler.simulator.web;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,12 @@ import com.shadowbattler.simulator.model.Team;
 import com.shadowbattler.simulator.model.battle.MovesetSolver;
 import com.shadowbattler.simulator.model.battle.OpponentBattleSolver;
 import com.shadowbattler.simulator.model.battle.TeamBattleSolver;
+import com.shadowbattler.simulator.persistence.service.BattleResultEntityService;
 import com.shadowbattler.simulator.service.BattlePersistenceService;
 import com.shadowbattler.simulator.service.MovesDataService;
 import com.shadowbattler.simulator.service.OpponentDataService;
 import com.shadowbattler.simulator.service.SpeciesDataService;
+import com.shadowbattler.simulator.web.BattleController.HydrateCreatureException;
 import com.shadowbattler.simulator.web.dto.BattleRequest;
 import com.shadowbattler.simulator.web.dto.CreatureDTO;
 
@@ -30,15 +33,18 @@ public class BattleController {
     private final SpeciesDataService speciesDataService;
     private final MovesDataService movesDataService;
     private final OpponentDataService opponentDataService;
+    private final BattleResultEntityService battleResultEntityService;
 
     public BattleController(
         SpeciesDataService speciesDataService,
         MovesDataService movesDataService,
-        OpponentDataService opponentDataService
+        OpponentDataService opponentDataService,
+        BattleResultEntityService battleResultEntityService
     ) {
         this.speciesDataService = speciesDataService;
         this.movesDataService = movesDataService;
         this.opponentDataService = opponentDataService;
+        this.battleResultEntityService = battleResultEntityService;
     }
 
     public class HydrateCreatureException extends RuntimeException {
@@ -84,16 +90,18 @@ public class BattleController {
                 throw new HydrateCreatureException("Invalid IVs");
             }
 
-            Move charged2 = null;
+
+            final List<Move> moves = new ArrayList<>();
+            moves.add(charged1);
             if (!ignoreMoves || dto.charged2() != null) {
                 try {
-                    charged2 =  this.movesDataService.getMoveById(dto.charged2().toUpperCase());
+                    moves.add(this.movesDataService.getMoveById(dto.charged2().toUpperCase()));
                 } catch (Exception e) {
                     throw new HydrateCreatureException("Invalid charged move 2 ID");
                 }
             }
 
-            return new Creature(species, dto.ivs(), dto.level(), fast, List.of(charged1, charged2));
+            return new Creature(species, dto.ivs(), dto.level(), fast, !ignoreMoves ? moves : null);
         } else {
             if (hydratedOpponent == null) {
                 throw new HydrateCreatureException("Invalid opponent");
@@ -113,7 +121,7 @@ public class BattleController {
         }
         
         if (battleRequest.trainerLevel() < 8 || battleRequest.trainerLevel() > 80) {
-            throw new HydrateCreatureException("Invalid trainer level");
+            return new ResponseEntity<>("Invalid trainer level", HttpStatus.BAD_REQUEST);
         }
 
         if (battleRequest.solveForMoveset() && battleRequest.enemyMode() == BattleRequest.EnemyMode.LINEUP) {
@@ -158,7 +166,7 @@ public class BattleController {
                         fast,
                         charged
                     ), (movesetCreature) -> new TeamBattleSolver(
-                        playerCreature, 
+                        movesetCreature, 
                         enemyTeam, 
                         opponent.getTitle().getShields()
                     )
@@ -175,8 +183,13 @@ public class BattleController {
                 System.out.println(solver.getBattleResult());
             }
         } else {
+            System.out.println(battleRequest.solveForMoveset());
             if (battleRequest.solveForMoveset()) {
-                //request database
+                final var results = this.battleResultEntityService.getMovesetBRs(
+                    playerCreature.getSpecies().getSpeciesId(),
+                    opponent.getOpponentId()
+                );
+                System.out.println(results);
             } else {
                 final var solver = new OpponentBattleSolver(
                     new Team<>(playerCreature, null, null), 

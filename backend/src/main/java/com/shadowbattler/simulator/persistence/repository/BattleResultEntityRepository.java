@@ -11,10 +11,12 @@ import com.shadowbattler.simulator.persistence.entity.BattleResultEntity;
 
 @Repository
 public interface BattleResultEntityRepository extends JpaRepository<BattleResultEntity, Integer>{
-    @Query("SELECT b.playerSpecies.speciesId, b.playerFastMove.moveId, b.playerChargedMove1.moveId, b.playerChargedMove2.moveId " +
-           "FROM BattleResultEntity b " +
-           "WHERE b.playerSpecies IS NOT NULL " +
-           "GROUP BY b.playerSpecies.speciesId, b.playerFastMove.moveId, b.playerChargedMove1.moveId, b.playerChargedMove2.moveId")
+    @Query("""
+        SELECT b.playerSpecies.speciesId, b.playerFastMove.moveId, b.playerChargedMove1.moveId, b.playerChargedMove2.moveId
+        FROM BattleResultEntity b
+        WHERE b.playerSpecies IS NOT NULL
+        GROUP BY b.playerSpecies.speciesId, b.playerFastMove.moveId, b.playerChargedMove1.moveId, b.playerChargedMove2.moveId
+        """)
     List<Object[]> findDistinctMovesetsPerSpecies();
 
     @Query(
@@ -29,4 +31,15 @@ public interface BattleResultEntityRepository extends JpaRepository<BattleResult
             """,
         nativeQuery = true)
     List<BattleResultEntity> findTopScoringBRsPerSpecies(@Param("opponentId") String opponentId);
+
+    @Query("""  
+        SELECT b
+        FROM BattleResultEntity b
+        WHERE b.playerSpecies.speciesId = :speciesId AND b.opponent.opponentId = :opponentId
+        ORDER BY b.score DESC
+        """)
+    List<BattleResultEntity> findMovesetBRs(
+        @Param("speciesId") String speciesId,
+        @Param("opponentId") String opponentId
+    );
 }

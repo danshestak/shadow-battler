@@ -31,6 +31,10 @@ public class BattleResultEntityService {
         return this.battleResultEntityRepository.findTopScoringBRsPerSpecies(opponentId);
     } 
 
+    public List<BattleResultEntity> getMovesetBRs(String speciesId, String opponentId) {
+        return this.battleResultEntityRepository.findMovesetBRs(speciesId, opponentId);
+    }
+
     @Transactional(readOnly = true)
     public Map<String, Long> getMovesetCountsPerSpecies() {
         List<Object[]> results = this.battleResultEntityRepository.findDistinctMovesetsPerSpecies();
