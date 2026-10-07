@@ -1,6 +1,5 @@
 package com.shadowbattler.simulator.service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Opponent;
 import com.shadowbattler.simulator.model.Species;
+import com.shadowbattler.simulator.model.battle.BattleResult;
 import com.shadowbattler.simulator.persistence.entity.MoveEntity;
 import com.shadowbattler.simulator.persistence.entity.OpponentEntity;
 import com.shadowbattler.simulator.persistence.entity.SpeciesEntity;
@@ -74,7 +74,7 @@ public class EntityReconciliationService {
             .toList();
             
         final Map<String, MoveEntity> existingMoves = this.moveEntityService.getAllMoveEntities().stream()
-            .collect(Collectors.toMap(MoveEntity::getMoveId, Function.identity()));
+            .collect(Collectors.toMap(m -> m.getMoveId(), Function.identity()));
 
         Set<Move> modifiedMoves = movesDataService.getAllMoves().stream()
             .filter(move -> {
@@ -88,7 +88,7 @@ public class EntityReconciliationService {
         final Map<String, Long> existingMovesetCounts = this.battleResultEntityService.getMovesetCountsPerSpecies();
 
         final Map<String, SpeciesEntity> existingSpecies = this.speciesEntityService.getAllSpeciesEntitiesWithMoveIds().stream()
-            .collect(Collectors.toMap(SpeciesEntity::getSpeciesId, Function.identity()));
+            .collect(Collectors.toMap(se -> se.getSpeciesId(), Function.identity()));
 
         Set<Species> modifiedSpecies = filteredSpecies.stream()
             .filter(species -> {
@@ -105,14 +105,14 @@ public class EntityReconciliationService {
         System.out.println("Modified species: " + modifiedSpecies.toString());
         
         final Map<String, OpponentEntity> existingOpponents = this.opponentEntityService.getAllOpponentEntitiesWithLineups().stream()
-            .collect(Collectors.toMap(OpponentEntity::getOpponentId, Function.identity()));
+            .collect(Collectors.toMap(o -> o.getOpponentId(), Function.identity()));
 
         Set<Opponent> modifiedOpponents = allOpponents.stream()
             .filter(opponent -> {
                 OpponentEntity e = existingOpponents.get(opponent.getOpponentId());
                 return e == null 
                     || !e.representsOpponent(opponent)
-                    || opponent.getLineupSpecies().stream().flatMap(Collection::stream).anyMatch(modifiedSpecies::contains);
+                    || opponent.getLineupSpecies().stream().flatMap(s -> s.stream()).anyMatch(modifiedSpecies::contains);
             })
             .collect(Collectors.toSet());
         
@@ -125,7 +125,7 @@ public class EntityReconciliationService {
         for (Opponent opponent : modifiedOpponents) {
             for (Species species : filteredSpecies) {
                 System.out.println("Reconciling battles between " + species.getSpeciesName() + " and " + opponent.getName());
-                List<BattlePersistenceService.BattleResultDTO> results = battleReconciliationService.createBattleResultEntities(species, opponent);
+                List<BattleResult> results = battleReconciliationService.createBattleResultEntities(species, opponent);
                 battleReconciliationService.persistBattles(results);
             }
         }
@@ -135,7 +135,7 @@ public class EntityReconciliationService {
 
             for (Species species : modifiedSpecies) {
                 System.out.println("Reconciling battles between " + species.getSpeciesName() + " and " + opponent.getName());
-                List<BattlePersistenceService.BattleResultDTO> results = battleReconciliationService.createBattleResultEntities(species, opponent);
+                List<BattleResult> results = battleReconciliationService.createBattleResultEntities(species, opponent);
                 battleReconciliationService.persistBattles(results);
             }
         }

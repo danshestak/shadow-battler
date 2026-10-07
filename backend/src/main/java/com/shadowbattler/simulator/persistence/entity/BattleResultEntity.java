@@ -1,8 +1,13 @@
 package com.shadowbattler.simulator.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.battle.BattleResult;
+import com.shadowbattler.simulator.persistence.service.MoveEntityService;
+import com.shadowbattler.simulator.persistence.service.OpponentEntityService;
+import com.shadowbattler.simulator.persistence.service.SpeciesEntityService;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,15 +18,12 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "battle_results")
-/**
- * jpa entity for BattleResults. differs from the BattleResult class significantly to include
- * data about player creature and opponent
- */
 public class BattleResultEntity {
     @Id
     @GeneratedValue
+    @JsonIgnore
     private int id;
-    private Integer timeElapsed;
+    private int timeElapsed;
     private double timeElapsedVariance;
     private double winPercent;
     private double hpPercent;
@@ -160,11 +162,27 @@ public class BattleResultEntity {
         this.trainerLevel = trainerLevel;
     }
 
-    public void updateFromBattleResult(BattleResult battleResult) {
-        this.setTimeElapsed(battleResult.getTimeElapsed().orElse(null));
+    public void updateFromBattleResult(
+        BattleResult battleResult,
+        SpeciesEntityService speciesEntityService,
+        OpponentEntityService opponentEntityService,
+        MoveEntityService moveEntityService
+    ) {
+        this.setTimeElapsed(battleResult.getTimeElapsed());
         this.setTimeElapsedVariance(battleResult.getTimeElapsedVariance());
         this.setWinPercent(battleResult.getWinPercent());
         this.setHpPercent(battleResult.getHpPercent());
         this.setScore(battleResult.getScore());
+
+        battleResult.getPlayerSpecies().ifPresent(s -> this.setPlayerSpecies(speciesEntityService.getReferenceById(s.getSpeciesId())));
+        battleResult.getOpponent().ifPresent(o -> this.setOpponent(opponentEntityService.getReferenceById(o.getOpponentId())));
+
+        Move[] moveset = battleResult.getMoveset();
+        if (moveset[0] != null) this.setPlayerFastMove(moveEntityService.getReferenceById(moveset[0].moveId()));
+        if (moveset[1] != null) this.setPlayerChargedMove1(moveEntityService.getReferenceById(moveset[1].moveId()));
+        if (moveset[2] != null) this.setPlayerChargedMove2(moveEntityService.getReferenceById(moveset[2].moveId()));
+
+        this.setPlayerLevel(battleResult.getPlayerLevel().orElse(null));
+        this.setTrainerLevel(battleResult.getTrainerLevel().orElse(null));
     }
 }

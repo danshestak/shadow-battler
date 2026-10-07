@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.shadowbattler.simulator.model.Creature;
-import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Opponent;
 import com.shadowbattler.simulator.model.Species;
 import com.shadowbattler.simulator.model.Stats3;
@@ -30,8 +29,6 @@ public class BattlePersistenceService {
     public static final List<Double> PLAYER_CREATURE_LEVELS = List.of(50.0);
     public static final List<Integer> TRAINER_LEVELS = List.of(80);
 
-    public record BattleResultDTO(BattleResult battleResult, String speciesId, String opponentId, Move[] moveset, double playerLevel, int trainerLevel) {}
-
     public BattlePersistenceService(BattleResultEntityService battleResultEntityService, SpeciesEntityService speciesEntityService, OpponentEntityService opponentEntityService, MoveEntityService moveEntityService) {
         this.battleResultEntityService = battleResultEntityService;
         this.speciesEntityService = speciesEntityService;
@@ -39,8 +36,8 @@ public class BattlePersistenceService {
         this.moveEntityService = moveEntityService;
     }
 
-    public List<BattleResultDTO> createBattleResultEntities(Species species, Opponent opponent) {
-        List<BattleResultDTO> resultsToSave = new ArrayList<>();
+    public List<BattleResult> createBattleResultEntities(Species species, Opponent opponent) {
+        List<BattleResult> resultsToSave = new ArrayList<>();
         for (int trainerLevel : TRAINER_LEVELS) {
             for (double playerCreatureLevel : PLAYER_CREATURE_LEVELS) {
                 final MovesetSolver solver = new MovesetSolver(
@@ -52,40 +49,20 @@ public class BattlePersistenceService {
                     )
                 );
                 solver.solve();
-
-                solver.getMovesetBattleResults().forEach(mbr -> {
-                    resultsToSave.add(new BattleResultDTO(
-                        mbr.getBattleResult(),
-                        species.getSpeciesId(),
-                        opponent.getOpponentId(),
-                        mbr.getMoveset(),
-                        playerCreatureLevel,
-                        trainerLevel
-                    ));
-                });
+                resultsToSave.addAll(solver.getBattleResults());
             }
         }
         return resultsToSave;
     }
 
-    public void persistBattles(List<BattleResultDTO> resultsToSave) {
-        if (resultsToSave == null || resultsToSave.isEmpty()) {
-            return;
-        }
-        List<BattleResultEntity> entities = resultsToSave.stream().map(dto -> {
+    public void persistBattles(List<BattleResult> resultsToSave) {
+        if (resultsToSave == null || resultsToSave.isEmpty()) return;
+
+        List<BattleResultEntity> entities = resultsToSave.stream().map(br -> {
             BattleResultEntity entity = new BattleResultEntity();
-            entity.updateFromBattleResult(dto.battleResult());
-            entity.setPlayerSpecies(this.speciesEntityService.getReferenceById(dto.speciesId()));
-            entity.setOpponent(this.opponentEntityService.getReferenceById(dto.opponentId()));
-            Move[] moveset = dto.moveset();
-            if (moveset[0] != null) entity.setPlayerFastMove(this.moveEntityService.getReferenceById(moveset[0].moveId()));
-            if (moveset[1] != null) entity.setPlayerChargedMove1(this.moveEntityService.getReferenceById(moveset[1].moveId()));
-            if (moveset[2] != null) entity.setPlayerChargedMove2(this.moveEntityService.getReferenceById(moveset[2].moveId()));
-            entity.setPlayerLevel(dto.playerLevel());
-            entity.setTrainerLevel(dto.trainerLevel());
+            entity.updateFromBattleResult(br, this.speciesEntityService, this.opponentEntityService, this.moveEntityService);
             return entity;
         }).toList();
         this.battleResultEntityService.saveAll(entities);
-
     }
 }

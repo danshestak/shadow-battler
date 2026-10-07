@@ -1,7 +1,6 @@
 package com.shadowbattler.simulator.model.battle;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -13,47 +12,10 @@ import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Species;
 
 public class MovesetSolver implements BattleSolver {
-    private List<MovesetBattleResult> movesetBattleResults;
+    private List<BattleResult> battleResults;
     private final Species species;
     private final BiFunction<Move, List<Move>, Creature> creatureFactory;
     private final Function<Creature, BattleSolver> battleSolverFactory;
-    
-    public static class MovesetBattleResult implements Comparable<MovesetBattleResult> {
-        Move[] moveset;
-        final BattleResult battleResult;
-
-        public MovesetBattleResult(Move[] moveset, BattleResult battleResult) {
-            this.moveset = moveset;
-            this.battleResult = battleResult;
-        }
-
-        @Override
-        public int compareTo(MovesetBattleResult o) {
-            if (this.battleResult == null && o.battleResult == null) return 0;
-            if (this.battleResult == null) return -1;
-            if (o.battleResult == null) return 1;
-            return Integer.valueOf(this.battleResult.getScore()).compareTo(o.battleResult.getScore());
-        }
-
-        @Override
-        public String toString() {
-            return "MovesetBattleResult [moveset=" + Arrays.toString(moveset) + ", battleResult=" + battleResult + "]";
-        }
-
-        public Move[] getMoveset() {
-            return this.moveset;
-        }
-
-        public void setMoveset(Move[] moveset) {
-            this.moveset = moveset;
-        }
-
-        public BattleResult getBattleResult() {
-            return this.battleResult;
-        }
-
-        
-    }
 
     public MovesetSolver(BiFunction<Move, List<Move>, Creature> creatureFactory, Function<Creature, BattleSolver> battleSolverFactory) {
         this.species = creatureFactory.apply(null, null).getSpecies();
@@ -63,7 +25,7 @@ public class MovesetSolver implements BattleSolver {
 
     @Override
     public void solve() {
-        if (this.movesetBattleResults != null) return;
+        if (this.battleResults != null) return;
 
         final int moveCombinations = this.species.moveCombinationQuantity(false);
 
@@ -72,22 +34,16 @@ public class MovesetSolver implements BattleSolver {
             movesets.add(this.species.moveCombinationFromId(i, false));
         }
 
-        // for (Move charged : this.species.getChargedMoves()) {
-        //     for (Move fast : this.species.getFastMoves()) {
-        //         movesets.add(new Move[]{fast, charged, null});
-        //     }
-        // }
-
-        this.movesetBattleResults = movesets.parallelStream()
+        this.battleResults = movesets.parallelStream()
             .map((moveset) -> {
                 Creature playerCreature = this.creatureFactory.apply(moveset[0], getChargedMoves(moveset));
                 BattleSolver battleSolver = battleSolverFactory.apply(playerCreature);
                 battleSolver.solve();
-                return new MovesetBattleResult(moveset, battleSolver.getBattleResult());
+                return battleSolver.getBattleResult();
             })
             .collect(Collectors.toCollection(ArrayList::new));
         
-        this.movesetBattleResults.sort(Comparator.reverseOrder());
+        this.battleResults.sort(Comparator.reverseOrder());
     }
 
     private static List<Move> getChargedMoves(Move[] moveset) {
@@ -107,16 +63,11 @@ public class MovesetSolver implements BattleSolver {
 
     @Override
     public BattleResult getBattleResult() {
-        if (this.movesetBattleResults.isEmpty()) return null;
-        return this.movesetBattleResults.get(0).battleResult;
+        if (this.battleResults.isEmpty()) return null;
+        return this.battleResults.get(0);
     }
 
-    public Move[] getMoveset() {
-        if (this.movesetBattleResults.isEmpty()) return null;
-        return this.movesetBattleResults.get(0).moveset;
-    }
-
-    public List<MovesetBattleResult> getMovesetBattleResults() {
-        return this.movesetBattleResults;
+    public List<BattleResult> getBattleResults() {
+        return this.battleResults;
     }
 }

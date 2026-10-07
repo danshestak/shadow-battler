@@ -15,7 +15,7 @@ public class JsonOpponentRepository extends AbstractJsonRepository<Opponent> imp
             objectMapper, 
             "/static/opponent_data.json", 
             new TypeReference<List<Opponent>>() {}, 
-            Opponent::getOpponentId
+            o -> o.getOpponentId()
         );
     }
 }

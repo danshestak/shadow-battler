@@ -15,7 +15,7 @@ public class JsonMovesRepository extends AbstractJsonRepository<Move> implements
             objectMapper, 
             "/static/moves_data.json", 
             new TypeReference<List<Move>>() {}, 
-            Move::moveId 
+            m -> m.moveId() 
         );
     }
 }

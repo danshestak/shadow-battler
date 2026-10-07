@@ -39,17 +39,16 @@ public final class BattleState {
     public int comparisonKey;
     public int projTimeElapsedLowerBoundAddend;
 
-    public BattleState(Team<Creature> playerTeam, Team<Creature> enemyTeam, byte enemyStartingShields,
-            boolean isLogged) {
+    public BattleState(Team<Creature> playerTeam, Team<Creature> enemyTeam, byte enemyStartingShields, boolean isLogged) {
         final Creature[] playerArr = new Creature[] {
-                playerTeam.getFirst(),
-                playerTeam.getSecond(),
-                playerTeam.getThird()
+            playerTeam.getFirst(),
+            playerTeam.getSecond(),
+            playerTeam.getThird()
         };
         final Creature[] enemyArr = new Creature[] {
-                enemyTeam.getFirst(),
-                enemyTeam.getSecond(),
-                enemyTeam.getThird()
+            enemyTeam.getFirst(),
+            enemyTeam.getSecond(),
+            enemyTeam.getThird()
         };
 
         this.context = new BattleContext(playerArr, enemyArr);

@@ -4,7 +4,6 @@ import { Opponent } from "./Opponent"
 import { Species } from "./Species"
 
 export type BattleResultRaw = {
-    id: number,
     timeElapsed: number,
     timeElapsedVariance: number,
     winPercent: number,
@@ -20,7 +19,6 @@ export type BattleResultRaw = {
 }
 
 export type BattleResult = {
-    id: number,
     timeElapsed: number,
     timeElapsedVariance: number,
     winPercent: number,
@@ -38,7 +36,6 @@ export type BattleResult = {
 export const BattleResult = {
     fromRaw(raw: BattleResultRaw, clientData: ClientData): BattleResult {
         return {
-            id: raw.id,
             timeElapsed: raw.timeElapsed,
             timeElapsedVariance: raw.timeElapsedVariance,
             winPercent: raw.winPercent,

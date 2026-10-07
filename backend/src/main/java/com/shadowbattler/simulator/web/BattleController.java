@@ -23,7 +23,6 @@ import com.shadowbattler.simulator.service.BattlePersistenceService;
 import com.shadowbattler.simulator.service.MovesDataService;
 import com.shadowbattler.simulator.service.OpponentDataService;
 import com.shadowbattler.simulator.service.SpeciesDataService;
-import com.shadowbattler.simulator.web.BattleController.HydrateCreatureException;
 import com.shadowbattler.simulator.web.dto.BattleRequest;
 import com.shadowbattler.simulator.web.dto.CreatureDTO;
 
@@ -112,7 +111,7 @@ public class BattleController {
     }
 
     @PostMapping("/battle")
-    public ResponseEntity<String> requestBattle(@RequestBody BattleRequest battleRequest) {
+    public ResponseEntity<?> requestBattle(@RequestBody BattleRequest battleRequest) {
         final Opponent opponent;
         try {
             opponent = this.opponentDataService.getOpponentById(battleRequest.opponentId());
@@ -172,7 +171,7 @@ public class BattleController {
                     )
                 );
                 solver.solve();
-                System.out.println(solver.getMovesetBattleResults());
+                return ResponseEntity.ok(solver.getBattleResults());
             } else {
                 final var solver = new TeamBattleSolver(
                     playerCreature, 
@@ -180,16 +179,15 @@ public class BattleController {
                     opponent.getTitle().getShields()
                 );
                 solver.solve();
-                System.out.println(solver.getBattleResult());
+                return ResponseEntity.ok(List.of(solver.getBattleResult()));
             }
         } else {
-            System.out.println(battleRequest.solveForMoveset());
             if (battleRequest.solveForMoveset()) {
                 final var results = this.battleResultEntityService.getMovesetBRs(
                     playerCreature.getSpecies().getSpeciesId(),
                     opponent.getOpponentId()
                 );
-                System.out.println(results);
+                return ResponseEntity.ok(results);
             } else {
                 final var solver = new OpponentBattleSolver(
                     new Team<>(playerCreature, null, null), 
@@ -197,10 +195,8 @@ public class BattleController {
                     battleRequest.trainerLevel()
                 );
                 solver.solve();
-                System.out.println(solver.getBattleResult());
+                return ResponseEntity.ok(List.of(solver.getBattleResult()));
             }
         }
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

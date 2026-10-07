@@ -35,6 +35,6 @@ public class MovesetSolverTest {
 
         movesetSolver.solve();
 
-        System.out.println(movesetSolver.getMovesetBattleResults());
+        System.out.println(movesetSolver.getBattleResults());
     }
 }

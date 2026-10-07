@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.shadowbattler.simulator.model.Creature;
+import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Team;
 
 public class TeamBattleSolver implements BattleSolver {
@@ -17,6 +19,8 @@ public class TeamBattleSolver implements BattleSolver {
     private boolean shouldLog = false;
 
     public TeamBattleSolver(Team<Creature> playerTeam, Team<Creature> opponentTeam, int opponentStartingShields) {
+        if (playerTeam.size() == 0 || opponentTeam.size() == 0) throw new IllegalStateException();
+
         this.playerTeam = playerTeam;
         this.opponentTeam = opponentTeam;
         this.opponentStartingShields = opponentStartingShields;
@@ -30,6 +34,8 @@ public class TeamBattleSolver implements BattleSolver {
     }
 
     public TeamBattleSolver(Creature playerCreature, Team<Creature> opponentTeam, int opponentStartingShields) {
+        if (playerCreature == null || opponentTeam.size() == 0) throw new IllegalStateException();
+
         this.playerTeam = new Team<>(playerCreature, null, null);
         this.opponentTeam = opponentTeam;
         this.opponentStartingShields = opponentStartingShields;
@@ -128,23 +134,34 @@ public class TeamBattleSolver implements BattleSolver {
         }
         this.battleState = fastestWin;
 
+        double hpPercent = 0;
         if (fastestWin != null) {
-            double hpPercent = 0;
+            int teamSize = 0;
             for (int i = 0; i < 3; i++) {
                 final short maxHp = fastestWin.context.maxHp[i];
                 if (maxHp <= 0) continue;
                 hpPercent += (double)fastestWin.getHp(i)/maxHp;
+                teamSize++;
             }
-            hpPercent /= 3;
-
-            this.battleResult = new BattleResult(
-                fastestWin.timeElapsed,
-                1.0,
-                hpPercent
-            );
-        } else {
-            this.battleResult = BattleResult.getLoss();
+            hpPercent /= teamSize;
         }
+
+        final Creature playerCreature = this.playerTeam.getFirst();
+        final Move[] playerMoveset = playerCreature.getMoveset();
+        final int trainerLevel = (int)this.opponentTeam.getFirst().getLevel();
+
+        this.battleResult = new BattleResult(
+            fastestWin == null ? -1 : fastestWin.timeElapsed,
+            fastestWin == null ? 0.0 : 1.0,
+            hpPercent,
+            playerMoveset[0],
+            playerMoveset[1],
+            playerMoveset[2],
+            playerCreature.getSpecies(),
+            null,
+            playerCreature.getLevel(),
+            this.opponentTeam.stream().filter(Objects::nonNull).allMatch(c -> c.getLevel() == trainerLevel) ? trainerLevel : null
+        );
     }
 
     @Override

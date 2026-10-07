@@ -164,7 +164,7 @@ public class Species {
         );
 
         this.chargedMoves = new ArrayList<>(this.hydrateMovesList(movesDataService, this.chargedMoveIds));
-        this.chargedMoves.sort(java.util.Comparator.comparingInt(Move::energy));
+        this.chargedMoves.sort(java.util.Comparator.comparingInt(m -> m.energy()));
 
         this.enemyChargedMoves = new ArrayList<>(this.hydrateMovesList(
             movesDataService, 
@@ -173,7 +173,7 @@ public class Species {
                         (this.requiredChargedMove != null && this.requiredChargedMove.moveId().equals(id))
             ).collect(java.util.stream.Collectors.toCollection(ArrayList::new))
         ));
-        this.enemyChargedMoves.sort(java.util.Comparator.comparingInt(Move::energy));
+        this.enemyChargedMoves.sort(java.util.Comparator.comparingInt(m -> m.energy()));
 
     this.cachedPlayerMoveCombinations = new ArrayList<>();
     int playerQty = this.calculateMoveCombinationQuantity(false);

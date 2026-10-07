@@ -10,6 +10,7 @@ import java.util.List;
 public class Creature {
     private final Species species;
     private final Stats3<Integer> ivs;
+    private final double level;
     private final Stats3<Double> stats;
     private final int cp;
     private final Move fastMove;
@@ -228,6 +229,7 @@ public class Creature {
     public Creature(Species species, Stats3<Integer> ivs, double level, Move fastMove, List<Move> chargedMoves) {
         this.species = species;
         this.ivs = ivs;
+        this.level = level;
         this.fastMove = fastMove;
         this.chargedMoves = chargedMoves == null ? List.of() : List.copyOf(chargedMoves);
 
@@ -242,6 +244,7 @@ public class Creature {
 
     public Creature(Species species, Opponent.Title rocketTitle, int trainerLevel, Move fastMove, Move chargedMove) {
         this.species = species;
+        this.level = trainerLevel;
         this.fastMove = fastMove;
         this.chargedMoves = chargedMove == null ? List.of() : List.of(chargedMove);
         double rank;
@@ -276,6 +279,10 @@ public class Creature {
 
     public Stats3<Double> getStats() {
         return this.stats;
+    }
+    
+    public double getLevel() {
+        return this.level;
     }
 
     public int getCp() {

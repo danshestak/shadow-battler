@@ -96,7 +96,7 @@ public class OpponentBattleSolver implements BattleSolver {
             })
             .toList();
 
-        this.battleResult = BattleResult.averageOf(battleResults);
+        this.battleResult = BattleResult.averageOf(battleResults, this.opponent);
     }
     
     private List<Creature> getCreaturesForSlot(Species species) {
