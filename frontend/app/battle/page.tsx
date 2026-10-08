@@ -3,6 +3,10 @@ import BattleClientPage from './BattleClientPage';
 import { OpponentCreature, PlayerCreature } from '@/types/Creature';
 import { Opponent } from '@/types/Opponent';
 
+export const metadata = {
+  title: 'Battle' 
+}
+
 interface CountersPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }

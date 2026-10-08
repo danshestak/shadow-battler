@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import HeaderButton from './HeaderButton'
 import Link from 'next/link'
+import Image from 'next/image'
 import HamburgerButton from './HamburgerButton'
 import Sidebar from '../sidebar/Sidebar'
 
@@ -14,12 +15,13 @@ const Header = () => {
   return (
     <>
       <header className='
-      sticky top-0 z-10 h-16 p-2
+      sticky top-0 z-10 h-16 px-4 py-2
       flex justify-between 
       bg-theme1 border-b border-theme4 shadow-lg'>
         {/* left */}
-        <Link className='flex items-center h-full text-3xl tracking-tighter font-extralight' href="/">
-          shadow<span className='text-highlight font-extrabold'>KO!</span>
+        <Link className='flex items-center h-full text-2xl gap-0.5 tracking-tighter font-light' href="/">
+          <Image src="/logo.svg" width={32} height={32} alt="Shadow Battler logo"/>
+          <div>Shadow Battler</div>
         </Link>
 
         {/* right */}

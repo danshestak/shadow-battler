@@ -3,6 +3,10 @@ import Link from 'next/link';
 import CodeBlock from '@/components/CodeBlock';
 import { getBackendUrl } from '@/lib/env';
 
+export const metadata = {
+  title: 'Counters' 
+}
+
 interface CountersPageProps {
   params: Promise<{ opponent?: string[] }>;
 }

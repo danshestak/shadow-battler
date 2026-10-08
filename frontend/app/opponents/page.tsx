@@ -3,6 +3,10 @@ import OpponentCard from '@/components/opponent/OpponentCard'
 import { getOpponents } from '@/lib/serverData'
 import { Opponent } from '@/types/Opponent';
 
+export const metadata = {
+  title: 'Opponents' 
+}
+
 const OpponentsPage = async () => {
   const opponents = await getOpponents();
   
