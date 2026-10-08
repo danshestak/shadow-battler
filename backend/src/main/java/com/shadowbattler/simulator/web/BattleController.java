@@ -52,7 +52,7 @@ public class BattleController {
         }
     }
 
-    private Creature hydrateCreatureDto(CreatureDTO dto, BattleRequest battleRequest, Opponent hydratedOpponent, boolean ignoreMoves) {
+    private Creature hydrateCreatureDto(CreatureDTO dto, BattleRequest battleRequest, boolean ignoreMoves, Opponent hydratedOpponent, int opponentSlot) {
         if (dto == null) throw new HydrateCreatureException("Cannot be null");
 
         final Species species;
@@ -70,6 +70,9 @@ public class BattleController {
                 throw new HydrateCreatureException("Invalid fast move ID");
             }
         }
+        if (!species.getFastMoves().contains(fast)) {
+            throw new HydrateCreatureException("Invalid fast move");
+        }
 
         Move charged1 = null;
         if (!ignoreMoves) {
@@ -78,6 +81,9 @@ public class BattleController {
             } catch (Exception e) {
                 throw new HydrateCreatureException("Invalid charged move 1 ID");
             }
+        }
+        if (!species.getChargedMoves().contains(charged1)) {
+            throw new HydrateCreatureException("Invalid charged move 1");
         }
 
         if (dto.user() == CreatureDTO.User.PLAYER) {
@@ -93,17 +99,26 @@ public class BattleController {
             final List<Move> moves = new ArrayList<>();
             moves.add(charged1);
             if (!ignoreMoves || dto.charged2() != null) {
+                Move charged2 = null;
                 try {
-                    moves.add(this.movesDataService.getMoveById(dto.charged2().toUpperCase()));
+                    charged2 = this.movesDataService.getMoveById(dto.charged2().toUpperCase());
                 } catch (Exception e) {
                     throw new HydrateCreatureException("Invalid charged move 2 ID");
                 }
+                if (!species.getChargedMoves().contains(charged2)) {
+                    throw new HydrateCreatureException("Invalid charged move 2");
+                }
+                moves.add(charged2);
             }
 
             return new Creature(species, dto.ivs(), dto.level(), fast, !ignoreMoves ? moves : null);
         } else {
             if (hydratedOpponent == null) {
                 throw new HydrateCreatureException("Invalid opponent");
+            }
+
+            if (!hydratedOpponent.getLineupSpecies().getByInt(opponentSlot).contains(species)) {
+                throw new HydrateCreatureException("Invalid species");
             }
 
             return new Creature(species, hydratedOpponent.getTitle(), battleRequest.trainerLevel(), fast, charged1);
@@ -134,7 +149,7 @@ public class BattleController {
 
         final Creature playerCreature;
         try {
-            playerCreature = this.hydrateCreatureDto(battleRequest.playerCreature(), battleRequest, opponent, battleRequest.solveForMoveset());
+            playerCreature = this.hydrateCreatureDto(battleRequest.playerCreature(), battleRequest, battleRequest.solveForMoveset(), opponent, -1);
         } catch (HydrateCreatureException e) {
             return new ResponseEntity<>("Player creature error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -149,7 +164,7 @@ public class BattleController {
 
             for (int i = 0; i < 3; i++) {
                 try {
-                    enemyCreatures[i] = this.hydrateCreatureDto(enemyDtos[i], battleRequest, opponent, false);
+                    enemyCreatures[i] = this.hydrateCreatureDto(enemyDtos[i], battleRequest, false, opponent, i+1);
                 } catch (HydrateCreatureException e) {
                     return new ResponseEntity<>(String.format("Enemy creature %d error: %s", i+1, e.getMessage()), HttpStatus.BAD_REQUEST);
                 }
