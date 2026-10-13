@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 const font = Outfit({subsets:['latin'],variable:'--font-sans'});
 
-const description = `Shadow Battler is the premier Team GO Rocket counters site for Pokémon GO. View grunts and leaders, which Pokémon defeat them, and run custom battle simulations`;
+const description = 'Shadow Battler is the premier Team GO Rocket battle simulator. View opponent lineups, compare Pokémon for defeating them, and run custom battle simulations.';
 const title = 'Shadow Battler';
 export const metadata = {
   title: {
@@ -41,7 +41,7 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col bg-theme2 text-text">
         <Header />
         <div className="flex-1 p-4">
-          <main className="max-w-5xl m-auto">
+          <main className="max-w-4xl m-auto">
             {children}
           </main>
         </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Species } from '@/types/Species';
-import { IconIndexes } from './IconIndexes';
+import { SpritesheetData } from './SpritesheetData';
 import { cn } from '@/lib/utils';
 
 interface SpriteProps {
@@ -8,11 +8,6 @@ interface SpriteProps {
     className?: string;
     scale?: number;
 }
-
-const width = 40;
-const height = 30;
-const spritesheetWidth = 480;
-const spritesheetHeight = 4110;
 
 const Sprite = ({ species, className, scale = 1 }: SpriteProps) => {
   let id = species?.speciesId.toLowerCase() ?? 'none';
@@ -37,25 +32,25 @@ const Sprite = ({ species, className, scale = 1 }: SpriteProps) => {
 
   id = id.replaceAll("_", "");
 
-  const num = IconIndexes[id] ?? species?.dex ?? 0;
+  const num = SpritesheetData.iconIndexes[id] ?? species?.dex ?? 0;
 
-	const top = Math.floor(num / 12) * height;
-	const left = (num % 12) * width;
+	const top = Math.floor(num / 12) * SpritesheetData.cellHeight;
+	const left = (num % 12) * SpritesheetData.cellWidth;
   
   const style: React.CSSProperties = {
-    width: `${width * scale}px`,
-    height: `${height * scale}px`,
+    width: `${SpritesheetData.cellWidth * scale}px`,
+    height: `${SpritesheetData.cellHeight * scale}px`,
     imageRendering: 'pixelated',
     backgroundRepeat: 'no-repeat',
   };
 
   const mainSpritePosition = `-${left * scale}px -${top * scale}px`;
-  const spritesheetSize = `${spritesheetWidth * scale}px ${spritesheetHeight * scale}px`;
+  const spritesheetSize = `${SpritesheetData.width * scale}px ${SpritesheetData.height * scale}px`;
 
   if (shadow) {
     style.backgroundImage = `url(/spritesheet.png), url(/shadowsprite.png)`;
     style.backgroundPosition = `${mainSpritePosition}, center`;
-    style.backgroundSize = `${spritesheetSize}, ${width * scale}px ${height * scale}px`;
+    style.backgroundSize = `${spritesheetSize}, ${SpritesheetData.cellWidth * scale}px ${SpritesheetData.cellHeight * scale}px`;
   } else {
     style.backgroundImage = 'url(/spritesheet.png)';
     style.backgroundPosition = mainSpritePosition;
