@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.shadowbattler.exception.ResourceNotFoundException;
+import com.shadowbattler.simulator.exception.ResourceNotFoundException;
 import com.shadowbattler.simulator.model.Species;
 import com.shadowbattler.simulator.repository.SpeciesRepository;
 

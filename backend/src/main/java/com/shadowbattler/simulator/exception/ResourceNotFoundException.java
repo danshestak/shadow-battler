@@ -1,4 +1,4 @@
-package com.shadowbattler.exception;
+package com.shadowbattler.simulator.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

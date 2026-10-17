@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.shadowbattler.simulator.exception.PublicResponseStatusException;
 import com.shadowbattler.simulator.model.Creature;
 import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.Opponent;
@@ -52,7 +53,14 @@ public class BattleController {
         }
     }
 
-    private Creature hydrateCreatureDto(CreatureDTO dto, BattleRequest battleRequest, boolean ignoreMoves, Opponent hydratedOpponent, int opponentSlot) {
+    private Creature hydrateCreatureDto(
+        CreatureDTO dto, 
+        BattleRequest battleRequest, 
+        boolean ignoreMoves,
+        boolean isRocket,
+        Opponent hydratedOpponent, 
+        int opponentSlot
+    ) {
         if (dto == null) throw new HydrateCreatureException("Cannot be null");
 
         final Species species;
@@ -65,13 +73,13 @@ public class BattleController {
         Move fast = null;
         if (!ignoreMoves) {
             try {
-                fast =  this.movesDataService.getMoveById(dto.fast().toUpperCase());
+                fast = this.movesDataService.getMoveById(dto.fast().toUpperCase());
             } catch (Exception e) {
                 throw new HydrateCreatureException("Invalid fast move ID");
             }
-        }
-        if (!species.getFastMoves().contains(fast)) {
-            throw new HydrateCreatureException("Invalid fast move");
+            if (!species.getFastMoves().contains(fast)) {
+                throw new HydrateCreatureException("Invalid fast move");
+            }
         }
 
         Move charged1 = null;
@@ -81,12 +89,12 @@ public class BattleController {
             } catch (Exception e) {
                 throw new HydrateCreatureException("Invalid charged move 1 ID");
             }
-        }
-        if (!species.getChargedMoves().contains(charged1)) {
-            throw new HydrateCreatureException("Invalid charged move 1");
+            if (!species.getChargedMoves().contains(charged1)) {
+                throw new HydrateCreatureException("Invalid charged move 1");
+            }
         }
 
-        if (dto.user() == CreatureDTO.User.PLAYER) {
+        if (!isRocket) {
             if (dto.level() == null || dto.level() < 1 || dto.level() > 55 || dto.level() % 0.5 != 0) {
                 throw new HydrateCreatureException("Invalid level");
             }
@@ -95,10 +103,9 @@ public class BattleController {
                 throw new HydrateCreatureException("Invalid IVs");
             }
 
-
-            final List<Move> moves = new ArrayList<>();
+            final List<Move> moves = new ArrayList<>(2);
             moves.add(charged1);
-            if (!ignoreMoves || dto.charged2() != null) {
+            if (!ignoreMoves && dto.charged2() != null) {
                 Move charged2 = null;
                 try {
                     charged2 = this.movesDataService.getMoveById(dto.charged2().toUpperCase());
@@ -131,27 +138,34 @@ public class BattleController {
         try {
             opponent = this.opponentDataService.getOpponentById(battleRequest.opponentId());
         } catch (Exception e) {
-            return new ResponseEntity<>("Opponent not found", HttpStatus.BAD_REQUEST);
+            throw new PublicResponseStatusException(HttpStatus.BAD_REQUEST, "Opponent not found");
         }
         
         if (battleRequest.trainerLevel() < 8 || battleRequest.trainerLevel() > 80) {
-            return new ResponseEntity<>("Invalid trainer level", HttpStatus.BAD_REQUEST);
+            throw new PublicResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid trainer level");
         }
-
-        if (battleRequest.solveForMoveset() && battleRequest.enemyMode() == BattleRequest.EnemyMode.LINEUP) {
-            if (!BattlePersistenceService.TRAINER_LEVELS.contains(battleRequest.trainerLevel())) {
-                return new ResponseEntity<>("Invalid trainer level for lineup moveset solver", HttpStatus.BAD_REQUEST);
-            }
-            if (!BattlePersistenceService.PLAYER_CREATURE_LEVELS.contains(battleRequest.playerCreature().level())) {
-                return new ResponseEntity<>("Invalid trainer level for lineup moveset solver", HttpStatus.BAD_REQUEST);
-            }
-        }
-
+        
         final Creature playerCreature;
         try {
-            playerCreature = this.hydrateCreatureDto(battleRequest.playerCreature(), battleRequest, battleRequest.solveForMoveset(), opponent, -1);
+            playerCreature = this.hydrateCreatureDto(
+                battleRequest.playerCreature(), 
+                battleRequest,
+                battleRequest.solveForMoveset(), 
+                false,
+                opponent, 
+                -1
+            );
         } catch (HydrateCreatureException e) {
-            return new ResponseEntity<>("Player creature error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+            throw new PublicResponseStatusException(HttpStatus.BAD_REQUEST, "Player creature error: " + e.getMessage());
+        }
+        
+        if (battleRequest.solveForMoveset() && battleRequest.enemyMode() == BattleRequest.EnemyMode.LINEUP) {
+            if (!BattlePersistenceService.TRAINER_LEVELS.contains(battleRequest.trainerLevel())) {
+                throw new PublicResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid trainer level for lineup moveset solver");
+            }
+            if (!BattlePersistenceService.PLAYER_CREATURE_LEVELS.contains(battleRequest.playerCreature().level())) {
+                throw new PublicResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid creature level for lineup moveset solver");
+            }
         }
 
         if (battleRequest.enemyMode() == BattleRequest.EnemyMode.TEAM) {
@@ -164,9 +178,16 @@ public class BattleController {
 
             for (int i = 0; i < 3; i++) {
                 try {
-                    enemyCreatures[i] = this.hydrateCreatureDto(enemyDtos[i], battleRequest, false, opponent, i+1);
+                    enemyCreatures[i] = this.hydrateCreatureDto(
+                        enemyDtos[i], 
+                        battleRequest, 
+                        false, 
+                        true,
+                        opponent, 
+                        i+1
+                    );
                 } catch (HydrateCreatureException e) {
-                    return new ResponseEntity<>(String.format("Enemy creature %d error: %s", i+1, e.getMessage()), HttpStatus.BAD_REQUEST);
+                    throw new PublicResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Enemy creature %d error: %s", i+1, e.getMessage()));
                 }
             }
 
