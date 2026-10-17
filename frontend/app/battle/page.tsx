@@ -39,7 +39,8 @@ const BattlePage = async ({ searchParams }: CountersPageProps) => {
       <h1 className="text-2xl mb-4">Battle</h1>
 
       <p className="mb-4">
-        Simulate battles between a Pokémon and an opponent team or lineup.
+        Simulate battles between a player Pokémon and an opponent team or lineup. Click on a Pokémon to change its species,
+        level, IVs, or moves.
       </p>
 
       <BattleClientPage

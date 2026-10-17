@@ -1,24 +1,22 @@
 import { getBackendUrl } from '@/lib/env';
+import { errorResponse } from '@/lib/errorResponse';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
     const opponentId = request.nextUrl.searchParams.get('opponentId');
 
     if (!opponentId) {
-        return NextResponse.json({ error: 'Missing opponentId parameter' }, { status: 400 });
+        return errorResponse(400, 'Missing opponentId parameter');
     }
 
     try {
         const res = await fetch(`${getBackendUrl()}/api/counters/${opponentId}`);
-        
-        if (!res.ok) {
-            return NextResponse.json({ error: `Failed to fetch counters for ${opponentId}` }, { status: res.status });
-        }
+        if (!res.ok) return errorResponse(400, `Failed to fetch counters for ${opponentId}`);
 
         const data = await res.json();
         return NextResponse.json(data);
         
     } catch {
-        return NextResponse.json({ error: 'Failed to connect to backend' }, { status: 500 });
+        return errorResponse(500, 'Failed to connect to backend');
     }
 }

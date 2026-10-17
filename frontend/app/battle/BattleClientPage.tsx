@@ -29,7 +29,58 @@ interface BattleClientPageProps {
   initEnemyMode: 'team' | 'lineup',
   initOpponent: Opponent | null,
   initTrainerLevel: number
-} 
+}
+
+const checkForIssues = (
+  playerCreature: Creature, 
+  enemyCreature1: Creature, 
+  enemyCreature2: Creature, 
+  enemyCreature3: Creature, 
+  solveForMoveset: boolean, 
+  enemyMode: 'team' | 'lineup', 
+  opponent: Opponent | null, 
+  isReady: boolean
+) => {
+  if (!isReady) return ['Data is not loaded'];
+
+  const currIssues = [];
+
+  const checkCreatureForIssues = (c: Creature, name: string) => {
+    if (c.species === undefined) {
+      currIssues.push(`${name} is missing species`);
+    } else {
+      if (!(c.user === 'player' && solveForMoveset)) {
+        if (c.fast === undefined) {
+          currIssues.push(`${name} is missing fast move`);
+        }
+        if (c.user === 'player') {
+          if (c.charged1 === undefined && (c as PlayerCreature).charged2 === undefined) {
+            currIssues.push(`${name} is missing charged move(s)`)
+          }
+        } else {
+          if (c.charged1 === undefined) {
+            currIssues.push(`${name} is missing charged move`)
+          }
+        }
+      }
+    }
+  }
+
+  checkCreatureForIssues(playerCreature, 'Player Pokémon');
+
+  if (opponent === null) {
+    currIssues.push('No opponent is selected');
+  } else {
+    if (enemyMode === 'team') {
+      const enemyCreatures = [enemyCreature1, enemyCreature2, enemyCreature3] as const;
+      for (let i = 0; i < enemyCreatures.length; i++) {
+        checkCreatureForIssues(enemyCreatures[i], `Enemy Pokémon in slot ${i+1}`)
+      }
+    }
+  }
+
+  return currIssues;
+}
 
 const BattleClientPage = (
   {
@@ -93,45 +144,7 @@ const BattleClientPage = (
   }
 
   const issues = useMemo(() => {
-    if (!isReady) return ['Data is not loaded'];
-
-    const currIssues = [];
-
-    const checkCreatureForIssues = (c: Creature, name: string) => {
-      if (c.species === undefined) {
-        currIssues.push(`${name} is missing species`);
-      } else {
-        if (!(c.user === 'player' && solveForMoveset)) {
-          if (c.fast === undefined) {
-            currIssues.push(`${name} is missing fast move`);
-          }
-          if (c.user === 'player') {
-            if (c.charged1 === undefined && (c as PlayerCreature).charged2 === undefined) {
-              currIssues.push(`${name} is missing charged move(s)`)
-            }
-          } else {
-            if (c.charged1 === undefined) {
-              currIssues.push(`${name} is missing charged move`)
-            }
-          }
-        }
-      }
-    }
-
-    checkCreatureForIssues(playerCreature, 'Player Pokémon');
-
-    if (opponent === null) {
-      currIssues.push('No opponent is selected');
-    } else {
-      if (enemyMode === 'team') {
-        const enemyCreatures = [enemyCreature1, enemyCreature2, enemyCreature3] as const;
-        for (let i = 0; i < enemyCreatures.length; i++) {
-          checkCreatureForIssues(enemyCreatures[i], `Enemy Pokémon in slot ${i+1}`)
-        }
-      }
-    }
-
-    return currIssues;
+    return checkForIssues(playerCreature, enemyCreature1, enemyCreature2, enemyCreature3, solveForMoveset, enemyMode, opponent, isReady);
   }, [playerCreature, enemyCreature1, enemyCreature2, enemyCreature3, solveForMoveset, enemyMode, opponent, isReady])
 
   return (
@@ -239,7 +252,15 @@ const BattleClientPage = (
       <div className='flex justify-end'>
         <HoverCard>
           <HoverCardTrigger className='w-full md:max-w-60 h-8 flex items-stretch' delay={100}>
-            {isReady ? <Button className='h-full w-full hover:bg-theme1' variant='highlight' disabled={issues.length > 0}>
+            {isReady ? <Button 
+              variant='highlight' 
+              className='h-full w-full hover:bg-theme1' 
+              disabled={issues.length > 0}
+              onClick={async () => {
+                const res = await fetch('/api/battle', { method: 'POST' });
+                console.log(res, await res.json());
+              }}
+            >
               Simulate battle!
             </Button> : <div className={cn(buttonVariants({ variant: 'highlight' }), 'h-full w-full pointer-events-none opacity-50')} aria-disabled={true}>
               Simulate battle!
