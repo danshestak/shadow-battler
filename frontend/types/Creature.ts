@@ -34,6 +34,15 @@ export type OpponentCreature = {
   possibleChargedMoves: string[],
 }
 
+export type CreatureRaw = {
+  species: string | undefined,
+  level: number | undefined,
+  ivs: Stats3<number> | undefined,
+  fast: string | undefined,
+  charged1: string | undefined,
+  charged2: string | undefined
+}
+
 export const PlayerCreature = {
   new(): PlayerCreature {
     return {
@@ -167,5 +176,18 @@ export const OpponentCreature = {
     if (charged1 && c.possibleChargedMoves.includes(charged1.moveId)) c.charged1 = charged1;
 
     return c;
+  }
+}
+
+export const CreatureRaw = {
+  from(c: Creature): CreatureRaw {
+    return {
+      species: c.species?.speciesId,
+      level: c.user === 'player' ? c.level : undefined,
+      ivs: c.ivs,
+      fast: c.fast?.moveId,
+      charged1: c.charged1?.moveId,
+      charged2: c.user === 'player' ? c.charged2?.moveId : undefined
+    }
   }
 }
