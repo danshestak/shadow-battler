@@ -15,6 +15,10 @@ import { Opponent } from "@/types/Opponent";
 import { cn } from "cn";
 import { useMemo, useState } from "react";
 import { checkForIssues, fetchBattle } from "./helpers";
+import { BattleResult, BattleResultRaw } from "@/types/BattleResult";
+import CountersTable from "@/components/counters/CountersTable";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { CountersTableDescription } from "@/components/counters/CountersTableDescription";
 
 const panelClass = 'bg-theme3 border border-theme4 rounded p-2 flex flex-col gap-2 shadow-lg flex-1 text-sm';
 const betweenClass = 'flex justify-between items-center gap-2';
@@ -30,6 +34,7 @@ interface BattleClientPageProps {
   initEnemyMode: 'team' | 'lineup',
   initOpponent: Opponent | null,
   initTrainerLevel: number
+  initBattleResultsRaw: BattleResultRaw[] | undefined
 }
 
 const BattleClientPage = (
@@ -41,11 +46,15 @@ const BattleClientPage = (
     initSolveForMoveset,
     initEnemyMode,
     initOpponent,
-    initTrainerLevel
+    initTrainerLevel,
+    initBattleResultsRaw
   }: BattleClientPageProps
 ) => {
+  const isSm = useMediaQuery(`(min-width: 640px)`);
   const { clientData, isError, isLoading } = useClientData();
   const isReady = !isError && !isLoading;
+
+  const [battleResultsRaw, setBattleResultsRaw] = useState(initBattleResultsRaw);
 
   const [playerCreature, setPlayerCreature] = useState(initPlayerCreature);
   const [enemyCreature1, setEnemyCreature1] = useState(initEnemyCreature1);
@@ -60,7 +69,7 @@ const BattleClientPage = (
       arr[1](clone);
     });
   };
-  
+
   const [solveForMoveset, setSolveForMoveset] = useState(initSolveForMoveset);
   const [enemyMode, setEnemyMode] = useState(initEnemyMode);
   const [opponent, setOpponent] = useState(initOpponent);
@@ -86,7 +95,7 @@ const BattleClientPage = (
     setOpponent(v);
   }
   const [trainerLevel, setTrainerLevel] = useState<number>(initTrainerLevel);
-    const statefulSetTrainerLevel: typeof setTrainerLevel = (v) => {
+  const statefulSetTrainerLevel: typeof setTrainerLevel = (v) => {
     setEnemyCreatures((c) => {
       c.trainerLevel = typeof v === 'number' ? v : initTrainerLevel;
     });
@@ -97,6 +106,17 @@ const BattleClientPage = (
     return checkForIssues(playerCreature, enemyCreature1, enemyCreature2, enemyCreature3, solveForMoveset, enemyMode, opponent, isReady);
   }, [playerCreature, enemyCreature1, enemyCreature2, enemyCreature3, solveForMoveset, enemyMode, opponent, isReady])
 
+  const countersTableDescription: CountersTableDescription = {
+    dropdownIndicator: true,
+    species: true,
+    moves: true,
+    time: isSm,
+    winpercent: isSm,
+    score: true
+  };
+  
+  const battleResults = (battleResultsRaw && isReady) ? battleResultsRaw.map(raw => BattleResult.fromRaw(raw, clientData)) : [];
+
   return (
     <div>
       <div className='flex flex-col items-stretch md:flex-row gap-4 pb-2'>
@@ -104,11 +124,11 @@ const BattleClientPage = (
           <h2 className='text-xl'>Player</h2>
           <div className={betweenClass}>
             Solve for moveset:
-            <Switch checked={solveForMoveset} onCheckedChange={setSolveForMoveset}/>
+            <Switch checked={solveForMoveset} onCheckedChange={setSolveForMoveset} />
           </div>
-          <CreaturePanel 
-            creature={playerCreature} 
-            setCreature={setPlayerCreature} 
+          <CreaturePanel
+            creature={playerCreature}
+            setCreature={setPlayerCreature}
             hide={solveForMoveset ? ['moves'] : []}
             className={creaturePanelMinH}
           />
@@ -122,10 +142,10 @@ const BattleClientPage = (
           <div className={betweenClass}>
             <span className='text-xl'>Enemy</span>
 
-            <ToggleGroup 
-              value={[enemyMode]} 
-              onValueChange={(v, eventDetails) => v.length === 0 ? eventDetails.cancel() : setEnemyMode(v[0] as 'team' | 'lineup')} 
-              defaultValue={['team']} 
+            <ToggleGroup
+              value={[enemyMode]}
+              onValueChange={(v, eventDetails) => v.length === 0 ? eventDetails.cancel() : setEnemyMode(v[0] as 'team' | 'lineup')}
+              defaultValue={['team']}
               spacing={0}
             >
               <ToggleGroupItem value='team' aria-label='Toggle team' className='aria-pressed:pointer-events-none'>
@@ -138,24 +158,24 @@ const BattleClientPage = (
           </div>
           <div className={betweenClass}>
             Opponent:
-            <OpponentCombobox 
-              opponentsData={clientData?.opponents ?? {}} 
-              onValueChange={(id) => statefulSetOpponent(id !== null ? (clientData?.opponents[id] ?? null) : null)} 
+            <OpponentCombobox
+              opponentsData={clientData?.opponents ?? {}}
+              onValueChange={(id) => statefulSetOpponent(id !== null ? (clientData?.opponents[id] ?? null) : null)}
               value={opponent !== null ? opponent.name : null}
             />
           </div>
           <div className={betweenClass}>
             Trainer level:
-            {isReady ? <NumberSelect 
-              min={8} 
-              max={80} 
-              value={trainerLevel} 
+            {isReady ? <NumberSelect
+              min={8}
+              max={80}
+              value={trainerLevel}
               onValueChange={(v) => v !== null && statefulSetTrainerLevel(v)}
               disabled={!isReady || opponent === null}
-            /> : <NumberSelectPlaceholder value={trainerLevel}/>}
+            /> : <NumberSelectPlaceholder value={trainerLevel} />}
           </div>
           {enemyMode === 'team' ? <>
-            <CreaturePanel 
+            <CreaturePanel
               species={opponent?.lineup.first}
               creature={enemyCreature1}
               setCreature={c => setEnemyCreature1(c)}
@@ -163,34 +183,34 @@ const BattleClientPage = (
               disabledMessage={enemyCreaturePanelDisabledMsg}
               className={creaturePanelMinH}
             />
-            <CreaturePanel 
+            <CreaturePanel
               species={opponent?.lineup.second}
-              creature={enemyCreature2} 
+              creature={enemyCreature2}
               setCreature={c => setEnemyCreature2(c)}
               disabled={opponent === null}
               disabledMessage={enemyCreaturePanelDisabledMsg}
               className={creaturePanelMinH}
             />
-            <CreaturePanel 
+            <CreaturePanel
               species={opponent?.lineup.third}
-              creature={enemyCreature3} 
+              creature={enemyCreature3}
               setCreature={c => setEnemyCreature3(c)}
               disabled={opponent === null}
               disabledMessage={enemyCreaturePanelDisabledMsg}
               className={creaturePanelMinH}
             />
           </> : <>
-            <OpponentCardRow 
+            <OpponentCardRow
               speciesArr={opponent?.lineup.first.map(id => clientData?.species[id]) ?? undefined}
               className={creaturePanelMinH}
               cpDependencies={{ trainerLevel: trainerLevel, title: opponent?.title ?? 'ROCKET_GRUNT' }}
             />
-            <OpponentCardRow 
+            <OpponentCardRow
               speciesArr={opponent?.lineup.second.map(id => clientData?.species[id]) ?? undefined}
               className={creaturePanelMinH}
               cpDependencies={{ trainerLevel: trainerLevel, title: opponent?.title ?? 'ROCKET_GRUNT' }}
             />
-            <OpponentCardRow 
+            <OpponentCardRow
               speciesArr={opponent?.lineup.third.map(id => clientData?.species[id]) ?? undefined}
               className={creaturePanelMinH}
               cpDependencies={{ trainerLevel: trainerLevel, title: opponent?.title ?? 'ROCKET_GRUNT' }}
@@ -202,12 +222,13 @@ const BattleClientPage = (
       <div className='flex justify-end'>
         <HoverCard>
           <HoverCardTrigger className='w-full md:max-w-60 h-8 flex items-stretch' delay={100}>
-            {isReady ? <Button 
-              variant='highlight' 
-              className='h-full w-full hover:bg-theme1' 
+            {isReady ? <Button
+              variant='highlight'
+              className='h-full w-full hover:bg-theme1'
               disabled={issues.length > 0}
               onClick={async () => {
                 const res = await fetchBattle(
+                  '',
                   playerCreature,
                   enemyCreature1,
                   enemyCreature2,
@@ -217,7 +238,8 @@ const BattleClientPage = (
                   enemyMode,
                   opponent
                 );
-                console.log(res, await res.json());
+                console.log(res);
+                if (res !== undefined) setBattleResultsRaw(res);
               }}
             >
               Simulate battle!
@@ -233,6 +255,13 @@ const BattleClientPage = (
           </HoverCardContent>
         </HoverCard>
       </div>
+      <h2 className="text-xl mb-2 mt-4">Battle results</h2>
+      <CountersTable
+        battleResults={battleResults}
+        opponent={opponent}
+        clientData={isReady ? clientData : null}
+        description={countersTableDescription}
+      />
     </div>
   )
 }

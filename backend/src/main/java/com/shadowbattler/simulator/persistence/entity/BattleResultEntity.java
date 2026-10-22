@@ -2,7 +2,6 @@ package com.shadowbattler.simulator.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.model.battle.BattleResult;
 import com.shadowbattler.simulator.persistence.service.MoveEntityService;
@@ -29,27 +28,22 @@ public class BattleResultEntity {
     private double hpPercent;
     private int score;
     @ManyToOne
-    @JsonProperty("playerFastMoveId")
     @JoinColumn(name = "player_fast_move_id", referencedColumnName = "moveId")
     @JsonIdentityReference(alwaysAsId = true)
     private MoveEntity playerFastMove;
     @ManyToOne
-    @JsonProperty("playerChargedMove1Id")
     @JoinColumn(name = "player_charged_move_1_id", referencedColumnName = "moveId")
     @JsonIdentityReference(alwaysAsId = true)
     private MoveEntity playerChargedMove1;
     @ManyToOne
-    @JsonProperty("playerChargedMove2Id")
     @JoinColumn(name = "player_charged_move_2_id", referencedColumnName = "moveId")
     @JsonIdentityReference(alwaysAsId = true)
     private MoveEntity playerChargedMove2;
     @ManyToOne
-    @JsonProperty("playerSpeciesId")
     @JoinColumn(name = "player_species_id", referencedColumnName = "speciesId")
     @JsonIdentityReference(alwaysAsId = true)
     private SpeciesEntity playerSpecies;
     @ManyToOne
-    @JsonProperty("opponentId")
     @JoinColumn(name = "opponent_id", referencedColumnName = "opponentId")
     @JsonIdentityReference(alwaysAsId = true)
     private OpponentEntity opponent;

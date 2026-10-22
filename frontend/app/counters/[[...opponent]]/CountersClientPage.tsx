@@ -4,7 +4,6 @@ import { useParams, useRouter } from 'next/navigation';
 import useSWR from 'swr';
 import Link from 'next/link';
 import CountersTable from '@/components/counters/CountersTable';
-import CountersTableRow from '@/components/counters/CountersTableRow';
 import { CountersTableDescription } from '@/components/counters/CountersTableDescription';
 import { useClientData } from '@/lib/clientData';
 import { BattleResult, BattleResultRaw } from '@/types/BattleResult';
@@ -42,16 +41,16 @@ const CountersClientPage = ({ initialBattleResults }: CountersClientPageProps) =
   const params = useParams();
 
   const opponentSlug = Array.isArray(params.opponent) ? params.opponent[0] : undefined;
-  const { 
-    data: rawBattleResults, 
-    error: isCountersError, 
-    isLoading: isCountersLoading 
+  const {
+    data: rawBattleResults,
+    error: isCountersError,
+    isLoading: isCountersLoading
   } = useSWR<BattleResultRaw[]>(
-    opponentSlug ? `/api/counters?opponentId=${opponentSlug}` : null, 
+    opponentSlug ? `/api/counters?opponentId=${opponentSlug}` : null,
     fetcher,
     { fallbackData: initialBattleResults }
   );
-  
+
   const isCountersPending = !rawBattleResults && !isCountersError && opponentSlug;
 
   if (isLoading || isError || isCountersError || isCountersPending) {
@@ -80,7 +79,7 @@ const CountersClientPage = ({ initialBattleResults }: CountersClientPageProps) =
         className='text-base shadow-lg mb-4 p-1'
         opponentsData={clientData.opponents}
         value={selectedOpponent?.name ?? null}
-        onValueChange={(id) => id && router.push(`/counters/${id}`) }
+        onValueChange={(id) => id && router.push(`/counters/${id}`)}
       />
 
       {selectedOpponent && <p className="mb-4">
@@ -88,23 +87,13 @@ const CountersClientPage = ({ initialBattleResults }: CountersClientPageProps) =
         their lineup <Link href={"/opponents"}><span className='text-highlight hover:underline'>here</span></Link>.
       </p>}
 
-      <div className="rounded bg-theme3 border border-theme4 p-2 overflow-x-auto shadow-lg">
-        {!selectedOpponent && <div className='text-center italic'>No opponent selected</div>}
-
-        {selectedOpponent &&
-          <CountersTable description={countersTableDescription}>
-            {battleResults.map((br, i) => (
-              <CountersTableRow 
-                key={i} 
-                description={countersTableDescription}
-                battleResult={br}
-                opponent={selectedOpponent}
-                clientData={clientData}
-              />
-            ))}
-          </CountersTable>
-        }
-      </div>
+      <CountersTable
+        battleResults={battleResults}
+        emptyTableMessage='No opponent selected.'
+        opponent={selectedOpponent ?? null}
+        clientData={clientData}
+        description={countersTableDescription}
+      />
     </>
   );
 };

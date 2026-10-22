@@ -17,7 +17,7 @@ interface CountersTableRowProps {
   description: CountersTableDescription,
   battleResult: BattleResult,
   clientData: ClientData,
-  opponent?: Opponent
+  opponent: Opponent | null
 }
 
 const roundNumber = (n: number) => Math.round(n * 100)/100;
@@ -31,7 +31,7 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
   const stats = Species.getStats(battleResult.playerSpecies, battleResult.playerLevel, {atk: 15, def: 15, hp: 15})
 
   let battleUrl = undefined;
-  if (opponent !== undefined) {
+  if (opponent !== null) {
     const c = PlayerCreature.new();
     PlayerCreature.statefulSetSpecies(c, battleResult.playerSpecies);
     c.level = battleResult.playerLevel;
@@ -39,7 +39,7 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
     c.charged1 = battleResult.playerChargedMove1;
     c.charged2 = battleResult.playerChargedMove2;
 
-    battleUrl = `/battle/?opponent=${opponent?.opponentId}&p1=${PlayerCreature.toSearchParams(c)}&trainer_level=${battleResult.trainerLevel}&enemy_mode=lineup`;
+    battleUrl = `/battle/?opponent=${opponent.opponentId}&p1=${PlayerCreature.toSearchParams(c)}&trainer_level=${battleResult.trainerLevel}&enemy_mode=lineup`;
   }
 
   return (
@@ -204,7 +204,7 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
 
                 <div className='text-sm font-bold'>Score:</div>
                 <div className='font-bold'>
-                  {battleResult.score} &plusmn; {Math.round(battleResult.timeElapsedVariance)}
+                  {battleResult.score} {/*&plusmn; {Math.round(battleResult.timeElapsedVariance)}*/}
                 </div>
               </div>
 

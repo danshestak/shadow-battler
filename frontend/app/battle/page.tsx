@@ -2,6 +2,8 @@ import { getMoves, getOpponents, getSpecies } from '@/lib/serverData';
 import BattleClientPage from './BattleClientPage';
 import { OpponentCreature, PlayerCreature } from '@/types/Creature';
 import { Opponent } from '@/types/Opponent';
+import { checkForIssues, fetchBattle } from './helpers';
+import { getBackendUrl } from '@/lib/env';
 
 export const metadata = {
   title: 'Battle' 
@@ -34,6 +36,21 @@ const BattlePage = async ({ searchParams }: CountersPageProps) => {
     }
   });
 
+  let battleResultsRaw = undefined;
+  if (checkForIssues(playerCreature, enemyCreatures[0], enemyCreatures[1], enemyCreatures[2], solveForMoveset, enemyMode, opponent, true).length === 0) {
+    battleResultsRaw = await fetchBattle(
+      getBackendUrl(),
+      playerCreature,
+      enemyCreatures[0],
+      enemyCreatures[1],
+      enemyCreatures[2],
+      trainerLevel,
+      solveForMoveset,
+      enemyMode,
+      opponent
+    );
+  }
+
   return (
     <div className="max-w-3xl m-auto">
       <h1 className="text-2xl mb-4">Battle</h1>
@@ -52,6 +69,7 @@ const BattlePage = async ({ searchParams }: CountersPageProps) => {
         initEnemyMode={enemyMode}
         initOpponent={opponent}
         initTrainerLevel={trainerLevel}
+        initBattleResultsRaw={battleResultsRaw}
       />
     </div>
   )
