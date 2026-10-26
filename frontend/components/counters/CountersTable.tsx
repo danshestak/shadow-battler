@@ -51,7 +51,7 @@ const CountersTable = ({ battleResults, emptyTableMessage, opponent, clientData,
 
   return (
     <div className={cn(className, "w-full text-left flex flex-col", outerCn)}>
-      <div className={cn('grid border-b border-theme4 px-2 pb-2')} style={{ gridTemplateColumns: gridCols }}>
+      <div className={cn('grid border-b border-theme4 px-2 pb-2 -mb-px')} style={{ gridTemplateColumns: gridCols }}>
         {Object.entries(description).filter(e => e[1] && e[0] !== "dropdownIndicator").map(e =>
           <div
             key={e[0]}

@@ -88,7 +88,7 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
               </h3>
 
               <div className='text-xs mb-2'>
-                The stats this species has with the given Pokémon level and IVs. The Pokémon level can be changed through the Counters list settings.
+                The stats this Pokémon has with the given level and IVs.
               </div>
 
               <div className='text-xs grid grid-cols-[max-content_max-content_1fr] items-center gap-2 mb-2 p-1'>
@@ -115,7 +115,7 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
                 <span>Moves</span>
               </h3>
 
-              <div className='text-xs mb-2'>The moves this species can learn. Damage, DPT, and DPE factor Same Type Attack Bonus (STAB).</div>
+              <div className='text-xs mb-2'>The moves this species can learn. Damage, damage per turn (DPT), and damage per energy (DPE) all factor Same Type Attack Bonus (STAB).</div>
 
               <div className='text-xs grid grid-cols-[4fr_1fr_1fr_1fr] gap-2 mb-4 p-1'>
                 <div className='text-sm'>Fast Move</div>
@@ -174,7 +174,7 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
               </div>
 
               <ul className='text-xs text-right mt-6'>
-                <li className='font-bold'>Preferred move</li>
+                <li className='font-bold'>Selected move</li>
                 <li>Obtainable by Elite TM{(Move.eliteSymbol)}</li>
                 <li>Unobtainable by any TM{(Move.legacySymbol)}</li>
               </ul>
@@ -183,7 +183,7 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
               <h3 className='text-lg mb-2'>Performance</h3>
 
               <div className='text-xs mb-2'>
-                How a Pokémon of this species performs against the selected opponent with the given Pokémon level, trainer level, and preferred moveset.
+                How a Pokémon of this species performs against the selected opponent with the given Pokémon level, trainer level, and selected moveset.
               </div>
 
               <div className='text-xs grid grid-cols-[2fr_1fr] items-center gap-2 mb-2 p-1'>
@@ -271,7 +271,7 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
               href={battleUrl + '&solve_for_moveset=true'}
               className={cn(buttonVariants(), 'py-1 text-sm')}
             >
-              View all moveset results
+              View all movesets
             </Link>
             <Link
               href={battleUrl}

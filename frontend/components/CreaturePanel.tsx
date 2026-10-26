@@ -16,7 +16,6 @@ import { cn } from "@/lib/utils";
 import CombatPowerLabel from "./CombatPowerLabel";
 import { buttonVariants } from "./ui/button";
 import { useMemo } from "react";
-import { CountersConfig } from "@/types/ClientData";
 
 const triggerClass = 'flex justify-between items-stretch p-2 text-sm text-start bg-theme1 border border-theme4 transition rounded shadow-lg';
 
