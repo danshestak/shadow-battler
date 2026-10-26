@@ -43,7 +43,7 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
   }
 
   return (
-    <div className={cn('bg-theme3 rounded border border-transparent transition-colors duration-150', isOpen && 'bg-theme2 border-theme4 shadow-lg mb-1')}>
+    <div className={cn('rounded border border-transparent transition-colors duration-150', isOpen && 'bg-theme2 border-theme4 shadow-lg not-last:mb-2')}>
       <button onClick={() => setIsOpen(!isOpen)} className={cn('w-full text-left cursor-pointer grid items-center gap-1 px-2')} style={{ gridTemplateColumns: gridCols }}>
         {description.dropdownIndicator && <div className={cn("transition-transform text-xs text-right", isOpen && "rotate-90")}>&#128898;</div>}
         {description.species && <div className={cellStyle}>
@@ -155,7 +155,7 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
                   .map((m, i) => (
                     <React.Fragment key={i}>
                       <div><MoveLabel
-                        className={`flex-none ${(m.moveId === battleResult.playerChargedMove1.moveId || m.moveId === battleResult.playerChargedMove2.moveId) ? 'font-bold' : ''}`}
+                        className={`flex-none ${(m.moveId === battleResult.playerChargedMove1.moveId || m.moveId === battleResult.playerChargedMove2?.moveId) ? 'font-bold' : ''}`}
                         move={m}
                         species={battleResult.playerSpecies} />
                       </div>

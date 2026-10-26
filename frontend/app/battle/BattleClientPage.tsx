@@ -114,7 +114,7 @@ const BattleClientPage = (
     winpercent: isSm,
     score: true
   };
-  
+
   const battleResults = (battleResultsRaw && isReady) ? battleResultsRaw.map(raw => BattleResult.fromRaw(raw, clientData)) : [];
 
   return (
@@ -258,7 +258,7 @@ const BattleClientPage = (
       <h2 className="text-xl mb-2 mt-4">Battle results</h2>
       <CountersTable
         battleResults={battleResults}
-        opponent={opponent}
+        opponent={null}
         clientData={isReady ? clientData : null}
         description={countersTableDescription}
       />

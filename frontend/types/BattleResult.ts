@@ -13,7 +13,7 @@ export type BattleResultRaw = {
     trainerLevel: number,
     playerFastMove: string,
     playerChargedMove1: string,
-    playerChargedMove2: string,
+    playerChargedMove2?: string,
     playerSpecies: string,
     opponent: string,
 }
@@ -28,7 +28,7 @@ export type BattleResult = {
     trainerLevel: number,
     playerFastMove: Move,
     playerChargedMove1: Move,
-    playerChargedMove2: Move,
+    playerChargedMove2?: Move,
     playerSpecies: Species,
     opponent: Opponent,
 }
@@ -43,7 +43,7 @@ export const BattleResult = {
             score: raw.score,
             playerFastMove: clientData.moves[raw.playerFastMove],
             playerChargedMove1: clientData.moves[raw.playerChargedMove1],
-            playerChargedMove2: clientData.moves[raw.playerChargedMove2],
+            playerChargedMove2: raw.playerChargedMove2 ? clientData.moves[raw.playerChargedMove2] : undefined,
             playerSpecies: clientData.species[raw.playerSpecies],
             opponent: clientData.opponents[raw.opponent],
             playerLevel: raw.playerLevel,

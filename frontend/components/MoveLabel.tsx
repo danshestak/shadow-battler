@@ -13,7 +13,7 @@ const MoveLabel = ({ className, move, species }: MoveLabelProps) => {
     const color = move !== undefined ? Type.toHex(move.type ?? 'NONE') : null;
     return (
         <span 
-        className={cn(className, "rounded border px-1 py-0.5", !move ? 'italic opacity-50 bg-theme3 border-theme4' : '')}
+        className={cn(className, "rounded border px-1 py-0.5 text-nowrap", !move ? 'italic opacity-50 bg-theme3 border-theme4' : '')}
         style={{
         backgroundColor: color !== null ? `${color}80` : undefined,
         borderColor: color !== null ? `${color}80` : undefined,
