@@ -4,7 +4,8 @@ import { Species } from "./Species"
 
 export type CountersConfig = {
     playerCreatureLevels: number[],
-    trainerLevels: number[]
+    trainerLevels: number[],
+    filteredSpecies: string[]
 }
 
 export type ClientData = {

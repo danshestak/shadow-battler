@@ -15,6 +15,7 @@ import com.shadowbattler.simulator.model.Species;
 import com.shadowbattler.simulator.persistence.entity.BattleResultEntity;
 import com.shadowbattler.simulator.persistence.service.BattleResultEntityService;
 import com.shadowbattler.simulator.service.BattlePersistenceService;
+import com.shadowbattler.simulator.service.EntityReconciliationService;
 import com.shadowbattler.simulator.service.MovesDataService;
 import com.shadowbattler.simulator.service.OpponentDataService;
 import com.shadowbattler.simulator.service.SpeciesDataService;
@@ -27,7 +28,7 @@ public class DataController {
     private final OpponentDataService opponentDataService;
     private final BattleResultEntityService battleResultEntityService;
 
-    private final Map<String, List<Double>> countersConfig;
+    private final Map<String, List<?>> countersConfig;
 
     public DataController(
         SpeciesDataService speciesDataService, 
@@ -43,6 +44,7 @@ public class DataController {
         this.countersConfig = new HashMap<>();
         this.countersConfig.put("playerCreatureLevels", BattlePersistenceService.PLAYER_CREATURE_LEVELS);
         this.countersConfig.put("trainerLevels", BattlePersistenceService.TRAINER_LEVELS.stream().map(i -> (double)i).toList());
+        this.countersConfig.put("filteredSpecies", speciesDataService.getAllSpeciesMap().values().stream().filter(EntityReconciliationService::speciesFilter).map(s -> s.getSpeciesId()).toList());
     }
 
     @GetMapping("/species/{id}")
@@ -81,7 +83,7 @@ public class DataController {
     }
 
     @GetMapping("/counters_config")
-    public Map<String, List<Double>> getCountersConfig() {
+    public Map<String, List<?>> getCountersConfig() {
         return this.countersConfig;
     }
 }
