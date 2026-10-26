@@ -72,6 +72,37 @@ const BattleClientPage = (
 
   const [solveForMoveset, setSolveForMoveset] = useState(initSolveForMoveset);
   const [enemyMode, setEnemyMode] = useState(initEnemyMode);
+  const useCountersConfig = isReady && enemyMode === 'lineup' && solveForMoveset;
+  const setSfmEmHelper = (newEnemyMode: typeof enemyMode, newSolveForMoveset: boolean) => {
+    setEnemyMode(newEnemyMode);
+    setSolveForMoveset(newSolveForMoveset);
+    if (!(newEnemyMode === 'lineup' && newSolveForMoveset)) return;
+
+    const clone = { ...playerCreature }
+
+    if (playerCreature.species && !clientData.countersConfig.filteredSpecies.includes(playerCreature.species.speciesId)) {
+      PlayerCreature.statefulSetSpecies(clone, undefined);
+    }
+    
+    //not worth improving from linear search since its only 1 or 2 entries anyways
+    let closestPcl = Number.POSITIVE_INFINITY;
+    for (const lvl of clientData.countersConfig.playerCreatureLevels) {
+      if (Math.abs(playerCreature.level - lvl) <= Math.abs(playerCreature.level - closestPcl)) closestPcl = lvl;
+    }
+    clone.level = closestPcl
+    clone.ivs = { atk: 15, def: 15, hp: 15 };
+    
+    let closestTl = Number.POSITIVE_INFINITY;
+    for (const lvl of clientData.countersConfig.trainerLevels) {
+      if (Math.abs(trainerLevel - lvl) <= Math.abs(trainerLevel - closestTl)) closestTl = lvl;
+    }
+    if (closestTl !== trainerLevel) setTrainerLevel(closestTl);
+
+    setPlayerCreature(clone);
+  }
+  const statefulSetSolveForMoveset = (newSolveForMoveset: boolean) => setSfmEmHelper(enemyMode, newSolveForMoveset);
+  const statefulSetEnemyMode = (newEnemyMode: typeof enemyMode) => setSfmEmHelper(newEnemyMode, solveForMoveset);
+
   const [opponent, setOpponent] = useState(initOpponent);
   const statefulSetOpponent = (v: Opponent | null) => {
     const lineupArr = v !== null ? Lineup.toArray(v.lineup) : [];
@@ -124,13 +155,14 @@ const BattleClientPage = (
           <h2 className='text-xl'>Player</h2>
           <div className={betweenClass}>
             Solve for moveset:
-            <Switch checked={solveForMoveset} onCheckedChange={setSolveForMoveset} />
+            <Switch checked={solveForMoveset} onCheckedChange={statefulSetSolveForMoveset} />
           </div>
           <CreaturePanel
             creature={playerCreature}
             setCreature={setPlayerCreature}
             hide={solveForMoveset ? ['moves'] : []}
             className={creaturePanelMinH}
+            useCountersConfig={useCountersConfig}
           />
         </div>
 
@@ -144,7 +176,7 @@ const BattleClientPage = (
 
             <ToggleGroup
               value={[enemyMode]}
-              onValueChange={(v, eventDetails) => v.length === 0 ? eventDetails.cancel() : setEnemyMode(v[0] as 'team' | 'lineup')}
+              onValueChange={(v, eventDetails) => v.length === 0 ? eventDetails.cancel() : statefulSetEnemyMode(v[0] as 'team' | 'lineup')}
               defaultValue={['team']}
               spacing={0}
             >
@@ -169,6 +201,7 @@ const BattleClientPage = (
             {isReady ? <NumberSelect
               min={8}
               max={80}
+              whitelist={useCountersConfig ? clientData.countersConfig.trainerLevels : undefined}
               value={trainerLevel}
               onValueChange={(v) => v !== null && statefulSetTrainerLevel(v)}
               disabled={!isReady || opponent === null}

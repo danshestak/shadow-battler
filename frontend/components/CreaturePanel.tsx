@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import CombatPowerLabel from "./CombatPowerLabel";
 import { buttonVariants } from "./ui/button";
 import { useMemo } from "react";
+import { CountersConfig } from "@/types/ClientData";
 
 const triggerClass = 'flex justify-between items-stretch p-2 text-sm text-start bg-theme1 border border-theme4 transition rounded shadow-lg';
 
@@ -34,9 +35,10 @@ interface CreaturePanelProps<T extends Creature> {
   disabled?: boolean
   disabledMessage?: string
   className?: string
+  useCountersConfig?: boolean
 }
 
-function CreaturePanel<T extends Creature>({ species, creature, setCreature, hide = [], disabled = false, disabledMessage = '', className }: CreaturePanelProps<T>) {
+function CreaturePanel<T extends Creature>({ species, creature, setCreature, hide = [], disabled = false, disabledMessage = '', className, useCountersConfig }: CreaturePanelProps<T>) {
   const { clientData, isError, isLoading } = useClientData();
   const c = creature.user === 'player' ? creature as unknown as PlayerCreature : creature as unknown as OpponentCreature;
   const isDisabled = disabled || isError || isLoading;
@@ -68,8 +70,15 @@ function CreaturePanel<T extends Creature>({ species, creature, setCreature, hid
 
   let speciesData: Record<string, Species> = {};
   if (isReady) {
-    if (species !== undefined) {
-      for (const id of species) {
+    let ids = undefined;
+    if (useCountersConfig) {
+      ids = clientData.countersConfig.filteredSpecies
+    } else if (species !== undefined) {
+      ids = species;
+    }
+
+    if (ids !== undefined) {
+      for (const id of ids) {
         if (clientData.species.hasOwnProperty(id)) {
           speciesData[id] = clientData.species[id];
         } else {
@@ -163,6 +172,7 @@ function CreaturePanel<T extends Creature>({ species, creature, setCreature, hid
                   })}
                   min={1}
                   max={51}
+                  whitelist={useCountersConfig ? clientData.countersConfig.playerCreatureLevels : undefined}
                   step={0.5}
                 />
               </div>
@@ -174,6 +184,7 @@ function CreaturePanel<T extends Creature>({ species, creature, setCreature, hid
                     onValueChange={(v) => v !== null && handleIvsChange('atk', v)}
                     min={0}
                     max={15}
+                    whitelist={useCountersConfig ? [15] : undefined}
                   />
                   /
                   <NumberSelect
@@ -181,6 +192,7 @@ function CreaturePanel<T extends Creature>({ species, creature, setCreature, hid
                     onValueChange={(v) => v !== null && handleIvsChange('def', v)}
                     min={0}
                     max={15}
+                    whitelist={useCountersConfig ? [15] : undefined}
                   />
                   /
                   <NumberSelect
@@ -188,10 +200,18 @@ function CreaturePanel<T extends Creature>({ species, creature, setCreature, hid
                     onValueChange={(v) => v !== null && handleIvsChange('hp', v)}
                     min={0}
                     max={15}
+                    whitelist={useCountersConfig ? [15] : undefined}
                   />
                 </span>
               </div>
             </>
+          )}
+
+          {useCountersConfig && (
+            <span className='text-center text-sm italic'>
+              When solving for moveset against a lineup, player Pokémon
+              and trainer level customization are limited
+            </span>
           )}
 
           <div className="p-2 bg-theme3 shadow-lg border border-theme4 rounded text-xs grid grid-cols-[1fr_1fr_8fr] items-center gap-2">

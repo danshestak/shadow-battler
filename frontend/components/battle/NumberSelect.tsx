@@ -5,6 +5,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectGroup, SelectI
 interface NumberSelectProps {
   min: number,
   max: number,
+  whitelist?: number[],
   step?: number
   value?: number,
   onValueChange: (value: number | null) => void,
@@ -15,10 +16,17 @@ interface NumberSelectPlaceholderProps {
   value?: number
 }
 
-const NumberSelect = ({ min, max, step = 1, value, onValueChange, disabled }: NumberSelectProps) => {
-  const numbers = [];
-  for (let i = min; i <= max; i += step) {
-    numbers.push({ label: i, value: i });
+const NumberSelect = ({ min, max, whitelist, step = 1, value, onValueChange, disabled }: NumberSelectProps) => {
+  let numbers;
+  if (whitelist) {
+    numbers = whitelist.map(i => {
+      return { label: i, value: i };
+    });
+  } else {
+    numbers = [];
+    for (let i = min; i <= max; i += step) {
+      numbers.push({ label: i, value: i });
+    }
   }
 
   return (
@@ -26,7 +34,7 @@ const NumberSelect = ({ min, max, step = 1, value, onValueChange, disabled }: Nu
       items={numbers}
       value={value}
       onValueChange={onValueChange}
-      disabled={disabled}
+      disabled={disabled || (whitelist?.length !== undefined && whitelist.length <= 1)}
     >
       <SelectTrigger>
         <SelectValue placeholder='--'/>
