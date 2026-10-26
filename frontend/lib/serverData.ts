@@ -3,6 +3,7 @@ import { Opponent } from '@/types/Opponent';
 import { Species } from '@/types/Species';
 import { Move } from '@/types/Move';
 import { getBackendUrl } from './env';
+import { CountersConfig } from '@/types/ClientData';
 
 const get = async (slug: string) => {
   const res = await fetch(`${getBackendUrl()}/api/${slug}`, { next: { revalidate: 3600, tags: [slug] } });
@@ -14,3 +15,4 @@ const get = async (slug: string) => {
 export const getOpponents = (): Promise<Record<string, Opponent>> => get('opponents');
 export const getSpecies = (): Promise<Record<string, Species>> => get('species');
 export const getMoves = (): Promise<Record<string, Move>> => get('moves');
+export const getCountersConfig = (): Promise<CountersConfig> => get('counters_config');
