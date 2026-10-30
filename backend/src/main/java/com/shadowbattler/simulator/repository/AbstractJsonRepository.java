@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,20 +20,21 @@ import jakarta.annotation.PostConstruct;
 
 public abstract class AbstractJsonRepository<T> implements Repository<T, String> {
     private final ObjectMapper objectMapper;
-    private final String resourcePath;
+    private final String fileName;
     private final TypeReference<List<T>> typeReference;
     private final Function<T, String> idExtractor;
-
+    @Value("${USE_TEST_JSON:true}")
+    private boolean useTestJson;
     protected Map<String, T> cache = new HashMap<>();
 
     protected AbstractJsonRepository(
         ObjectMapper objectMapper, 
-        String resourcePath, 
+        String fileName, 
         TypeReference<List<T>> typeReference, 
         Function<T, String> idExtractor
     ) {
         this.objectMapper = objectMapper;
-        this.resourcePath = resourcePath;
+        this.fileName = fileName;
         this.typeReference = typeReference;
         this.idExtractor = idExtractor;
     }
@@ -40,14 +42,16 @@ public abstract class AbstractJsonRepository<T> implements Repository<T, String>
     @PostConstruct
     public void loadAll() {
         try {
-            InputStream inputStream = new ClassPathResource(resourcePath).getInputStream();
-            List<T> items = objectMapper.readValue(inputStream, typeReference);
+            InputStream inputStream = new ClassPathResource(
+                String.format("/json/%s/%s", this.useTestJson ? "test" : "prod", this.fileName)
+            ).getInputStream();
+            List<T> items = objectMapper.readValue(inputStream, this.typeReference);
             
-            this.cache = items.stream().collect(Collectors.toMap(idExtractor, Function.identity()));
+            this.cache = items.stream().collect(Collectors.toMap(this.idExtractor, Function.identity()));
                 
-            System.out.println("Loaded " + this.cache.size() + " items from " + resourcePath);
+            System.out.println("Loaded " + this.cache.size() + " items from " + this.fileName);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load data from " + resourcePath, e);
+            throw new RuntimeException("Failed to load data from " + this.fileName, e);
         }
     }
 

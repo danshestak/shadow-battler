@@ -13,7 +13,7 @@ public class JsonMovesRepository extends AbstractJsonRepository<Move> implements
     public JsonMovesRepository(ObjectMapper objectMapper) {
         super(
             objectMapper, 
-            "/static/moves_data.json", 
+            "moves_data.json", 
             new TypeReference<List<Move>>() {}, 
             m -> m.moveId() 
         );

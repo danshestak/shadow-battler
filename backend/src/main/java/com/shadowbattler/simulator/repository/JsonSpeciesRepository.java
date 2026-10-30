@@ -13,7 +13,7 @@ public class JsonSpeciesRepository extends AbstractJsonRepository<Species> imple
     public JsonSpeciesRepository(ObjectMapper objectMapper) {
         super(
             objectMapper, 
-            "/static/species_data.json", 
+            "species_data.json", 
             new TypeReference<List<Species>>() {}, 
             s -> s.getSpeciesId()
         );

@@ -13,7 +13,7 @@ public class JsonOpponentRepository extends AbstractJsonRepository<Opponent> imp
     public JsonOpponentRepository(ObjectMapper objectMapper) {
         super(
             objectMapper, 
-            "/static/opponent_data.json", 
+            "opponent_data.json", 
             new TypeReference<List<Opponent>>() {}, 
             o -> o.getOpponentId()
         );

@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -34,6 +35,8 @@ public class EntityReconciliationService {
     private final MovesDataService movesDataService;
     private final BattlePersistenceService battleReconciliationService;
     private final BattleResultEntityService battleResultEntityService;
+    @Value("${RECONCILE_ENTITIES:true}")
+    private boolean reconcileEntities;
 
     public EntityReconciliationService(
         SpeciesEntityService speciesEntityService,
@@ -117,6 +120,14 @@ public class EntityReconciliationService {
             .collect(Collectors.toSet());
         
         System.out.println("Modified opponents: " + modifiedOpponents.toString());
+
+        if (!this.reconcileEntities) {
+            System.out.println("Reconciliation skipped due to RECONCILE_ENTITIES env variable");
+            if (!modifiedMoves.isEmpty() || !modifiedSpecies.isEmpty() || !modifiedOpponents.isEmpty()) {
+                System.out.println("WARNING: in-memory objects don't match database. Reconcile to fix.");
+            }
+            return;
+        }
 
         modifiedMoves.forEach(this.moveEntityService::saveMove);
         modifiedSpecies.forEach(this.speciesEntityService::saveSpecies);
