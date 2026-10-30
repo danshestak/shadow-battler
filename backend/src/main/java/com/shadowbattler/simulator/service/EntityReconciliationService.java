@@ -133,9 +133,14 @@ public class EntityReconciliationService {
         modifiedSpecies.forEach(this.speciesEntityService::saveSpecies);
         modifiedOpponents.forEach(this.opponentEntityService::saveOpponent);
 
+        final long remainingOpponents = allOpponents.stream().filter(opponent -> !modifiedOpponents.contains(opponent)).count();
+        final int totalMatchups = (modifiedOpponents.size() * filteredSpecies.size()) + ((int) remainingOpponents * modifiedSpecies.size());
+        int reconciledMatchups = 0;
+
         for (Opponent opponent : modifiedOpponents) {
             for (Species species : filteredSpecies) {
-                System.out.println("Reconciling battles between " + species.getSpeciesName() + " and " + opponent.getName());
+                reconciledMatchups++;
+                printReconciliationProgress(reconciledMatchups, totalMatchups, species, opponent);
                 List<BattleResult> results = battleReconciliationService.createBattleResultEntities(species, opponent);
                 battleReconciliationService.persistBattles(results);
             }
@@ -145,12 +150,34 @@ public class EntityReconciliationService {
             if (modifiedOpponents.contains(opponent)) continue; //avoid battles reconciled in previous loop
 
             for (Species species : modifiedSpecies) {
-                System.out.println("Reconciling battles between " + species.getSpeciesName() + " and " + opponent.getName());
+                reconciledMatchups++;
+                printReconciliationProgress(reconciledMatchups, totalMatchups, species, opponent);
                 List<BattleResult> results = battleReconciliationService.createBattleResultEntities(species, opponent);
                 battleReconciliationService.persistBattles(results);
             }
         }
 
+        if (totalMatchups > 0) System.out.println();
         System.out.println("Reconciliation complete!");
+    }
+
+    private static void printReconciliationProgress(
+        int reconciledMatchups,
+        int totalMatchups,
+        Species species,
+        Opponent opponent
+    ) {
+        final int barWidth = 24;
+        int filledWidth = totalMatchups == 0 ? barWidth : (reconciledMatchups * barWidth) / totalMatchups;
+        String bar = "█".repeat(filledWidth) + "▒".repeat(barWidth - filledWidth);
+
+        System.out.print(String.format("\033[2K\033[1GReconciling: %s | %d/%d | %s vs. %s", 
+            bar, 
+            reconciledMatchups, 
+            totalMatchups, 
+            species.getSpeciesName(), 
+            opponent.getName())
+        );
+        System.out.flush();
     }
 }
