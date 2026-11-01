@@ -1,8 +1,8 @@
-import React from 'react'
 import OpponentCard from '@/components/opponent/OpponentCard'
 import { getOpponents } from '@/lib/serverData'
 import { Opponent } from '@/types/Opponent';
 
+export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'Opponents' 
 }
