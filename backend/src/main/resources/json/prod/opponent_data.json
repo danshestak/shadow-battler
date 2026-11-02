@@ -1,0 +1,333 @@
+[
+    {
+        "opponentId": "boss_giovanni",
+        "name": "Boss Giovanni",
+        "title": "rocket_boss",
+        "limit": 100000,
+        "lineup": {
+            "first": ["persian_shadow"],
+            "second": ["kangaskhan_shadow", "rhyperior_shadow", "machamp_shadow"],
+            "third": ["zekrom_shadow"]
+        },
+        "encounterSlots": [3]
+    },
+    {
+        "opponentId": "leader_cliff",
+        "name": "Leader Cliff",
+        "title": "rocket_leader",
+        "limit": 100000,
+        "lineup": {
+            "first": ["cubone_shadow"],
+            "second": ["snorlax_shadow", "golurk_shadow", "weezing_galarian_shadow"],
+            "third": ["tyranitar_shadow", "camerupt_shadow", "gallade_shadow"]
+        },
+        "encounterSlots": [1]
+    },
+    {
+        "opponentId": "leader_arlo",
+        "name": "Leader Arlo",
+        "title": "rocket_leader",
+        "limit": 100000,
+        "lineup": {
+            "first": ["grimer_alolan_shadow"],
+            "second": ["steelix_shadow", "golurk_shadow", "slowbro_shadow"],
+            "third": ["alakazam_shadow", "charizard_shadow", "scizor_shadow"]
+        },
+        "encounterSlots": [1]
+    },
+    {
+        "opponentId": "leader_sierra",
+        "name": "Leader Sierra",
+        "title": "rocket_leader",
+        "limit": 100000,
+        "lineup": {
+            "first": ["pancham_shadow"],
+            "second": ["blastoise_shadow", "flygon_shadow", "ferrothorn_shadow"],
+            "third": ["milotic_shadow", "houndoom_shadow", "steelix_shadow"]
+        },
+        "encounterSlots": [1]
+    },
+    {
+        "opponentId": "grunt_m_normal",
+        "name": "Normal-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["teddiursa_shadow", "hoothoot_shadow", "porygon_shadow"],
+            "second": ["loudred_shadow", "stufful_shadow", "starly_shadow"],
+            "third": ["ursaring_shadow", "swellow_shadow", "kangaskhan_shadow"]
+        },
+        "encounterSlots": [1, 2],
+        "specialtyType": "normal"
+    },
+    {
+        "opponentId": "grunt_f_fire",
+        "name": "Fire-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["litwick_shadow", "ponyta_shadow", "torchic_shadow"],
+            "second": ["magmar_shadow", "blaziken_shadow", "camerupt_shadow"],
+            "third": ["darmanitan_standard_shadow", "delphox_shadow", "magmortar_shadow"]
+        },
+        "encounterSlots": [1],
+        "specialtyType": "fire"
+    },
+    {
+        "opponentId": "grunt_f_water",
+        "name": "Water-type Grunt (Female)",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["mudkip_shadow", "tentacool_shadow", "krabby_shadow"],
+            "second": ["dewpider_shadow", "swampert_shadow", "sharpedo_shadow"],
+            "third": ["walrein_shadow", "greninja_shadow", "tentacruel_shadow"]
+        },
+        "encounterSlots": [1],
+        "specialtyType": "water"
+    },
+    {
+        "opponentId": "grunt_m_water",
+        "name": "Water-type Grunt (Male)",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["magikarp_shadow", "feebas_shadow"],
+            "second": ["magikarp_shadow"],
+            "third": ["magikarp_shadow", "gyarados_shadow"]
+        },
+        "encounterSlots": [1, 2],
+        "specialtyType": "water"
+    },
+    {
+        "opponentId": "grunt_f_electric",
+        "name": "Electric-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["voltorb_shadow", "shinx_shadow", "helioptile_shadow"],
+            "second": ["electabuzz_shadow", "magnemite_shadow", "geodude_alolan_shadow"],
+            "third": ["luxray_shadow", "ampharos_shadow", "galvantula_shadow"]
+        },
+        "encounterSlots": [1, 2],
+        "specialtyType": "electric"
+    },
+    {
+        "opponentId": "grunt_m_grass",
+        "name": "Grass-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["phantump_shadow", "fomantis_shadow", "tangela_shadow"],
+            "second": ["lileep_shadow", "sceptile_shadow", "morelull_shadow"],
+            "third": ["chesnaught_shadow", "trevenant_shadow", "cradily_shadow"]
+        },
+        "encounterSlots": [1],
+        "specialtyType": "grass"
+    },
+    {
+        "opponentId": "grunt_f_ice",
+        "name": "Ice-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["seel_shadow", "delibird_shadow", "spheal_shadow"],
+            "second": ["sealeo_shadow", "froslass_shadow", "ninetales_alolan_shadow"],
+            "third": ["aurorus_shadow", "froslass_shadow", "glalie_shadow"]
+        },
+        "encounterSlots": [1],
+        "specialtyType": "ice"
+    },
+    {
+        "opponentId": "grunt_f_fighting",
+        "name": "Fighting-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["timburr_shadow", "mankey_shadow", "makuhita_shadow"],
+            "second": ["hitmontop_shadow", "hitmonlee_shadow", "hitmonchan_shadow"],
+            "third": ["conkeldurr_shadow", "annihilape_shadow", "infernape_shadow"]
+        },
+        "encounterSlots": [1, 2],
+        "specialtyType": "fighting"
+    },
+    {
+        "opponentId": "grunt_f_poison",
+        "name": "Poison-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["oddish_shadow", "zubat_shadow", "qwilfish_shadow"],
+            "second": ["weezing_galarian_shadow", "nidorino_shadow", "nidorina_shadow"],
+            "third": ["weezing_shadow", "croagunk_shadow", "amoonguss_shadow"]
+        },
+        "encounterSlots": [1, 2],
+        "specialtyType": "poison"
+    },
+    {
+        "opponentId": "grunt_m_ground",
+        "name": "Ground-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["rhyhorn_shadow", "gligar_shadow", "trapinch_shadow"],
+            "second": ["gligar_shadow", "claydol_shadow", "vibrava_shadow"],
+            "third": ["golurk_shadow", "hippowdon_shadow", "flygon_shadow"]
+        },
+        "encounterSlots": [1, 2],
+        "specialtyType": "ground"
+    },
+    {
+        "opponentId": "grunt_f_flying",
+        "name": "Flying-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["taillow_shadow", "rookidee_shadow", "swablu_shadow"],
+            "second": ["scyther_shadow", "zubat_shadow", "gligar_shadow"],
+            "third": ["dragonite_shadow", "toucannon_shadow", "swanna_shadow"]
+        },
+        "encounterSlots": [1, 2],
+        "specialtyType": "flying"
+    },
+    {
+        "opponentId": "grunt_m_psychic",
+        "name": "Psychic-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["wobbuffet_shadow", "ralts_shadow", "drowzee_shadow"],
+            "second": ["drowzee_shadow", "duosion_shadow", "wobbuffet_shadow"],
+            "third": ["gallade_shadow", "malamar_shadow", "reuniclus_shadow"]
+        },
+        "encounterSlots": [1, 2],
+        "specialtyType": "psychic"
+    },
+    {
+        "opponentId": "grunt_m_bug",
+        "name": "Bug-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["venonat_shadow", "weedle_shadow", "wimpod_shadow"],
+            "second": ["pinsir_shadow", "anorith_shadow", "dewpider_shadow"],
+            "third": ["scizor_shadow", "scolipede_shadow", "vikavolt_shadow"]
+        },
+        "encounterSlots": [1, 2],
+        "specialtyType": "bug"
+    },
+    {
+        "opponentId": "grunt_m_rock",
+        "name": "Rock-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["onix_shadow", "kabuto_shadow", "cranidos_shadow"],
+            "second": ["shieldon_shadow", "graveler_shadow", "cranidos_shadow"],
+            "third": ["tyrantrum_shadow", "golem_shadow", "aurorus_shadow"]
+        },
+        "encounterSlots": [1, 2],
+        "specialtyType": "rock"
+    },
+    {
+        "opponentId": "grunt_m_ghost",
+        "name": "Ghost-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["duskull_shadow", "sandygast_shadow", "yamask_shadow"],
+            "second": ["dusclops_shadow", "sableye_shadow", "cofagrigus_shadow"],
+            "third": ["gengar_shadow", "froslass_shadow", "cofagrigus_shadow"]
+        },
+        "encounterSlots": [1],
+        "specialtyType": "ghost"
+    },
+    {
+        "opponentId": "grunt_f_dragon",
+        "name": "Dragon-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["noibat_shadow", "deino_shadow", "axew_shadow"],
+            "second": ["exeggutor_alolan_shadow", "dragonair_shadow", "gabite_shadow"],
+            "third": ["dragonite_shadow", "garchomp_shadow", "salamence_shadow"]
+        },
+        "encounterSlots": [1],
+        "specialtyType": "dragon"
+    },
+    {
+        "opponentId": "grunt_f_dark",
+        "name": "Dark-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["carvanha_shadow", "poochyena_shadow", "rattata_alolan_shadow"],
+            "second": ["sneasel_shadow", "houndour_shadow", "absol_shadow"],
+            "third": ["liepard_shadow", "hydreigon_shadow"]
+        },
+        "encounterSlots": [1, 2],
+        "specialtyType": "dark"
+    },
+    {
+        "opponentId": "grunt_m_steel",
+        "name": "Steel-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["sandshrew_alolan_shadow", "aron_shadow", "beldum_shadow"],
+            "second": ["lairon_shadow", "skarmory_shadow", "metang_shadow"],
+            "third": ["aggron_shadow", "sandslash_alolan_shadow", "probopass_shadow"]
+        },
+        "encounterSlots": [1],
+        "specialtyType": "steel"
+    },
+    {
+        "opponentId": "grunt_f_fairy",
+        "name": "Fairy-type Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["ralts_shadow", "snubbull_shadow", "vulpix_alolan_shadow"],
+            "second": ["snubbull_shadow", "weezing_galarian_shadow", "kirlia_shadow"],
+            "third": ["ninetales_alolan_shadow", "weezing_galarian_shadow", "granbull_shadow"]
+        },
+        "encounterSlots": [1, 2],
+        "specialtyType": "fairy"
+    },
+    {
+        "opponentId": "grunt_m_none",
+        "name": "Typeless Grunt (Male)",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["bulbasaur_shadow", "charmander_shadow", "squirtle_shadow"],
+            "second": ["ivysaur_shadow", "charmeleon_shadow", "wartortle_shadow"],
+            "third": ["venusaur_shadow", "charizard_shadow", "blastoise_shadow"]
+        },
+        "encounterSlots": [1]
+    },
+    {
+        "opponentId": "grunt_f_none",
+        "name": "Typeless Grunt (Female)",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["snorlax_shadow", "lapras_shadow"],
+            "second": ["snorlax_shadow", "gardevoir_shadow", "poliwrath_shadow"],
+            "third": ["snorlax_shadow", "dragonite_shadow", "gyarados_shadow"]
+        },
+        "encounterSlots": [1]
+    },
+    {
+        "opponentId": "grunt_f_decoy",
+        "name": "Decoy Grunt",
+        "title": "rocket_grunt",
+        "limit": 100000,
+        "lineup": {
+            "first": ["bellsprout_shadow"],
+            "second": ["raticate_shadow", "weepinbell_shadow"],
+            "third": ["raticate_shadow", "snorlax_shadow"]
+        },
+        "encounterSlots": [1]
+    }
+]

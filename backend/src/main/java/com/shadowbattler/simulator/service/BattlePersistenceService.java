@@ -27,7 +27,7 @@ public class BattlePersistenceService {
     private final MoveEntityService moveEntityService;
 
     public static final List<Double> PLAYER_CREATURE_LEVELS = List.of(50.0);
-    public static final List<Integer> TRAINER_LEVELS = List.of(80);
+    public static final List<Integer> TRAINER_LEVELS = List.of(70);
 
     public BattlePersistenceService(BattleResultEntityService battleResultEntityService, SpeciesEntityService speciesEntityService, OpponentEntityService opponentEntityService, MoveEntityService moveEntityService) {
         this.battleResultEntityService = battleResultEntityService;
