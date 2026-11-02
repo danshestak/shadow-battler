@@ -58,10 +58,11 @@ public class EntityReconciliationService {
         this.battleResultEntityService = battleResultEntityService;
     }
 
-    private static final List<String> speciesBlacklist = List.of("smeargle", "morpeko", "aegislash", "mimikyu");
+    private static final List<String> speciesBlacklist = List.of("smeargle", "morpeko", "aegislash", "mimikyu", "pikachu");
 
     public static boolean speciesFilter(Species species) {
         if (species.getFamily() != null && species.getFamily().evolutions() != null) return false;
+        if (!species.isReleased()) return false;
         return !speciesBlacklist.stream().anyMatch(species.getSpeciesId()::startsWith);
     }
 
