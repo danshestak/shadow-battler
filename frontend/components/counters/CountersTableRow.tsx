@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { buttonVariants } from '../ui/button';
 import { Opponent } from '@/types/Opponent';
 import { PlayerCreature } from '@/types/Creature';
+import { ChevronRightIcon } from 'lucide-react';
 
 interface CountersTableRowProps {
   description: CountersTableDescription,
@@ -44,8 +45,12 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
 
   return (
     <div className={cn('rounded border border-transparent transition-colors duration-150', isOpen && 'bg-theme2 border-theme4 shadow-lg not-last:mb-2')}>
-      <button onClick={() => setIsOpen(!isOpen)} className={cn('w-full text-left cursor-pointer grid items-center gap-1 px-2')} style={{ gridTemplateColumns: gridCols }}>
-        {description.dropdownIndicator && <div className={cn("transition-transform text-xs text-right", isOpen && "rotate-90")}>&#128898;</div>}
+      <button onClick={() => setIsOpen(!isOpen)} className={cn('w-full text-left cursor-pointer grid items-center gap-1 px-1')} style={{ gridTemplateColumns: gridCols }}>
+        {description.dropdownIndicator && (
+          <ChevronRightIcon
+            className={cn("size-4 transition-transform", isOpen && "rotate-90")}
+          />
+        )}
         {description.species && <div className={cellStyle}>
           <div className='text-sm flex items-center gap-1'>
             <Sprite species={battleResult.playerSpecies} />
