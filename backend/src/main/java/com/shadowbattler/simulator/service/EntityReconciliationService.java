@@ -136,11 +136,13 @@ public class EntityReconciliationService {
         final long remainingOpponents = allOpponents.stream().filter(opponent -> !modifiedOpponents.contains(opponent)).count();
         final int totalMatchups = (modifiedOpponents.size() * filteredSpecies.size()) + ((int) remainingOpponents * modifiedSpecies.size());
         int reconciledMatchups = 0;
+        
+        System.out.println(String.format("Reconciling %d matchups...", totalMatchups));
 
         for (Opponent opponent : modifiedOpponents) {
             for (Species species : filteredSpecies) {
                 reconciledMatchups++;
-                printReconciliationProgress(reconciledMatchups, totalMatchups, species, opponent);
+                printReconciliationProgress(reconciledMatchups, totalMatchups);
                 List<BattleResult> results = battleReconciliationService.createBattleResultEntities(species, opponent);
                 battleReconciliationService.persistBattles(results);
             }
@@ -151,33 +153,25 @@ public class EntityReconciliationService {
 
             for (Species species : modifiedSpecies) {
                 reconciledMatchups++;
-                printReconciliationProgress(reconciledMatchups, totalMatchups, species, opponent);
+                printReconciliationProgress(reconciledMatchups, totalMatchups);
                 List<BattleResult> results = battleReconciliationService.createBattleResultEntities(species, opponent);
                 battleReconciliationService.persistBattles(results);
             }
         }
 
-        if (totalMatchups > 0) System.out.println();
         System.out.println("Reconciliation complete!");
     }
 
     private static void printReconciliationProgress(
         int reconciledMatchups,
-        int totalMatchups,
-        Species species,
-        Opponent opponent
+        int totalMatchups
     ) {
-        final int barWidth = 24;
-        int filledWidth = totalMatchups == 0 ? barWidth : (reconciledMatchups * barWidth) / totalMatchups;
-        String bar = "█".repeat(filledWidth) + "▒".repeat(barWidth - filledWidth);
-
-        System.out.print(String.format("\033[2K\033[1GReconciling: %s | %d/%d | %s vs. %s", 
-            bar, 
-            reconciledMatchups, 
-            totalMatchups, 
-            species.getSpeciesName(), 
-            opponent.getName())
-        );
-        System.out.flush();
+        int curr = reconciledMatchups*100/totalMatchups;
+        int prev = (reconciledMatchups-1)*100/totalMatchups;
+        if (curr/5 > prev/5) {
+            System.out.println(
+                String.format("Reconciliation %d%% complete (%d/%d)", curr, reconciledMatchups, totalMatchups)
+            );
+        }
     }
 }
