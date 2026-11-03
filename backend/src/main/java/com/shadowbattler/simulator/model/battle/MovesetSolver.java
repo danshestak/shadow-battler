@@ -16,22 +16,34 @@ public class MovesetSolver implements BattleSolver {
     private final Species species;
     private final BiFunction<Move, List<Move>, Creature> creatureFactory;
     private final Function<Creature, BattleSolver> battleSolverFactory;
+    private final boolean multipleChargedMoves;
 
-    public MovesetSolver(BiFunction<Move, List<Move>, Creature> creatureFactory, Function<Creature, BattleSolver> battleSolverFactory) {
+    public MovesetSolver(BiFunction<Move, List<Move>, Creature> creatureFactory, Function<Creature, BattleSolver> battleSolverFactory, boolean multipleChargedMoves) {
         this.species = creatureFactory.apply(null, null).getSpecies();
         this.creatureFactory = creatureFactory;
         this.battleSolverFactory = battleSolverFactory;
+        this.multipleChargedMoves = multipleChargedMoves;
     }
 
     @Override
     public void solve() {
         if (this.battleResults != null) return;
+        
+        final List<Move[]> movesets;
+        if (multipleChargedMoves) {
+            final int moveCombinations = this.species.moveCombinationQuantity(false);
+            movesets = new ArrayList<>(moveCombinations);
 
-        final int moveCombinations = this.species.moveCombinationQuantity(false);
-
-        final List<Move[]> movesets = new ArrayList<>(moveCombinations);
-        for (int i = 0; i < moveCombinations; i++) {
-            movesets.add(this.species.moveCombinationFromId(i, false));
+            for (int i = 0; i < moveCombinations; i++) {
+                movesets.add(this.species.moveCombinationFromId(i, false));
+            }
+        } else {
+            movesets = new ArrayList<>(this.species.getChargedMoves().size());
+            for (Move fast : this.species.getFastMoves()) {
+                for (Move charged : this.species.getChargedMoves()) {
+                    movesets.add(new Move[]{fast, charged, null});
+                }
+            }
         }
 
         this.battleResults = movesets.parallelStream()

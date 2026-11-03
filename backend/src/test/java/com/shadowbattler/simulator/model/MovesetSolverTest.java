@@ -30,7 +30,8 @@ public class MovesetSolverTest {
                 new Team<>(playerCreature, null, null), 
                 opponentDataService.getOpponentById("grunt_f_fire"),
                 80
-            )
+            ),
+            false
         );
 
         movesetSolver.solve();

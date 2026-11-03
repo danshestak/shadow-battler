@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.shadowbattler.simulator.model.Move;
 import com.shadowbattler.simulator.persistence.entity.MoveEntity;
@@ -30,6 +31,7 @@ public class MoveEntityService {
         return this.moveEntityRepository.getReferenceById(id);
     }
 
+    @Transactional
     public MoveEntity saveMove(@NonNull Move move) {
         MoveEntity entity = this.moveEntityRepository.findById(move.moveId()).orElse(new MoveEntity());
         

@@ -46,7 +46,8 @@ public class BattlePersistenceService {
                         new Team<>(playerCreature, null, null), 
                         opponent,
                         trainerLevel
-                    )
+                    ),
+                    false
                 );
                 solver.solve();
                 resultsToSave.addAll(solver.getBattleResults());

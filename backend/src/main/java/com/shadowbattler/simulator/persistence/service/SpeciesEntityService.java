@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.shadowbattler.simulator.model.Species;
 import com.shadowbattler.simulator.persistence.entity.SpeciesEntity;
@@ -33,6 +34,7 @@ public class SpeciesEntityService {
         return this.speciesEntityRepository.getReferenceById(id);
     }
 
+    @Transactional
     public SpeciesEntity saveSpecies(Species species) {
         SpeciesEntity entity = this.speciesEntityRepository.findById(species.getSpeciesId()).orElse(new SpeciesEntity());
         

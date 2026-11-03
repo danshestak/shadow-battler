@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.shadowbattler.simulator.model.Opponent;
 import com.shadowbattler.simulator.persistence.entity.OpponentEntity;
@@ -34,6 +35,7 @@ public class OpponentEntityService {
         return this.opponentEntityRepository.getReferenceById(id);
     }
 
+    @Transactional
     public OpponentEntity saveOpponent(Opponent opponent) {
         OpponentEntity entity = this.opponentEntityRepository.findById(opponent.getOpponentId()).orElse(new OpponentEntity());
 

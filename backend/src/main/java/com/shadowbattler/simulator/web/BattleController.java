@@ -204,7 +204,8 @@ public class BattleController {
                         movesetCreature, 
                         enemyTeam, 
                         opponent.getTitle().getShields()
-                    )
+                    ),
+                    true
                 );
                 solver.solve();
                 return ResponseEntity.ok(solver.getBattleResults());
