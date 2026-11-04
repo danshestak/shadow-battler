@@ -59,12 +59,10 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
         </div>}
         {description.moves && <div className={cellStyle}>
           <div className='flex flex-wrap gap-0.5 items-start text-xs'>
-            {(['playerFastMove', 'playerChargedMove1', 'playerChargedMove2'] as const).map((s, i) => (
-              <MoveLabel
-              key={i}
-              move={battleResult[s]}
-              species={battleResult.playerSpecies}/>
-            ))}
+            {(['playerFastMove', 'playerChargedMove1', 'playerChargedMove2'] as const)
+              .map(e => battleResult[e])
+              .filter(m => m !== undefined)
+              .map((m, i) => <MoveLabel key={i} move={m} species={battleResult.playerSpecies}/>)}
           </div>
         </div>}
         {description.time &&
