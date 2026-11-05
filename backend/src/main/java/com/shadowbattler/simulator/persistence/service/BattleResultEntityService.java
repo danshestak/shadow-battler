@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +28,12 @@ public class BattleResultEntityService {
         return this.battleResultEntityRepository.saveAll(battleResultEntities);
     }
 
+    @Cacheable(cacheNames = "countersByOpponent", key = "#opponentId")
     public List<BattleResultEntity> getTopScoringBRsPerSpecies(String opponentId) {
         return this.battleResultEntityRepository.findTopScoringBRsPerSpecies(opponentId);
     } 
 
+    @Cacheable(cacheNames = "movesetResults", key = "#speciesId + '-' + #opponentId")
     public List<BattleResultEntity> getMovesetBRs(String speciesId, String opponentId) {
         return this.battleResultEntityRepository.findMovesetBRs(speciesId, opponentId);
     }
