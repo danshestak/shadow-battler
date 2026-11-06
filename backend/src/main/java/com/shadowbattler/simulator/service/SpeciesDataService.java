@@ -103,4 +103,8 @@ public class SpeciesDataService {
             s.hydrate(this.movesDataService);
         });
     }
+
+    public int getRepoHash() {
+        return this.speciesRepository.hashCode();
+    }
 }

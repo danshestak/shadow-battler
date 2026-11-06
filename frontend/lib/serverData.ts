@@ -12,6 +12,16 @@ const get = async (slug: string) => {
   return res.json();
 }
 
+export const getCachedResponse = async (slug: string) => {
+  const res = await fetch(`${getBackendUrl()}/api/${slug}`, { next: { revalidate: 3600, tags: [slug] } });
+  if (!res.ok) throw new Error(`Failed to fetch ${slug}`);
+
+  return {
+    data: await res.json(),
+    etag: res.headers.get('etag')
+  };
+}
+
 export const getOpponents = (): Promise<Record<string, Opponent>> => get('opponents');
 export const getSpecies = (): Promise<Record<string, Species>> => get('species');
 export const getMoves = (): Promise<Record<string, Move>> => get('moves');

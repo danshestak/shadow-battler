@@ -29,4 +29,8 @@ public class MovesDataService {
     public Map<String, Move> getAllMovesMap() {
         return movesRepository.findAllAsMap();
     }
+
+    public int getRepoHash() {
+        return this.movesRepository.hashCode();
+    }
 }

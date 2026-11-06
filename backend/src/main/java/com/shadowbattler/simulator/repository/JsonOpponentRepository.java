@@ -10,6 +10,8 @@ import com.shadowbattler.simulator.model.Opponent;
 
 @Repository
 public class JsonOpponentRepository extends AbstractJsonRepository<Opponent> implements OpponentRepository {
+    private final int hash;
+
     public JsonOpponentRepository(ObjectMapper objectMapper) {
         super(
             objectMapper, 
@@ -17,5 +19,11 @@ public class JsonOpponentRepository extends AbstractJsonRepository<Opponent> imp
             new TypeReference<List<Opponent>>() {}, 
             o -> o.getOpponentId()
         );
+        this.hash = this.cache.hashCode();
+    }
+
+    @Override
+    public int hashCode() {
+        return this.hash;
     }
 }

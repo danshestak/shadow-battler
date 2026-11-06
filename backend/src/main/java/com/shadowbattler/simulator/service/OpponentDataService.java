@@ -40,4 +40,8 @@ public class OpponentDataService {
             o.hydrate(speciesDataService);
         });
     }
+
+    public int getRepoHash() {
+        return this.opponentRepository.hashCode();
+    }
 }
