@@ -52,7 +52,7 @@ const BattlePage = async ({ searchParams }: CountersPageProps) => {
   }
 
   return (
-    <div className="max-w-3xl m-auto">
+    <div className="m-auto">
       <h1 className="text-2xl mb-4">Battle</h1>
 
       <p className="mb-4">

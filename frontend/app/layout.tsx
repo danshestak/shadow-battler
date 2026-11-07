@@ -41,7 +41,7 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col bg-theme2 text-text">
         <Header />
         <div className="flex-1 p-4">
-          <main className="max-w-4xl m-auto">
+          <main className="max-w-3xl m-auto">
             {children}
           </main>
         </div>

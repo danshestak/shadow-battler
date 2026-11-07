@@ -27,7 +27,7 @@ const CountersPage = async ({ params }: CountersPageProps) => {
   }
 
   return (
-    <div className="max-w-4xl m-auto">
+    <div className="m-auto">
       <h1 className="text-2xl mb-4">Counters</h1>
 
       <p className="mb-4">

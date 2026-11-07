@@ -12,7 +12,7 @@ const OpponentsPage = async () => {
   const species = await getSpecies();
 
   return (
-    <div className='max-w-3xl m-auto'>
+    <div className='m-auto'>
       <h1 className='text-2xl mb-4'>Opponents</h1>
 
       <p className='mb-4'>
