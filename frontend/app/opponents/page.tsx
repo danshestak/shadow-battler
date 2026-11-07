@@ -1,15 +1,16 @@
 import OpponentCard from '@/components/opponent/OpponentCard'
-import { getOpponents } from '@/lib/serverData'
+import { getOpponents, getSpecies } from '@/lib/serverData'
 import { Opponent } from '@/types/Opponent';
 
 export const dynamic = 'force-dynamic';
 export const metadata = {
-  title: 'Opponents' 
+  title: 'Opponents'
 }
 
 const OpponentsPage = async () => {
   const opponents = await getOpponents();
-  
+  const species = await getSpecies();
+
   return (
     <div className='max-w-3xl m-auto'>
       <h1 className='text-2xl mb-4'>Opponents</h1>
@@ -26,7 +27,12 @@ const OpponentsPage = async () => {
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
         {Object.values(opponents)
           .sort(Opponent.compare)
-          .map((opponent) => <OpponentCard key={opponent.opponentId} opponent={opponent}/>)}
+          .map((opponent) => <OpponentCard
+            key={opponent.opponentId}
+            className='p-2 bg-theme3 border border-theme4 rounded shadow-lg'
+            opponent={opponent}
+            speciesData={species}
+          />)}
       </div>
     </div>
   )

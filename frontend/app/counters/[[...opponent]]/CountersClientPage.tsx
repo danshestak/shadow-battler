@@ -2,7 +2,6 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import useSWR from 'swr';
-import Link from 'next/link';
 import CountersTable from '@/components/counters/CountersTable';
 import { CountersTableDescription } from '@/components/counters/CountersTableDescription';
 import { useClientData } from '@/lib/clientData';
@@ -81,11 +80,6 @@ const CountersClientPage = ({ initialBattleResults }: CountersClientPageProps) =
         value={selectedOpponent?.name ?? null}
         onValueChange={(id) => id && router.push(`/counters/${id}`)}
       />
-
-      {selectedOpponent && <p className="mb-4">
-        Viewing counters for {selectedOpponent.name}. View more details about them and
-        their lineup <Link href={"/opponents"}><span className='text-highlight hover:underline'>here</span></Link>.
-      </p>}
 
       <CountersTable
         battleResults={battleResults}

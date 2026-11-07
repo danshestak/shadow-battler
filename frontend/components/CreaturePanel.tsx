@@ -139,7 +139,7 @@ function CreaturePanel<T extends Creature>({ species, creature, setCreature, hid
       )}
 
       {isReady && (
-        <DialogContent className="flex flex-col sm:max-w-sm" showCloseButton={false}>
+        <DialogContent className="flex flex-col sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Edit Pokémon</DialogTitle>
           </DialogHeader>
