@@ -43,6 +43,8 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
     battleUrl = `/battle/?opponent=${opponent.opponentId}&p1=${PlayerCreature.toSearchParams(c)}&trainer_level=${battleResult.trainerLevel}&enemy_mode=lineup`;
   }
 
+  console.log(clientData.moves)
+
   return (
     <div className={cn('rounded border border-transparent transition-colors duration-150', isOpen && 'bg-theme2 border-theme4 shadow-lg not-last:mb-2')}>
       <button onClick={() => setIsOpen(!isOpen)} className={cn('w-full text-left cursor-pointer grid items-center gap-1 px-1')} style={{ gridTemplateColumns: gridCols }}>
@@ -171,6 +173,20 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
                       <div className='text-center'>
                         {roundNumber(m.power / m.energy * (Species.givesStab(battleResult.playerSpecies, m) ? 1.2 : 1))}
                       </div>
+                      {m.buffApplyChance > 0 && <div className='italic -mt-1 mb-1 col-span-4'>
+                        {m.buffApplyChance*100}% chance {
+                          [{ buffs: m.buffsSelf, target: 'self' }, { buffs: m.buffsOpponent, target: 'enemy' }]
+                            .filter(v => v.buffs && (v.buffs.atk !== 0 || v.buffs.def !== 0))
+                            .map(v => 
+                              [
+                                v.buffs.atk !== 0 ? `${v.buffs.atk > 0 ? '+' : '-'}${Math.abs(v.buffs.atk)} ATK` : null,
+                                v.buffs.def !== 0 ? `${v.buffs.def > 0 ? '+' : '-'}${Math.abs(v.buffs.def)} DEF` : null,
+                                v.target
+                              ].filter(s => s !== null).join(' ')
+                            )
+                            .join(', ')
+                        }
+                      </div>}
                     </React.Fragment>
                   ))
                 }
