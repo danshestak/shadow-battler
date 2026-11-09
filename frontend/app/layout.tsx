@@ -25,7 +25,7 @@ export const metadata = {
   },
 
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: title,
     description: description,
     images: ['https://shadowbattler.com/opengraph.png'],
