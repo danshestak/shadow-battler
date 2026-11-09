@@ -1,0 +1,1 @@
+![Shadow Battler](frontend/public/opengraph.png)

@@ -21,12 +21,14 @@ export const metadata = {
     siteName: title,
     locale: 'en_US',
     type: 'website',
+    images: ['https://shadowbattler.com/opengraph.png'],
   },
 
   twitter: {
     card: 'summary',
     title: title,
-    description: description
+    description: description,
+    images: ['https://shadowbattler.com/opengraph.png'],
   },
 };
 
