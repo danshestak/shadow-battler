@@ -1,5 +1,6 @@
 import { SpritesheetData } from "@/components/sprite/SpritesheetData";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { UpdateAnnouncements } from "@/types/UpdateAnnouncement";
 import { cn } from "cn";
 import Link from "next/link";
 
@@ -77,6 +78,22 @@ export default function Home() {
         Want to learn more or contribute?
         Shadow Battler is proudly <Link href={"https://github.com/danshestak/shadow-battler"}><span className='text-highlight hover:underline'>open source</span></Link>!
       </p>
+
+      <h2 className="text-xl mt-4 mb-2">
+        Updates
+      </h2>
+      <div>
+        {
+          UpdateAnnouncements.map((v, i) => <div 
+            key={i}
+            className='bg-theme3 border border-theme4 rounded p-2 shadow-xl text-sm'
+          >
+            <h3 className="text-lg mb-1">{v.title} <span className="text-sm italic">{v.date.toDateString()}</span></h3>
+            {v.content}
+          </div>)
+        }
+      </div>
+      
     </main>
   );
 }
