@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 const font = Outfit({subsets:['latin'],variable:'--font-sans'});
 
-const description = 'Shadow Battler is the premier Team GO Rocket battle simulator. View opponent lineups, compare Pokémon for defeating them, and run custom battle simulations.';
+const description = 'Shadow Battler is the premier Team GO Rocket battle simulator for Pokémon GO. View opponents, compare the best counters, and run battle simulations.';
 const title = 'Shadow Battler';
 export const metadata = {
   title: {
