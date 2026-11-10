@@ -27,13 +27,13 @@ To sort and compare battle results, the backend saves them to a database during 
 
 ### Running
 
-1. Open a terminal in `\backend` and run:
+1. Open a terminal in `backend` and run:
 
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-2. Open a second terminal in `\frontend` and run:
+2. Open a second terminal in `frontend` and run:
 
 ```powershell
 npm run dev
