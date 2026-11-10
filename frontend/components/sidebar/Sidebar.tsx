@@ -1,18 +1,18 @@
 'use client'
-import React from 'react'
-import HeaderButton from '../header/HeaderButton'
+import HeaderButton from '../layout/HeaderButton'
+import { X } from 'lucide-react';
+import { buttonVariants } from '../ui/button';
+import { cn } from 'cn';
 
 interface SidebarProps {
-    buttons: string[];
-    isOpen: boolean;
-    onClose: () => void;
+  buttons: string[];
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-//            backdrop-filter backdrop-blur-xl 
 const Sidebar = (p: SidebarProps) => {
   return (
     <>
-      {/* overlay */}
       <div
         className={`fixed inset-0 z-20 md:hidden
             bg-theme1/75 backdrop-blur-xs
@@ -21,7 +21,6 @@ const Sidebar = (p: SidebarProps) => {
         aria-hidden="true"
       />
 
-      {/* sidebar */}
       <div
         className={`fixed top-0 right-0 h-full w-1/2 p-2 z-30 md:hidden
             bg-theme1 border-l border-theme4 shadow-lg 
@@ -31,13 +30,14 @@ const Sidebar = (p: SidebarProps) => {
         aria-labelledby="sidebar-title"
       >
         <div className="flex flex-col justify-end gap-2">
-            <div className='h-12 flex justify-end'>
-                <button onClick={p.onClose} className="h-full aspect-square flex justify-center items-center p-1 rounded-full border border-transparent transition cursor-pointer hover:bg-theme2 hover:text-text hover:border-highlight">
-                    <svg width="1.5em" height="1.5em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    <span className="sr-only">Close menu</span>
-                </button>
-            </div>
-            {p.buttons.map(s => <HeaderButton key={s} content={s} onClick={p.onClose}/>)}
+          <div className='h-12 flex justify-end pr-2'>
+            <button
+              onClick={p.onClose}
+              className={cn(buttonVariants({ variant: 'blended' }), "h-full aspect-square flex justify-center items-center p-1 rounded-full")}>
+              <X className='size-5'/>
+            </button>
+          </div>
+          {p.buttons.map(s => <HeaderButton key={s} content={s} onClick={p.onClose} />)}
         </div>
       </div>
     </>

@@ -1,7 +1,8 @@
-import Header from "@/components/header/Header";
+import Header from "@/components/layout/Header";
 import "./globals.css";
 import { Outfit } from "next/font/google";
 import { cn } from "@/lib/utils";
+import Footer from "@/components/layout/Footer";
 
 const font = Outfit({subsets:['latin'],variable:'--font-sans'});
 
@@ -41,17 +42,13 @@ export default function RootLayout({
     <html lang="en" className={cn("font-sans", font.variable)}>
       <meta name="apple-mobile-web-app-title" content="Shadow Battler" />
       <body className="min-h-screen flex flex-col bg-theme2 text-text">
-        <Header />
+        <Header/>
         <div className="flex-1 p-4">
           <main className="max-w-3xl m-auto">
             {children}
           </main>
         </div>
-        <footer className="p-4 mt-4 text-center text-xs bg-theme3 border-t border-theme4 shadow-xl">
-            Shadow Battler is not in any way affiliated with The Pokémon Company, Nintendo, Scopely, or Niantic.
-            <br/>
-            Pokémon is a trademark of Nintendo. All such trademarks are the property of their respective owners.
-        </footer>
+        <Footer/>
       </body>
     </html>
   );
