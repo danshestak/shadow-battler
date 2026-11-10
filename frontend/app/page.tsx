@@ -82,7 +82,7 @@ export default function Home() {
       <h2 className="text-xl mt-4 mb-2">
         Updates
       </h2>
-      <div>
+      <div className="flex flex-col gap-2">
         {
           UpdateAnnouncements.map((v, i) => <div 
             key={i}
