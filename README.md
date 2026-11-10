@@ -1,5 +1,3 @@
-
-
 # <img src="frontend/public/logo.svg" alt="logo" style="height: 1.25em; width: auto; vertical-align: text-bottom;"> Shadow Battler
 
 [Shadow Battler](https://shadowbattler.com/) is a tool for Pokemon GO that simulates Team GO Rocket battles to quantitatively determine which Pokemon are fastest and most consistent for defeating each Team GO Rocket opponent.
@@ -22,8 +20,8 @@ To sort and compare battle results, the backend saves them to a database during 
 1. Start PostgreSQL and create an empty database for the app
 2. Copy `backend\.env.example` as `backend\.env`, and `frontend\.env.local.example` as `frontend\.env.local`
 3. Edit `backend\.env` so `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` match your PostgreSQL database and user. For example, if you created a database named `shadowbattler`, set `DB_URL` to `jdbc:postgresql://localhost:5432/shadowbattler`
-4. In `backend\.env`, Leave `USE_TEST_JSON=true` to use the included test game data. For development, I'd highly recommend using test data as the production dataset can take up to a day to process. Additionally, `RECONCILE_ENTITIES=true` enables the database reconciliation endpoint, so enable it if you
-5. Run ```npm install``` in `frontend`. You should not need to modify `frontend\.env.local` unless the backend is running on a port other than 8080
+4. In `backend\.env`, Leave `USE_TEST_JSON=true` to use the included test game data. For development, I'd highly recommend using test data as the production dataset can take up to a day to process. Additionally, `RECONCILE_ENTITIES=true` enables the database reconciliation endpoint (see the reconciliation section)
+5. Run `npm install` in `frontend`. You should not need to modify `frontend\.env.local` unless the backend is running on a port other than 8080
 
 ### Running
 
