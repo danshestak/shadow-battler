@@ -13,6 +13,7 @@ import CodeBlock from '../CodeBlock'
 import { Switch } from '../ui/switch'
 import { useMemo, useState } from 'react'
 import NumberSelect from '../battle/NumberSelect'
+import { useCountersFilters } from '@/hooks/useCountersFilters'
 
 interface CountersTableProps {
   battleResults: BattleResult[]
@@ -38,9 +39,7 @@ const outerCn = 'rounded bg-theme3 border border-theme4 p-2 overflow-x-auto shad
 
 const CountersTable = ({ battleResults, emptyTableMessage, opponent, clientData, className, title, description }: CountersTableProps) => {
   const [page, setPage] = useState(1);
-  const [includeMega, setIncludeMega] = useState(true);
-  const [includeShadow, setIncludeShadow] = useState(true);
-  const [includeLegendary, setIncludeLegendary] = useState(true);
+  const [{ includeMega, includeShadow, includeLegendary }, setFilter] = useCountersFilters();
 
   const filteredBattleResults = useMemo(() => {
     if (!battleResults || battleResults.length === 0) return [];
@@ -61,7 +60,7 @@ const CountersTable = ({ battleResults, emptyTableMessage, opponent, clientData,
     return filteredBattleResults.slice(start, end);
   }, [filteredBattleResults, page]);
 
-  const pageCount = 1 + Math.floor((filteredBattleResults.length-1)/pageSize);
+  const pageCount = Math.max(1, Math.ceil(filteredBattleResults.length / pageSize));
   
   const gridCols = getGridColsByDesc(description);
 
@@ -81,7 +80,8 @@ const CountersTable = ({ battleResults, emptyTableMessage, opponent, clientData,
     </div>
   }
 
-  if (!filteredBattleResults || filteredBattleResults.length === 0) {
+  // Only bail out when there's nothing to filter, so the settings button stays reachable if filters hide every result
+  if (!battleResults || battleResults.length === 0) {
     return <div className={outerCn}>
       <div className='text-center italic'>{emptyTableMessage ?? 'Battles table is empty.'}</div>
     </div>
@@ -150,13 +150,13 @@ const CountersTable = ({ battleResults, emptyTableMessage, opponent, clientData,
               </DialogHeader>
 
                 <div className='flex justify-between'>
-                  Include Mega Pokémon <Switch checked={includeMega} onCheckedChange={setIncludeMega}/>
+                  Include Mega Pokémon <Switch checked={includeMega} onCheckedChange={v => setFilter('includeMega', v)}/>
                 </div>
                 <div className='flex justify-between'>
-                  Include Shadow Pokémon <Switch checked={includeShadow} onCheckedChange={setIncludeShadow}/>
+                  Include Shadow Pokémon <Switch checked={includeShadow} onCheckedChange={v => setFilter('includeShadow', v)}/>
                 </div>
                 <div className='flex justify-between'>
-                  Include Legendary Pokémon <Switch checked={includeLegendary} onCheckedChange={setIncludeLegendary}/>
+                  Include Legendary Pokémon <Switch checked={includeLegendary} onCheckedChange={v => setFilter('includeLegendary', v)}/>
                 </div>
             </DialogContent>
           </Dialog>
@@ -173,6 +173,9 @@ const CountersTable = ({ battleResults, emptyTableMessage, opponent, clientData,
         )}
       </div>
       <div className="flex flex-col">
+        {filteredBattleResults.length === 0 && <div className='text-center italic py-2'>
+          All results are hidden by the counters configuration.
+        </div>}
         {battleResultsPage.map((br, i) => (
           <CountersTableRow
             key={i}
