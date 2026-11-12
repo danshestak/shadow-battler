@@ -66,7 +66,7 @@ public class OpponentBattleSolver implements BattleSolver {
                 final boolean[] enemyCanReachCharged = new boolean[]{true, true, true};
                 for (int i = 0; i < 3; i++) {
                     final short playerfastDmg = context.getFastDmgWithBuff(0, 3+i, playerAtkDrop ? -BattleContext.MAX_BUFF_STAGES : 0, 0);
-                    final int fastAtksToKo = (int)Math.ceil((double)context.maxHp[i] / playerfastDmg);
+                    final int fastAtksToKo = (int)Math.ceil((double)context.maxHp[3+i] / playerfastDmg);
                     final int turns = context.fastTurns[0] * fastAtksToKo;
                     final int enemyMinEnergy = (turns / context.fastTurns[3+i]) * context.fastEnrg[3+i];
                     if (enemyMinEnergy < context.charged0Enrg[3+i]) {
