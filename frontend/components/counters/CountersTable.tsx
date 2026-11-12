@@ -23,6 +23,7 @@ interface CountersTableProps {
   className?: string,
   title?: string,
   description: CountersTableDescription,
+  useFilters: boolean
 }
 
 const colNames: Record<string, string> = {
@@ -37,13 +38,13 @@ const pageSize = 20;
 const legendaryTags = new Set(['LEGENDARY', 'MYTHICAL', 'ULTRABEAST']);
 const outerCn = 'rounded bg-theme3 border border-theme4 p-2 overflow-x-auto shadow-lg';
 
-const CountersTable = ({ battleResults, emptyTableMessage, opponent, clientData, className, title, description }: CountersTableProps) => {
+const CountersTable = ({ battleResults, emptyTableMessage, opponent, clientData, className, title, description, useFilters }: CountersTableProps) => {
   const [page, setPage] = useState(1);
   const [{ includeMega, includeShadow, includeLegendary }, setFilter] = useCountersFilters();
 
   const filteredBattleResults = useMemo(() => {
     if (!battleResults || battleResults.length === 0) return [];
-    if (includeMega && includeShadow && includeLegendary) return battleResults;
+    if (!useFilters || (includeMega && includeShadow && includeLegendary)) return battleResults;
     return battleResults.filter(br => {
       for (const tag of br.playerSpecies.tags) {
         if (!includeMega && tag === 'MEGA') return false;
@@ -52,7 +53,7 @@ const CountersTable = ({ battleResults, emptyTableMessage, opponent, clientData,
       }
       return true;
     });
-  }, [battleResults, includeMega, includeShadow, includeLegendary]);
+  }, [battleResults, includeMega, includeShadow, includeLegendary, useFilters]);
 
   const battleResultsPage = useMemo(() => {
     const start = (page-1) * pageSize;
@@ -79,8 +80,7 @@ const CountersTable = ({ battleResults, emptyTableMessage, opponent, clientData,
       <div className='text-center italic'>Loading game data...</div>
     </div>
   }
-
-  // Only bail out when there's nothing to filter, so the settings button stays reachable if filters hide every result
+  
   if (!battleResults || battleResults.length === 0) {
     return <div className={outerCn}>
       <div className='text-center italic'>{emptyTableMessage ?? 'Battles table is empty.'}</div>
@@ -140,7 +140,7 @@ const CountersTable = ({ battleResults, emptyTableMessage, opponent, clientData,
           </Dialog>
 
           <Dialog>
-            <DialogTrigger className={cn(buttonVariants({ variant: 'blended' }), 'w-8 h-8')}>
+            <DialogTrigger className={cn(buttonVariants({ variant: 'blended' }), 'w-8 h-8')} disabled={!useFilters}>
               <Settings2 className='size-5'/>
             </DialogTrigger>
 
