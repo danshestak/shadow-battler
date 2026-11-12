@@ -128,7 +128,11 @@ public class TeamBattleSolver implements BattleSolver {
         for (BattleState state : finishedStates) {
             if (!state.finished || !state.playerWon()) continue;
 
-            if (fastestWin == null || state.timeElapsed < fastestWin.timeElapsed) {
+            if (
+                fastestWin == null || 
+                state.timeElapsed < fastestWin.timeElapsed ||
+                (state.timeElapsed == fastestWin.timeElapsed && state.getHp(0) > fastestWin.getHp(0))
+            ) {
                 fastestWin = state;
             }
         }

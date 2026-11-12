@@ -576,7 +576,19 @@ public final class BattleState {
         } else if (this.enemyQueuedAction == Actions.FAST_ATTACK && other.enemyQueuedAction == Actions.FAST_ATTACK) {
             if (this.enemyQueuedActionFulfills > other.enemyQueuedActionFulfills) return false;
         }
-        return !(this.enemyStunQueued && !other.enemyStunQueued);
+        if (this.enemyStunQueued && !other.enemyStunQueued) return false;
+        
+        if (Actions.isChargedAttack(this.playerQueuedAction) || Actions.isChargedAttack(other.playerQueuedAction)) {
+            if (this.playerQueuedAction != other.playerQueuedAction) return false;
+            if (this.playerQueuedActionFulfills < other.playerQueuedActionFulfills) return false;
+        }
+        
+        if (Actions.isChargedAttack(this.enemyQueuedAction) || Actions.isChargedAttack(other.enemyQueuedAction)) {
+            if (this.enemyQueuedAction != other.enemyQueuedAction) return false;
+            if (this.enemyQueuedActionFulfills > other.enemyQueuedActionFulfills) return false;
+        }
+
+        return true;
     }
 
     /**

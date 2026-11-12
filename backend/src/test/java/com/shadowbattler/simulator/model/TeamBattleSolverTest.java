@@ -57,7 +57,7 @@ public class TeamBattleSolverTest {
 
     @BeforeEach
     public void setup() {
-        this.pLead = helper("charizard", "CONFUSION", "PSYCHIC_FANGS", null);
+        this.pLead = helper("charizard", "CONFUSION", "PSYCHIC_FANGS", "AIR_CUTTER");
         this.pSwitch = null; //helper("regice", "LOCK_ON", "BLIZZARD", null);
         this.pCloser = null; //helper("regirock", "LOCK_ON", "STONE_EDGE", null);
         this.eLead = shadowHelper("squirtle", "SPLASH", "STRUGGLE");
@@ -117,6 +117,6 @@ public class TeamBattleSolverTest {
         solver.solve();
 
         System.out.printf("TeamBattleSolver test BattleResult: %s\n", solver.getBattleResult());
-        System.out.printf("log: %s\n", solver.getBattleState().log.toString());
+        System.out.printf("log: %s\n", solver.getBattleResult());
     }
 }

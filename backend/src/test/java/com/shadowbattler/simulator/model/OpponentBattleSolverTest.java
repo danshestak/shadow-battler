@@ -20,15 +20,17 @@ public class OpponentBattleSolverTest {
     @Autowired
     OpponentDataService opponentDataService;
 
-    private OpponentBattleSolver helper(String playerSpeciesId, String playerFastId, String playerChargedId, String opponentId) {
+    private OpponentBattleSolver helper(String playerSpeciesId, String playerFastId, String playerChargedId1, String playerChargedId2, String opponentId) {
         final Species playerSpecies = this.speciesDataService.getSpeciesById(playerSpeciesId);
         final Move playerFast = this.movesDataService.getMoveById(playerFastId);
-        final Move playerCharged = movesDataService.getMoveById(playerChargedId);
+        final Move playerCharged1 = movesDataService.getMoveById(playerChargedId1);
+        final Move playerCharged2 = movesDataService.getMoveById(playerChargedId2);
         final Opponent opponent = this.opponentDataService.getOpponentById(opponentId);
 
         System.out.println(playerSpecies);
         System.out.println(playerFast);
-        System.out.println(playerCharged);
+        System.out.println(playerCharged1);
+        System.out.println(playerCharged2);
         System.out.println(opponent);
 
         return new OpponentBattleSolver(
@@ -38,7 +40,7 @@ public class OpponentBattleSolverTest {
                     Stats3.getMaxIVs(), 
                     50, 
                     playerFast, 
-                    List.of(playerCharged)
+                    List.of(playerCharged1, playerCharged2)
                 ),
                 null,
                 null
@@ -50,19 +52,23 @@ public class OpponentBattleSolverTest {
 
     @Test
     void testSolve() {
+        System.out.println(speciesDataService.getAllSpecies());
+
         final OpponentBattleSolver lineupBattleSolver1 = helper(
-            "magnezone_shadow", 
+            "charizard", 
             "VOLT_SWITCH", 
-            "WILD_CHARGE", 
+            "FOUL_PLAY", 
+            "AIR_CUTTER", 
             "grunt_f_water"
         );
         System.out.println(lineupBattleSolver1);
         lineupBattleSolver1.solve();
 
         final OpponentBattleSolver lineupBattleSolver2 = helper(
-            "rampardos", 
-            "SMACK_DOWN", 
-            "ROCK_SLIDE", 
+            "charizard", 
+            "VOLT_SWITCH", 
+            "AIR_CUTTER", 
+            "FOUL_PLAY", 
             "grunt_f_water"
         );
         lineupBattleSolver2.solve();
