@@ -56,20 +56,20 @@ public class OpponentBattleSolverTest {
 
         final OpponentBattleSolver lineupBattleSolver1 = helper(
             "charizard", 
-            "VOLT_SWITCH", 
-            "FOUL_PLAY", 
+            "DRAGON_BREATH", 
+            "BLAST_BURN", 
             "AIR_CUTTER", 
-            "grunt_f_water"
+            "leader_cliff"
         );
         System.out.println(lineupBattleSolver1);
         lineupBattleSolver1.solve();
 
         final OpponentBattleSolver lineupBattleSolver2 = helper(
             "charizard", 
-            "VOLT_SWITCH", 
+            "DRAGON_BREATH", 
             "AIR_CUTTER", 
-            "FOUL_PLAY", 
-            "grunt_f_water"
+            "BLAST_BURN", 
+            "leader_cliff"
         );
         lineupBattleSolver2.solve();
 

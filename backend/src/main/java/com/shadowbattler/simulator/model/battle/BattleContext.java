@@ -34,11 +34,11 @@ public final class BattleContext {
      * accounts for only how long animations take and how quickly a player can shield after the enemy starts
      * charging
      */
-    public final static int ENEMY_CHARGE_TIME = 7000;
+    public final static int ENEMY_CHARGE_TIME = 6000;
     /** how long it takes either trainer to switch to their next creature after their active faints */
     public final static int FAINT_TIME = 1000;
     /** how many turns the enemy is stunned for after a trainer switches/uses a charged move */
-    public final static short STUN_TURNS = 8;
+    public final static short STUN_TURNS = 6;
 
     public final static byte MAX_BUFF_STAGES = 4;
     public final static float BUFF_APPLY_THRESHOLD = 0.8f;
