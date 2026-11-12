@@ -239,6 +239,7 @@ public class BattleResult implements Comparable<BattleResult> {
         sb.append(", opponent=").append(opponent);
         sb.append(", playerLevel=").append(playerLevel);
         sb.append(", trainerLevel=").append(trainerLevel);
+        sb.append(", score=").append(this.getScore());
         sb.append('}');
         return sb.toString();
     }
