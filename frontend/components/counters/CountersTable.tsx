@@ -173,8 +173,8 @@ const CountersTable = ({ battleResults, emptyTableMessage, opponent, clientData,
         )}
       </div>
       <div className="flex flex-col">
-        {filteredBattleResults.length === 0 && <div className='text-center italic py-2'>
-          All results are hidden by the counters configuration.
+        {filteredBattleResults.length === 0 && <div className='text-center italic text-sm py-4'>
+          No results match the counters configuration.
         </div>}
         {battleResultsPage.map((br, i) => (
           <CountersTableRow
