@@ -224,12 +224,16 @@ export const Species = {
       throw new Error(`expected level to be between 1.0 and 55.0, received ${level}`)
     }
     
-    const cpm = cpMultipliers[Math.round((level-1.0)*2)];
+    const cpm = Math.fround(cpMultipliers[Math.round((level-1.0)*2)]);
     const atk = (species.baseStats.atk + ivs.atk) * cpm;
     const def = (species.baseStats.def + ivs.def) * cpm;
     const hp = (species.baseStats.hp + ivs.hp) * cpm;
 
-    return { atk: atk, def: def, hp: Math.max(10.0, Math.floor(hp))};
+    return { atk: atk, def: def, hp: hp };
+  },
+
+  roundHp(hp: number) {
+    return hp < 10.0 ? 10.0 : Math.floor(hp);
   },
 
   getOpponentStats(species: Species, trainerLevel: number, title: OpponentTitle): Stats3<number> {
@@ -238,12 +242,12 @@ export const Species = {
     }
 
     const rank = OpponentTitle.toMultiplier(title);
-    const rcpm = rocketCpMultipliers[trainerLevel - 8];
+    const rcpm = Math.fround(rocketCpMultipliers[trainerLevel - 8]);
     const atk = Math.floor((species.baseStats.atk + 15) * 5/3) * rank * rcpm;
     const def = (species.baseStats.def + 15) * rank * rcpm;
     const hp = Math.floor((species.baseStats.hp + 15) * 3/5) * rank * rcpm;
 
-    return { atk: atk, def: def, hp: Math.max(10.0, Math.floor(hp))};
+    return { atk: atk, def: def, hp: hp };
   },
 
   getCp(stats: Stats3<number>): number {

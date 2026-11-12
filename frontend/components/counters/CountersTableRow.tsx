@@ -109,8 +109,8 @@ const CountersTableRow = ({ description, battleResult, clientData, opponent }: C
                 <Meter value={stats.def} max={400} colorSensitivity={2} colorOffset={100} label="Defense" className='h-2.5' />
 
                 <div className='text-sm'>HP:</div>
-                <div>{stats.hp}</div>
-                <Meter value={stats.hp} max={400} colorSensitivity={2} colorOffset={100} label="HP" className='h-2.5' />
+                <div>{Species.roundHp(stats.hp)}</div>
+                <Meter value={Species.roundHp(stats.hp)} max={400} colorSensitivity={2} colorOffset={100} label="HP" className='h-2.5' />
               </div>
 
               {battleResult.playerSpecies.shadow && <div className='text-xs text-center italic'>Shadow Pokémon deal and take 20% more damage!</div>}
