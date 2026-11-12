@@ -53,7 +53,8 @@ public class OpponentBattleSolver implements BattleSolver {
 
         final Map<String, BattleResult> sharedResults = new HashMap<>();
 
-        final List<BattleResult> battleResults = teams.stream()
+        final List<BattleResult> battleResults = teams
+            .parallelStream()
             .map(t -> {
                 final TeamBattleSolver teamBattleSolver = new TeamBattleSolver(
                     this.playerTeam,
