@@ -294,6 +294,7 @@ const BattleClientPage = (
         opponent={null}
         clientData={isReady ? clientData : null}
         description={countersTableDescription}
+        useFilters={false}
       />
     </div>
   )

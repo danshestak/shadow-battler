@@ -87,6 +87,7 @@ const CountersClientPage = ({ initialBattleResults }: CountersClientPageProps) =
         opponent={selectedOpponent ?? null}
         clientData={clientData}
         description={countersTableDescription}
+        useFilters={true}
       />
     </>
   );
